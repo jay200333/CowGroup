@@ -232,7 +232,6 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 
 # Custom Plugins (Build Logic)
-#cowgroup-android-application = { id = "cowgroup.android.application", version = "unspecified" }
 cowgroup-android-application = { id = "cowgroup.android.application", version = "unspecified" }
 cowgroup-android-library = { id = "cowgroup.android.library", version = "unspecified" }
 cowgroup-android-compose = { id = "cowgroup.android.compose", version = "unspecified" }
