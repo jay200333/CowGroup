@@ -11,5 +11,4 @@ dependencies {
     implementation(projects.core.data)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-
 }
