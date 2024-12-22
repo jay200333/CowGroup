@@ -1,4 +1,3 @@
-import com.example.convention.extension.androidTestImplementation
 import com.example.convention.extension.getBundle
 import com.example.convention.extension.implementation
 import com.example.convention.extension.libs

@@ -1,7 +1,8 @@
+
 import com.example.convention.extension.getLibrary
+import com.example.convention.extension.getVersion
 import com.example.convention.extension.implementation
 import com.example.convention.extension.libs
-import com.example.convention.extension.getVersion
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
