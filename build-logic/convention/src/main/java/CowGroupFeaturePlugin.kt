@@ -1,3 +1,4 @@
+
 import com.example.convention.extension.getBundle
 import com.example.convention.extension.implementation
 import com.example.convention.extension.libs
@@ -13,11 +14,14 @@ class CowGroupFeaturePlugin : Plugin<Project> {
                 apply("com.android.library")
                 apply("cowgroup.android.hilt")
                 apply("cowgroup.android.compose")
+                apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
             dependencies {
                 implementation(project(":core:designsystem"))
                 implementation(project(":core:model"))
+                implementation(libs.getBundle("navigation"))
+                implementation(libs.findLibrary("kotlinx.serialization.json").get())
                 testImplementation(libs.getBundle("test"))
             }
         }
