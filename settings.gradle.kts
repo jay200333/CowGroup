@@ -28,6 +28,9 @@ include(":app")
 
 include(":feature:login")
 include(":feature:main")
+include(":feature:home")
+include(":feature:map")
+include(":feature:mypage")
 
 include(":core:domain")
 include(":core:data")

@@ -46,16 +46,16 @@ fun MainScreen() {
                 }
             }
         },
-    ) { innerpadding ->
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerpadding),
+                .padding(innerPadding),
         ) {
             when (selectedScreenIndex) {
-                0 -> HomeScreen()
-                1 -> MapScreen()
-                2 -> MyPageScreen()
+                0 -> com.example.home.presentation.HomeScreen()
+                1 -> com.example.map.presentation.MapScreen()
+                2 -> com.example.mypage.presentation.MyPageScreen()
             }
         }
     }

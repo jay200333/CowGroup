@@ -1,4 +1,4 @@
-package com.example.main.presentation
+package com.example.mypage.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,31 +15,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.main.R
 
 @Composable
-fun EventDetailScreen() {
+fun SettingScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                },
+                title = { Text(text = "설정") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {}) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "top_bar_nav_icon_event_detail",
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painterResource(R.drawable.baseline_bookmarks_24),
-                            contentDescription = "top_bar_icon_event_detail_bookmark",
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "top_bar_nav_setting",
                         )
                     }
                 },
@@ -52,15 +41,12 @@ fun EventDetailScreen() {
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "EventDetailScreen", style = MaterialTheme.typography.displaySmall)
+            Text(text = "SettingScreen", style = MaterialTheme.typography.displayLarge)
             Button(onClick = {}) {
-                Text(text = "지도로 보기")
+                Text(text = "푸시 알림 받기")
             }
             Button(onClick = {}) {
-                Text(text = "전체 참여자 목록 보기")
-            }
-            Button(onClick = {}) {
-                Text(text = "참석 하기")
+                Text(text = "회원 탈퇴")
             }
         }
     }
@@ -68,6 +54,6 @@ fun EventDetailScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun EventDetailPreview() {
-    EventDetailScreen()
+fun SettingScreenPreview() {
+    SettingScreen()
 }

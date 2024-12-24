@@ -1,11 +1,10 @@
-package com.example.main.presentation
+package com.example.map.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,17 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun MyPageScreen() {
+fun MemberScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "마이 페이지") },
-                actions = {
+                title = { Text(text ="참여자 목록") },
+                navigationIcon = {
                     IconButton(onClick = {}) {
                         Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "top_bar_icon_myPage",
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "top_bar_nav_member",
                         )
                     }
                 },
@@ -41,19 +40,13 @@ fun MyPageScreen() {
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "MyPageScreen", style = MaterialTheme.typography.displayLarge)
-            Button(onClick = {}) {
-                Text(text = "프로필 편집")
-            }
-            Button(onClick = {}) {
-                Text(text = "이벤트 클릭")
-            }
+            Text(text = "MemberScreen", style = MaterialTheme.typography.displayLarge)
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun MyPageScreenPreview() {
-    MyPageScreen()
+fun MemberScreenPreview() {
+    MemberScreen()
 }

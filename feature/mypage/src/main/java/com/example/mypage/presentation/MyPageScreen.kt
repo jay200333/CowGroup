@@ -1,10 +1,10 @@
-package com.example.main.presentation
+package com.example.mypage.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
@@ -18,19 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun CreateMeetingScreen() {
+fun MyPageScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text(text = "모임 만들기")
-                },
-                navigationIcon = {
-                    IconButton(onClick = { }) {
+                title = { Text(text = "마이 페이지") },
+                actions = {
+                    IconButton(onClick = {}) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "top_bar_nav_icon_create_meeting",
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "top_bar_icon_myPage",
                         )
                     }
                 },
@@ -43,9 +41,12 @@ fun CreateMeetingScreen() {
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "CreateMeetingScreen", style = MaterialTheme.typography.displaySmall)
+            Text(text = "MyPageScreen", style = MaterialTheme.typography.displayLarge)
             Button(onClick = {}) {
-                Text(text = "모임 만들기 버튼")
+                Text(text = "프로필 편집")
+            }
+            Button(onClick = {}) {
+                Text(text = "이벤트 클릭")
             }
         }
     }
@@ -53,6 +54,6 @@ fun CreateMeetingScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun CreateMeetingScreenPreview() {
-    CreateMeetingScreen()
+fun MyPageScreenPreview() {
+    MyPageScreen()
 }

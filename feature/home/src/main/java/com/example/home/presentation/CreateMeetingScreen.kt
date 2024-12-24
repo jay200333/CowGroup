@@ -1,13 +1,14 @@
-package com.example.main.presentation
+package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,16 +18,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun HomeScreen() {
+fun CreateMeetingScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Fab_HomeScreen",
-                )
-            }
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = "모임 만들기")
+                },
+                navigationIcon = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "top_bar_nav_icon_create_meeting",
+                        )
+                    }
+                },
+            )
         },
     ) { innerPadding ->
         Column(
@@ -35,13 +43,9 @@ fun HomeScreen() {
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge)
-            // topBar 구현 해야함
+            Text(text = "CreateMeetingScreen", style = MaterialTheme.typography.displaySmall)
             Button(onClick = {}) {
-                Text(text = "로그인 버튼")
-            }
-            Button(onClick = {}) {
-                Text(text = "이벤트 클릭")
+                Text(text = "모임 만들기 버튼")
             }
         }
     }
@@ -49,6 +53,6 @@ fun HomeScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
-    HomeScreen()
+fun CreateMeetingScreenPreview() {
+    CreateMeetingScreen()
 }
