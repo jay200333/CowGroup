@@ -20,7 +20,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.home.R
 
 @Composable
-fun EventDetailScreen() {
+fun EventDetailScreen(
+    onMemberButtonClick: () -> Unit,
+    onEventNavigateButtonClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -28,7 +31,7 @@ fun EventDetailScreen() {
                 title = {
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onEventNavigateButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "top_bar_nav_icon_event_detail",
@@ -56,7 +59,7 @@ fun EventDetailScreen() {
             Button(onClick = {}) {
                 Text(text = "지도로 보기")
             }
-            Button(onClick = {}) {
+            Button(onClick = onMemberButtonClick) {
                 Text(text = "전체 참여자 목록 보기")
             }
             Button(onClick = {}) {
@@ -69,5 +72,8 @@ fun EventDetailScreen() {
 @Preview(showBackground = true)
 @Composable
 fun EventDetailPreview() {
-    EventDetailScreen()
+    EventDetailScreen(
+        onMemberButtonClick = {},
+        onEventNavigateButtonClick = {},
+    )
 }

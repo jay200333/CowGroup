@@ -7,3 +7,6 @@ data object CreateMeetingRoute
 
 @Serializable
 data object EventDetailRoute
+
+@Serializable
+data object MemberRoute

@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun MapScreen() {
+fun MapScreen(
+    onEventClick: () -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
@@ -23,8 +25,8 @@ fun MapScreen() {
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge)
-            Button(onClick = {}) {
+            Text(text = "MapScreen", style = MaterialTheme.typography.displayLarge)
+            Button(onClick = onEventClick) {
                 Text(text = "이벤트 클릭")
             }
         }
@@ -34,5 +36,7 @@ fun MapScreen() {
 @Preview(showBackground = true)
 @Composable
 fun MapScreenPreview() {
-    MapScreen()
+    MapScreen(
+        onEventClick = {}
+    )
 }

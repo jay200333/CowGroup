@@ -1,4 +1,4 @@
-package com.example.map.presentation
+package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,14 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun MemberScreen() {
+fun MemberScreen(
+    onMemberNavigateButtonClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text ="참여자 목록") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onMemberNavigateButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "top_bar_nav_member",
@@ -48,5 +50,7 @@ fun MemberScreen() {
 @Preview(showBackground = true)
 @Composable
 fun MemberScreenPreview() {
-    MemberScreen()
+    MemberScreen(
+        onMemberNavigateButtonClick = {}
+    )
 }
