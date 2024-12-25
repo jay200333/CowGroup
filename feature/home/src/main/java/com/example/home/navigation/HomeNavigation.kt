@@ -32,10 +32,9 @@ fun NavController.navigateMember() {
 fun NavGraphBuilder.homeNavGraph(
     onLoginButtonClick: () -> Unit,
     onEventClick: () -> Unit,
-    onEventNavigateButtonClick: () -> Unit,
     onCreateMeetingClick: () -> Unit,
     onMemberButtonClick: () -> Unit,
-    onMemberNavigateButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
 ) {
     composable<HomeScreenRoute> {
         HomeScreen(
@@ -45,17 +44,19 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
     composable<CreateMeetingRoute> {
-        CreateMeetingScreen()
+        CreateMeetingScreen(
+            onNavigationButtonClick = onNavigationButtonClick,
+        )
     }
     composable<EventDetailRoute> {
         EventDetailScreen(
             onMemberButtonClick = onMemberButtonClick,
-            onEventNavigateButtonClick = onEventNavigateButtonClick
+            onNavigationButtonClick = onNavigationButtonClick,
         )
     }
     composable<MemberRoute> {
         MemberScreen(
-            onMemberNavigateButtonClick = onMemberNavigateButtonClick
+            onNavigationButtonClick = onNavigationButtonClick,
         )
     }
 }

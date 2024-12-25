@@ -13,6 +13,8 @@ import com.example.login.navigation.navigateLogin
 import com.example.login.navigation.navigateSignUp
 import com.example.map.navigation.mapNavGraph
 import com.example.mypage.navigation.myPageNavGraph
+import com.example.mypage.navigation.navigateEditProfile
+import com.example.mypage.navigation.navigateSetting
 import com.example.navigation.HomeScreenRoute
 
 @Composable
@@ -25,15 +27,19 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         homeNavGraph(
             onLoginButtonClick = navController::navigateLogin,
             onEventClick = navController::navigateEventDetail,
-            onEventNavigateButtonClick = navController::navigateUp,
             onCreateMeetingClick = navController::navigateCreateMeeting,
             onMemberButtonClick = navController::navigateMember,
-            onMemberNavigateButtonClick = navController::navigateUp,
+            onNavigationButtonClick = navController::navigateUp,
         )
         mapNavGraph(
             onEventClick = navController::navigateEventDetail,
         )
-        myPageNavGraph()
+        myPageNavGraph(
+            onEventClick = navController::navigateEventDetail,
+            onEditProfileButtonClick = navController::navigateEditProfile,
+            onSettingButtonClick = navController::navigateSetting,
+            onNavigationButtonClick = navController::navigateUp,
+        )
         loginNavGraph(
             onSignUpButtonClick = navController::navigateSignUp,
         )

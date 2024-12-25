@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MemberScreen(
-    onMemberNavigateButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -26,7 +26,7 @@ fun MemberScreen(
             CenterAlignedTopAppBar(
                 title = { Text(text ="참여자 목록") },
                 navigationIcon = {
-                    IconButton(onClick = onMemberNavigateButtonClick) {
+                    IconButton(onClick = onNavigationButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "top_bar_nav_member",
@@ -51,6 +51,6 @@ fun MemberScreen(
 @Composable
 fun MemberScreenPreview() {
     MemberScreen(
-        onMemberNavigateButtonClick = {}
+        onNavigationButtonClick = {}
     )
 }

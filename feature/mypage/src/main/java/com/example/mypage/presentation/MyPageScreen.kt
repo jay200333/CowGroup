@@ -18,14 +18,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun MyPageScreen() {
+fun MyPageScreen(
+    onEventClick: () -> Unit,
+    onEditProfileButtonClick: () -> Unit,
+    onSettingButtonClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = "마이 페이지") },
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onSettingButtonClick) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "top_bar_icon_myPage",
@@ -42,10 +46,10 @@ fun MyPageScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(text = "MyPageScreen", style = MaterialTheme.typography.displayLarge)
-            Button(onClick = {}) {
+            Button(onClick = onEditProfileButtonClick) {
                 Text(text = "프로필 편집")
             }
-            Button(onClick = {}) {
+            Button(onClick = onEventClick) {
                 Text(text = "이벤트 클릭")
             }
         }
@@ -55,5 +59,9 @@ fun MyPageScreen() {
 @Preview(showBackground = true)
 @Composable
 fun MyPageScreenPreview() {
-    MyPageScreen()
+    MyPageScreen(
+        onEventClick = {},
+        onEditProfileButtonClick = {},
+        onSettingButtonClick = {},
+    )
 }

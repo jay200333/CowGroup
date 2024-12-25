@@ -18,14 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SettingScreen() {
+fun SettingScreen(
+    onNavigationButtonClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = "설정") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onNavigationButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "top_bar_nav_setting",
@@ -55,5 +57,7 @@ fun SettingScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SettingScreenPreview() {
-    SettingScreen()
+    SettingScreen(
+        onNavigationButtonClick = {},
+    )
 }

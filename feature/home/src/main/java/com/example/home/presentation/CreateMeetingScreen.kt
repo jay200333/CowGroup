@@ -18,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun CreateMeetingScreen() {
+fun CreateMeetingScreen(
+    onNavigationButtonClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -27,7 +29,7 @@ fun CreateMeetingScreen() {
                     Text(text = "모임 만들기")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onNavigationButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "top_bar_nav_icon_create_meeting",
@@ -54,5 +56,7 @@ fun CreateMeetingScreen() {
 @Preview(showBackground = true)
 @Composable
 fun CreateMeetingScreenPreview() {
-    CreateMeetingScreen()
+    CreateMeetingScreen(
+        onNavigationButtonClick = {},
+    )
 }

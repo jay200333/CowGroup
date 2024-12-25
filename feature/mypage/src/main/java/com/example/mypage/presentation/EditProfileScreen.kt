@@ -19,14 +19,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.mypage.R
 
 @Composable
-fun EditProfileScreen() {
+fun EditProfileScreen(
+    onNavigationButtonClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = "프로필 편집") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onNavigationButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "top_bar_nav_edit_profile",
@@ -58,5 +60,7 @@ fun EditProfileScreen() {
 @Preview(showBackground = true)
 @Composable
 fun EditProfileScreenPreview() {
-    EditProfileScreen()
+    EditProfileScreen(
+        onNavigationButtonClick = {},
+    )
 }

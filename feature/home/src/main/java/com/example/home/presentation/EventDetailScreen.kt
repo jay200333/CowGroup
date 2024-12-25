@@ -22,7 +22,7 @@ import com.example.home.R
 @Composable
 fun EventDetailScreen(
     onMemberButtonClick: () -> Unit,
-    onEventNavigateButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -31,7 +31,7 @@ fun EventDetailScreen(
                 title = {
                 },
                 navigationIcon = {
-                    IconButton(onClick = onEventNavigateButtonClick) {
+                    IconButton(onClick = onNavigationButtonClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "top_bar_nav_icon_event_detail",
@@ -74,6 +74,6 @@ fun EventDetailScreen(
 fun EventDetailPreview() {
     EventDetailScreen(
         onMemberButtonClick = {},
-        onEventNavigateButtonClick = {},
+        onNavigationButtonClick = {},
     )
 }
