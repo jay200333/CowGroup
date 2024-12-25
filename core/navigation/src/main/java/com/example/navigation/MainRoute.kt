@@ -1,6 +1,5 @@
-package com.example.main.navigation
+package com.example.navigation
 
-import com.example.main.R
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,4 +14,3 @@ data object MapScreenRoute : ScreenRouter(R.drawable.baseline_map_24, "지도")
 @Serializable
 data object MyPageScreenRoute :
     ScreenRouter(R.drawable.baseline_account_circle_24, "마이 페이지")
-

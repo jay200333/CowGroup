@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview(showBackground = true)
 @Composable
 fun LoginScreen() {
     Scaffold(
@@ -36,4 +35,10 @@ fun LoginScreen() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen()
 }

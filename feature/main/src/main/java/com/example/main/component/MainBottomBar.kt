@@ -9,9 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.main.navigation.HomeScreenRoute
-import com.example.main.navigation.MapScreenRoute
-import com.example.main.navigation.MyPageScreenRoute
+import com.example.navigation.HomeScreenRoute
+import com.example.navigation.MapScreenRoute
+import com.example.navigation.MyPageScreenRoute
 
 @Composable
 fun MainBottomBar(navController: NavController) {
