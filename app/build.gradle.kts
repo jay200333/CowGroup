@@ -27,6 +27,9 @@ android {
 dependencies {
     implementation(projects.feature.main)
     implementation(projects.feature.login)
+    implementation(projects.feature.home)
+    implementation(projects.feature.map)
+    implementation(projects.feature.mypage)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
