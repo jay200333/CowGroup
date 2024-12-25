@@ -17,11 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onLoginButtonClick: () -> Unit,
+    onEventClick: () -> Unit,
+    onCreateMeetingClick: () -> Unit,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick = onCreateMeetingClick) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Fab_HomeScreen",
@@ -37,10 +41,12 @@ fun HomeScreen() {
         ) {
             Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge)
             // topBar 구현 해야함
-            Button(onClick = {}) {
+            Button(
+                onClick = onLoginButtonClick,
+            ) {
                 Text(text = "로그인 버튼")
             }
-            Button(onClick = {}) {
+            Button(onClick = onEventClick) {
                 Text(text = "이벤트 클릭")
             }
         }
@@ -50,5 +56,9 @@ fun HomeScreen() {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(
+        onLoginButtonClick = {},
+        onEventClick = {},
+        onCreateMeetingClick = {},
+    )
 }

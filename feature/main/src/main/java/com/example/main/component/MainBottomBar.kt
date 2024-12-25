@@ -38,10 +38,7 @@ fun MainBottomBar(navController: NavController) {
                 onClick = {
                     navController.navigate(navItem) {
                         launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
+                        popUpTo(navController.graph.startDestinationId)
                     }
                 },
             )

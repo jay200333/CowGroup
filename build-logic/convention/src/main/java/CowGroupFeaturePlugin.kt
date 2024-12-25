@@ -20,6 +20,7 @@ class CowGroupFeaturePlugin : Plugin<Project> {
             dependencies {
                 implementation(project(":core:designsystem"))
                 implementation(project(":core:model"))
+                implementation(project(":core:navigation"))
                 implementation(libs.getBundle("navigation"))
                 implementation(libs.findLibrary("kotlinx.serialization.json").get())
                 testImplementation(libs.getBundle("test"))
