@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LoginScreen(
-    onSignUpButtonClick: () -> Unit
+    onSignUpButtonClick: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -26,14 +26,14 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(text = "LoginScreen", style = MaterialTheme.typography.displayLarge)
-            Button(onClick =  {}) {
-                Text(text =  "로그인 버튼")
+            Button(onClick = {}) {
+                Text(text = "로그인 버튼")
             }
-            Button(onClick =  onSignUpButtonClick) {
-                Text(text =  "회원 가입 버튼")
+            Button(onClick = onSignUpButtonClick) {
+                Text(text = "회원 가입 버튼")
             }
-            Button(onClick =  {}) {
-                Text(text =  "구글 로그인 버튼")
+            Button(onClick = {}) {
+                Text(text = "구글 로그인 버튼")
             }
         }
     }
@@ -43,6 +43,6 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        onSignUpButtonClick = {}
+        onSignUpButtonClick = {},
     )
 }

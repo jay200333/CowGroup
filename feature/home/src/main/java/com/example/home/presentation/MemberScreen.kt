@@ -24,7 +24,7 @@ fun MemberScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text ="참여자 목록") },
+                title = { Text(text = "참여자 목록") },
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
@@ -51,6 +51,6 @@ fun MemberScreen(
 @Composable
 fun MemberScreenPreview() {
     MemberScreen(
-        onNavigationButtonClick = {}
+        onNavigationButtonClick = {},
     )
 }

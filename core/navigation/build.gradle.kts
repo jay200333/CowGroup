@@ -8,7 +8,6 @@ android {
     namespace = "com.example.navigation"
 }
 
-
 dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(projects.core.model)

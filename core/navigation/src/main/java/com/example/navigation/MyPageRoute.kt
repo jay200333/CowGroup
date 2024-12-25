@@ -7,4 +7,3 @@ data object EditProfileRoute
 
 @Serializable
 data object SettingRoute
-

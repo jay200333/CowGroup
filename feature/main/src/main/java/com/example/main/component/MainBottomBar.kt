@@ -36,12 +36,12 @@ fun MainBottomBar(navController: NavController) {
                 label = { Text(navItem.title) },
                 selected = currentRoute == navItem,
                 onClick = {
-                        navController.navigate(navItem) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+                    navController.navigate(navItem) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
                 },
             )

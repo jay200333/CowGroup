@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MapScreen(
-    onEventClick: () -> Unit
+    onEventClick: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -37,6 +37,6 @@ fun MapScreen(
 @Composable
 fun MapScreenPreview() {
     MapScreen(
-        onEventClick = {}
+        onEventClick = {},
     )
 }
