@@ -3,7 +3,10 @@ package com.example.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class ScreenRouter(val iconId: Int, val title: String)
+sealed class ScreenRouter(
+    val iconId: Int,
+    val title: String,
+)
 
 @Serializable
 data object HomeScreenRoute : ScreenRouter(
