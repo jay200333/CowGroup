@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onSignUpButtonClick: () -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
@@ -27,7 +29,7 @@ fun LoginScreen() {
             Button(onClick =  {}) {
                 Text(text =  "로그인 버튼")
             }
-            Button(onClick =  {}) {
+            Button(onClick =  onSignUpButtonClick) {
                 Text(text =  "회원 가입 버튼")
             }
             Button(onClick =  {}) {
@@ -40,5 +42,7 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(
+        onSignUpButtonClick = {}
+    )
 }
