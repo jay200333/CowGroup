@@ -40,7 +40,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LazyColumn(
