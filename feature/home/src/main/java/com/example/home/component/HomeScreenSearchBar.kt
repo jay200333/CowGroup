@@ -86,9 +86,9 @@ fun HomeScreenSearchBar(onTopBarActionButtonClick: () -> Unit, iconId: Int) {
                             supportingContent = { Text("Additional info") },
                             leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            modifier =
-                            Modifier
-                                .clickable {
+                            modifier = Modifier
+                                .clickable
+                                {
                                     textFieldState.value = resultText
                                     expanded = false
                                 }
@@ -99,7 +99,10 @@ fun HomeScreenSearchBar(onTopBarActionButtonClick: () -> Unit, iconId: Int) {
                 }
             }
 
-            IconButton(onClick = onTopBarActionButtonClick, modifier = Modifier.padding(end = 8.dp)) {
+            IconButton(
+                onClick = onTopBarActionButtonClick,
+                modifier = Modifier.padding(end = 8.dp),
+            ) {
                 Icon(
                     painter = painterResource(iconId),
                     contentDescription = "btn_home_top_bar",
