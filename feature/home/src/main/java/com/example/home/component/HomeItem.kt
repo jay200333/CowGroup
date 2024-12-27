@@ -1,6 +1,7 @@
 package com.example.home.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,17 +30,15 @@ import com.example.designsystem.MarkButton
 import com.example.home.R
 
 @Composable
-fun HomeItem() {
+fun HomeItem(itemClick: () -> Unit) {
     var isBookMarked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clip(
-                RoundedCornerShape(16.dp),
-            )
+            .clip(RoundedCornerShape(16.dp),)
             .border(1.dp, Color.Gray, RoundedCornerShape(16.dp))
-            .padding(16.dp),
+            .padding(16.dp).clickable { itemClick() },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
@@ -95,5 +94,7 @@ fun MemberTab(totalNumber: Int, currentNumber: Int) {
 @Preview(showBackground = true)
 @Composable
 fun HomeItemPreview() {
-    HomeItem()
+    HomeItem(
+        itemClick = {}
+    )
 }

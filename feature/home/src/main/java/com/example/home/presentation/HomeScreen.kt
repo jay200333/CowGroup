@@ -7,12 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,15 +43,11 @@ fun HomeScreen(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge)
-            Button(onClick = onEventClick) {
-                Text(text = "이벤트 클릭")
-            }
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(count = 5) {
-                    HomeItem()
+                    HomeItem(onEventClick)
                 }
             }
         }
