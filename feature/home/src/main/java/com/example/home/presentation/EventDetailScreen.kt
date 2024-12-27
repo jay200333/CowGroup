@@ -13,10 +13,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.designsystem.MarkButton
 import com.example.home.R
 
 @Composable
@@ -24,6 +28,8 @@ fun EventDetailScreen(
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
 ) {
+    var isBookMarked by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -38,13 +44,14 @@ fun EventDetailScreen(
                         )
                     }
                 },
+                // bookMark 상태 값 반영해야함
                 actions = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painterResource(R.drawable.baseline_bookmarks_24),
-                            contentDescription = "top_bar_icon_event_detail_bookmark",
-                        )
-                    }
+                    MarkButton(
+                        isMarked = true,
+                        onMarkClick = { isBookMarked = it },
+                        markedIconId = R.drawable.baseline_bookmarks_24,
+                        unMarkedIconId = R.drawable.baseline_bookmarks_24,
+                    )
                 },
             )
         },
