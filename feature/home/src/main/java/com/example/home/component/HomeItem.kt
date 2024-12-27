@@ -36,7 +36,7 @@ fun HomeItem(itemClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clip(RoundedCornerShape(16.dp),)
+            .clip(RoundedCornerShape(16.dp))
             .border(1.dp, Color.Gray, RoundedCornerShape(16.dp))
             .padding(16.dp).clickable { itemClick() },
     ) {
@@ -95,6 +95,6 @@ fun MemberTab(totalNumber: Int, currentNumber: Int) {
 @Composable
 fun HomeItemPreview() {
     HomeItem(
-        itemClick = {}
+        itemClick = {},
     )
 }

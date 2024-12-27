@@ -109,7 +109,6 @@ fun HomeScreenSearchBar(onTopBarActionButtonClick: () -> Unit, iconId: Int) {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun CowGroupSearchBarPreview() {
