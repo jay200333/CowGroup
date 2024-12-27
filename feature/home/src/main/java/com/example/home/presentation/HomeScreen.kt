@@ -1,8 +1,12 @@
 package com.example.home.presentation
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -15,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.home.R
+import com.example.home.component.HomeScreenSearchBar
 
 @Composable
 fun HomeScreen(
@@ -24,6 +31,7 @@ fun HomeScreen(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = { HomeScreenSearchBar(onLoginButtonClick, R.drawable.baseline_login_24) },
         floatingActionButton = {
             FloatingActionButton(onClick = onCreateMeetingClick) {
                 Icon(
@@ -40,16 +48,30 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge)
-            // topBar 구현 해야함
-            Button(
-                onClick = onLoginButtonClick,
-            ) {
-                Text(text = "로그인 버튼")
-            }
             Button(onClick = onEventClick) {
                 Text(text = "이벤트 클릭")
             }
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    top = 72.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                val list = List(100) { "Text $it" }
+                items(count = list.size) {
+                    Text(
+                        text = list[it],
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                    )
+                }
+            }
         }
+
     }
 }
 
