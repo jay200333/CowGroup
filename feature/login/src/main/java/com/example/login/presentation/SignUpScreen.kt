@@ -38,7 +38,9 @@ import com.example.login.R
 import com.example.login.component.ValidatingTextField
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    onLoginTextClick: () -> Unit,
+) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var pw1 by rememberSaveable { mutableStateOf("") }
@@ -182,7 +184,7 @@ fun SignUpScreen() {
                 text = "로그인",
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .clickable { },
+                    .clickable { onLoginTextClick() },
                 color = Color.Blue,
             )
         }
@@ -205,5 +207,7 @@ fun signUpCondition(
 @Preview(showBackground = true)
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen()
+    SignUpScreen(
+        onLoginTextClick = {},
+    )
 }

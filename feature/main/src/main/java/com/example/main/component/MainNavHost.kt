@@ -42,6 +42,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         )
         loginNavGraph(
             onSignUpButtonClick = navController::navigateSignUp,
+            onNavigationButtonClick = navController::navigateUp,
         )
     }
 }
