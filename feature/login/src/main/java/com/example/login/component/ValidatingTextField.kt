@@ -35,7 +35,7 @@ fun ValidatingTextField(
             onValueChange = onValueChange,
             label = { Text(text = label) },
             placeholder = { Text(text = placeholder) },
-            isError = validateCondition,
+            isError = validateCondition.not(),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
             keyboardOptions = keyboardOptions,
@@ -43,7 +43,7 @@ fun ValidatingTextField(
             maxLines = maxLines,
             minLines = minLines,
         )
-        if (validateCondition) {
+        if (validateCondition.not()) {
             Text(
                 modifier = modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start,
