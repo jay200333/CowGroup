@@ -66,8 +66,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = nickname,
             onValueChange = { nickname = it },
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text(text = "닉네임") },
             placeholder = { Text(text = "닉네임을 입력하세요.") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -79,10 +78,8 @@ fun SignUpScreen(
         ValidatingTextField(
             value = email,
             onValueChange = { email = it },
-            validateCondition = email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email)
-                .matches(),
-            modifier = Modifier
-                .fillMaxWidth(),
+            validateCondition = email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email).matches(),
+            modifier = Modifier.fillMaxWidth(),
             label = "이메일 주소",
             placeholder = "이메일을 입력하세요.",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -96,8 +93,7 @@ fun SignUpScreen(
             value = pw1,
             onValueChange = { pw1 = it },
             validateCondition = pw1.isEmpty() || pw1.matches(pwPattern),
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             label = "비밀번호",
             placeholder = "비밀번호를 입력하세요.",
             errorMessage = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~16자리여야 합니다.",
@@ -134,8 +130,7 @@ fun SignUpScreen(
             value = pw2,
             onValueChange = { pw2 = it },
             validateCondition = pw1 == pw2,
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             label = "비밀번호 확인",
             placeholder = "비밀번호를 입력하세요.",
             errorMessage = "비밀번호가 일치하지 않습니다.",
