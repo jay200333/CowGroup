@@ -9,23 +9,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.navigation.HomeScreenRoute
-import com.example.navigation.MapScreenRoute
-import com.example.navigation.MyPageScreenRoute
+import com.example.navigation.bottomBarScreens
 
 @Composable
 fun MainBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
 
-    val navItems = listOf(
-        HomeScreenRoute,
-        MapScreenRoute,
-        MyPageScreenRoute,
-    )
-
     NavigationBar {
-        navItems.forEach { navItem ->
+        bottomBarScreens.forEach { navItem ->
             NavigationBarItem(
                 icon = {
                     Icon(
