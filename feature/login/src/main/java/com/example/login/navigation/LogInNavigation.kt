@@ -18,6 +18,7 @@ fun NavController.navigateSignUp() {
 
 fun NavGraphBuilder.loginNavGraph(
     onSignUpButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
 ) {
     composable<LoginRoute> {
         LoginScreen(
@@ -26,6 +27,8 @@ fun NavGraphBuilder.loginNavGraph(
     }
 
     composable<SignUpRoute> {
-        SignUpScreen()
+        SignUpScreen(
+            onLoginTextClick = onNavigationButtonClick,
+        )
     }
 }
