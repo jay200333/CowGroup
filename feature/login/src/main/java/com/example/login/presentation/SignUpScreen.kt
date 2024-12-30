@@ -73,16 +73,17 @@ fun SignUpScreen(
         ValidatingTextField(
             value = uiState.signUpInfo.email,
             onValueChange = { viewModel.updateEmail(it) },
-            validateCondition = uiState.signUpInfo.email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(
-                uiState.signUpInfo.email,
-            ).matches(),
+            validateCondition = uiState.signUpInfo.email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(uiState.signUpInfo.email).matches(),
             modifier = Modifier.fillMaxWidth(),
             label = "이메일 주소",
             placeholder = "이메일을 입력하세요.",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
             leadingIcon = {
-                Icon(imageVector = Icons.Filled.Email, contentDescription = "icon_person")
+                Icon(
+                    imageVector = Icons.Filled.Email,
+                    contentDescription = "icon_person",
+                )
             },
             errorMessage = "이메일 형식에 맞게 입력해 주세요.",
         )
@@ -90,9 +91,7 @@ fun SignUpScreen(
         ValidatingTextField(
             value = uiState.signUpInfo.password,
             onValueChange = { viewModel.updatePassword(it) },
-            validateCondition = uiState.signUpInfo.password.isEmpty() || uiState.signUpInfo.password.matches(
-                viewModel.getPasswordPattern(),
-            ),
+            validateCondition = uiState.signUpInfo.password.isEmpty() || uiState.signUpInfo.password.matches(viewModel.getPasswordPattern()),
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호",
             placeholder = "비밀번호를 입력하세요.",
