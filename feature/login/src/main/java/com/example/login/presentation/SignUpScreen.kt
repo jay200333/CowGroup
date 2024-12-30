@@ -21,10 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,22 +30,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.login.R
 import com.example.login.component.ValidatingTextField
+import com.example.login.viewmodel.SignUpUIState
+import com.example.login.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpScreen(
+    viewModel: SignUpViewModel = hiltViewModel(),
     onLoginTextClick: () -> Unit,
 ) {
-    var nickname by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordConfirm by rememberSaveable { mutableStateOf("") }
-    var showPassword by remember { mutableStateOf(false) }
-    var showPasswordConfirm by remember { mutableStateOf(false) }
-    val passwordPattern = Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
-    val signUpButtonEnabled =
-        signUpCondition(nickname, email, password, passwordConfirm, passwordPattern)
+    val uiState: SignUpUIState by viewModel.signUpUIState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -65,8 +58,8 @@ fun SignUpScreen(
         )
 
         OutlinedTextField(
-            value = nickname,
-            onValueChange = { nickname = it },
+            value = uiState.signUpInfo.nickname,
+            onValueChange = { viewModel.updateNickname(it) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(text = "닉네임") },
             placeholder = { Text(text = "닉네임을 입력하세요.") },
@@ -78,9 +71,11 @@ fun SignUpScreen(
         )
 
         ValidatingTextField(
-            value = email,
-            onValueChange = { email = it },
-            validateCondition = email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email).matches(),
+            value = uiState.signUpInfo.email,
+            onValueChange = { viewModel.updateEmail(it) },
+            validateCondition = uiState.signUpInfo.email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(
+                uiState.signUpInfo.email,
+            ).matches(),
             modifier = Modifier.fillMaxWidth(),
             label = "이메일 주소",
             placeholder = "이메일을 입력하세요.",
@@ -93,25 +88,27 @@ fun SignUpScreen(
         )
 
         ValidatingTextField(
-            value = password,
-            onValueChange = { password = it },
-            validateCondition = password.isEmpty() || password.matches(passwordPattern),
+            value = uiState.signUpInfo.password,
+            onValueChange = { viewModel.updatePassword(it) },
+            validateCondition = uiState.signUpInfo.password.isEmpty() || uiState.signUpInfo.password.matches(
+                viewModel.getPasswordPattern(),
+            ),
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호",
             placeholder = "비밀번호를 입력하세요.",
             errorMessage = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~16자리여야 합니다.",
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (uiState.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Lock,
-                    contentDescription = "PW1Icon",
+                    contentDescription = "PasswordIcon",
                 )
             },
             trailingIcon = {
-                if (showPassword) {
-                    IconButton(onClick = { showPassword = false }) {
+                if (uiState.showPassword) {
+                    IconButton(onClick = { viewModel.updateShowPassword(true) }) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_visibility_24),
                             contentDescription = "hide_password",
@@ -119,7 +116,7 @@ fun SignUpScreen(
                     }
                 } else {
                     IconButton(
-                        onClick = { showPassword = true },
+                        onClick = { viewModel.updateShowPassword(false) },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_visibility_off_24),
@@ -131,15 +128,15 @@ fun SignUpScreen(
         )
 
         ValidatingTextField(
-            value = passwordConfirm,
-            onValueChange = { passwordConfirm = it },
-            validateCondition = password == passwordConfirm,
+            value = uiState.passwordConfirm,
+            onValueChange = { viewModel.updatePasswordConfirm(it) },
+            validateCondition = uiState.signUpInfo.password == uiState.passwordConfirm,
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호 확인",
             placeholder = "비밀번호를 입력하세요.",
             errorMessage = "비밀번호가 일치하지 않습니다.",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (showPasswordConfirm) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (uiState.showPasswordConfirm) VisualTransformation.None else PasswordVisualTransformation(),
             singleLine = true,
             leadingIcon = {
                 Icon(
@@ -148,8 +145,8 @@ fun SignUpScreen(
                 )
             },
             trailingIcon = {
-                if (showPasswordConfirm) {
-                    IconButton(onClick = { showPasswordConfirm = false }) {
+                if (uiState.showPasswordConfirm) {
+                    IconButton(onClick = { viewModel.updateShowPasswordConfirm(true) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_visibility_24),
                             contentDescription = "hide_password",
@@ -157,7 +154,7 @@ fun SignUpScreen(
                     }
                 } else {
                     IconButton(
-                        onClick = { showPasswordConfirm = true },
+                        onClick = { viewModel.updateShowPasswordConfirm(false) },
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_visibility_off_24),
@@ -173,7 +170,7 @@ fun SignUpScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp, bottom = 8.dp),
-            enabled = signUpButtonEnabled,
+            enabled = uiState.signUpButtonEnabled,
         ) {
             Text(text = "회원 가입")
         }
@@ -189,19 +186,6 @@ fun SignUpScreen(
             )
         }
     }
-}
-
-fun signUpCondition(
-    nickname: String,
-    email: String,
-    password: String,
-    passwordConfirm: String,
-    passwordPattern: Regex,
-): Boolean {
-    val emailCondition = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    val passwordCondition = password.isNotEmpty() && password.matches(passwordPattern)
-    val passwordConfirmCondition = password == passwordConfirm
-    return nickname.isNotEmpty() && emailCondition && passwordCondition && passwordConfirmCondition
 }
 
 @Preview(showBackground = true)
