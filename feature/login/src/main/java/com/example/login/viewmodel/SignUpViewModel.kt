@@ -78,10 +78,7 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         state: SignUpUIState,
     ): Boolean {
         val emailCondition = Patterns.EMAIL_ADDRESS.matcher(state.signUpInfo.email).matches()
-        val passwordCondition =
-            state.signUpInfo.password.isNotEmpty() && state.signUpInfo.password.matches(
-                passwordPattern,
-            )
+        val passwordCondition = state.signUpInfo.password.isNotEmpty() && state.signUpInfo.password.matches(passwordPattern)
         val passwordConfirmCondition = state.signUpInfo.password == state.passwordConfirm
         return state.signUpInfo.nickname.isNotEmpty() && emailCondition && passwordCondition && passwordConfirmCondition
     }
