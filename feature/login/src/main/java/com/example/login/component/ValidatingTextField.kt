@@ -25,6 +25,7 @@ fun ValidatingTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    singleLine: Boolean = false,
     maxLines: Int = 1,
     minLines: Int = 1,
 ) {
@@ -40,6 +41,7 @@ fun ValidatingTextField(
             trailingIcon = trailingIcon,
             keyboardOptions = keyboardOptions,
             visualTransformation = visualTransformation,
+            singleLine = singleLine,
             maxLines = maxLines,
             minLines = minLines,
         )
