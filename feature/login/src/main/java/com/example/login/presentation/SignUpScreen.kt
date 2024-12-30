@@ -43,12 +43,13 @@ fun SignUpScreen(
 ) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
-    var pw1 by rememberSaveable { mutableStateOf("") }
-    var pw2 by rememberSaveable { mutableStateOf("") }
-    var showPw1 by remember { mutableStateOf(false) }
-    var showPw2 by remember { mutableStateOf(false) }
-    val pwPattern = Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
-    val signUpButtonEnabled = signUpCondition(nickname, email, pw1, pw2, pwPattern)
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordConfirm by rememberSaveable { mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(false) }
+    var showPasswordConfirm by remember { mutableStateOf(false) }
+    val passwordPattern = Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
+    val signUpButtonEnabled =
+        signUpCondition(nickname, email, password, passwordConfirm, passwordPattern)
 
     Column(
         modifier = Modifier
@@ -73,6 +74,7 @@ fun SignUpScreen(
             leadingIcon = {
                 Icon(imageVector = Icons.Filled.Person, contentDescription = "icon_person")
             },
+            singleLine = true,
         )
 
         ValidatingTextField(
@@ -83,6 +85,7 @@ fun SignUpScreen(
             label = "이메일 주소",
             placeholder = "이메일을 입력하세요.",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true,
             leadingIcon = {
                 Icon(imageVector = Icons.Filled.Email, contentDescription = "icon_person")
             },
@@ -90,15 +93,16 @@ fun SignUpScreen(
         )
 
         ValidatingTextField(
-            value = pw1,
-            onValueChange = { pw1 = it },
-            validateCondition = pw1.isEmpty() || pw1.matches(pwPattern),
+            value = password,
+            onValueChange = { password = it },
+            validateCondition = password.isEmpty() || password.matches(passwordPattern),
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호",
             placeholder = "비밀번호를 입력하세요.",
             errorMessage = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~16자리여야 합니다.",
+            singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (showPw1) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Lock,
@@ -106,8 +110,8 @@ fun SignUpScreen(
                 )
             },
             trailingIcon = {
-                if (showPw1) {
-                    IconButton(onClick = { showPw1 = false }) {
+                if (showPassword) {
+                    IconButton(onClick = { showPassword = false }) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_visibility_24),
                             contentDescription = "hide_password",
@@ -115,7 +119,7 @@ fun SignUpScreen(
                     }
                 } else {
                     IconButton(
-                        onClick = { showPw1 = true },
+                        onClick = { showPassword = true },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_visibility_off_24),
@@ -127,15 +131,16 @@ fun SignUpScreen(
         )
 
         ValidatingTextField(
-            value = pw2,
-            onValueChange = { pw2 = it },
-            validateCondition = pw1 == pw2,
+            value = passwordConfirm,
+            onValueChange = { passwordConfirm = it },
+            validateCondition = password == passwordConfirm,
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호 확인",
             placeholder = "비밀번호를 입력하세요.",
             errorMessage = "비밀번호가 일치하지 않습니다.",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (showPw2) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (showPasswordConfirm) VisualTransformation.None else PasswordVisualTransformation(),
+            singleLine = true,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Lock,
@@ -143,8 +148,8 @@ fun SignUpScreen(
                 )
             },
             trailingIcon = {
-                if (showPw2) {
-                    IconButton(onClick = { showPw2 = false }) {
+                if (showPasswordConfirm) {
+                    IconButton(onClick = { showPasswordConfirm = false }) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_visibility_24),
                             contentDescription = "hide_password",
@@ -152,7 +157,7 @@ fun SignUpScreen(
                     }
                 } else {
                     IconButton(
-                        onClick = { showPw2 = true },
+                        onClick = { showPasswordConfirm = true },
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_visibility_off_24),
@@ -189,14 +194,14 @@ fun SignUpScreen(
 fun signUpCondition(
     nickname: String,
     email: String,
-    pw1: String,
-    pw2: String,
-    pwPattern: Regex,
+    password: String,
+    passwordConfirm: String,
+    passwordPattern: Regex,
 ): Boolean {
     val emailCondition = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    val pw1Condition = pw1.isNotEmpty() && pw1.matches(pwPattern)
-    val pw2Condition = pw1 == pw2
-    return nickname.isNotEmpty() && emailCondition && pw1Condition && pw2Condition
+    val passwordCondition = password.isNotEmpty() && password.matches(passwordPattern)
+    val passwordConfirmCondition = password == passwordConfirm
+    return nickname.isNotEmpty() && emailCondition && passwordCondition && passwordConfirmCondition
 }
 
 @Preview(showBackground = true)
