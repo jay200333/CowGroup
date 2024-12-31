@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.cowgroup.android.application)
     alias(libs.plugins.cowgroup.android.hilt)
+    alias(libs.plugins.kotlin.serialization)
 // 구글 서비스 이용시 주석 제거
 // id("com.google.gms.google-services")
 }
@@ -37,6 +38,8 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.ui)
     implementation(projects.core.common)
+    implementation(projects.core.network)
+    implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }

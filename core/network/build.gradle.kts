@@ -1,16 +1,19 @@
 plugins {
     alias(libs.plugins.cowgroup.android.library)
     alias(libs.plugins.cowgroup.android.hilt)
-    alias(libs.plugins.kotlin.serialization)
+    id("kotlinx-serialization")
 }
 
 android {
-    namespace = "com.example.data"
+    namespace = "com.example.network"
 }
 
 dependencies {
     implementation(projects.core.common)
-    implementation(projects.core.network)
+    implementation(projects.core.model)
+    implementation(libs.retrofit.core)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
 }
