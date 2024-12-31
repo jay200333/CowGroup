@@ -11,7 +11,11 @@ android {
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.model)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.core)
+    implementation (libs.okhttp3.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit.kotlinx.serialization)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
