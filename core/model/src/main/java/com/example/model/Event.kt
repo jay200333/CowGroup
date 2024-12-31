@@ -5,7 +5,7 @@ data class Event(
     val name: String,
     val content: String,
     val eventDate: String,
-    val createDate: String,
+    val createdDate: String,
     val participants: Int,
     val capacities: Int,
     val isBookmarked: Boolean

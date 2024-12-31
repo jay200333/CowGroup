@@ -63,9 +63,14 @@ fun HomeScreen(
                     key = { _, event -> event.id },
                 ) { _, event ->
                     HomeItem(
-                        viewModel = viewModel,
                         event = event,
                         onEventClick = onEventClick,
+                        onBookMarkClick = { isBookmarked ->
+                            viewModel.updateBookmark(
+                                event.id,
+                                isBookmarked,
+                            )
+                        },
                     )
                 }
             }

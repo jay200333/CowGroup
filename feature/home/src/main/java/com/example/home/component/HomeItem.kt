@@ -22,11 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.MarkButton
 import com.example.home.R
-import com.example.home.viewmodel.HomeViewModel
 import com.example.model.Event
 
 @Composable
-fun HomeItem(viewModel: HomeViewModel, event: Event, onEventClick: () -> Unit) {
+fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +44,7 @@ fun HomeItem(viewModel: HomeViewModel, event: Event, onEventClick: () -> Unit) {
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            Text(text = event.createDate, style = MaterialTheme.typography.labelSmall)
+            Text(text = event.createdDate, style = MaterialTheme.typography.labelSmall)
         }
         Text(
             text = event.content,
@@ -66,7 +65,7 @@ fun HomeItem(viewModel: HomeViewModel, event: Event, onEventClick: () -> Unit) {
             MemberTab(event.capacities, event.participants)
             MarkButton(
                 isMarked = event.isBookmarked,
-                onMarkClick = { isBookmarked -> viewModel.updateBookmark(event.id, isBookmarked) },
+                onMarkClick = { onBookMarkClick(event.isBookmarked) },
                 markedIconId = R.drawable.baseline_bookmarks_24,
                 unMarkedIconId = R.drawable.baseline_bookmarks_24,
             )
@@ -89,14 +88,14 @@ fun MemberTab(capacities: Int, participants: Int) {
 @Composable
 fun HomeItemPreview() {
     HomeItem(
-        viewModel = HomeViewModel(),
+        onBookMarkClick = {},
         onEventClick = {},
         event = Event(
             id = 1,
             name = "test1",
             content = "test1",
             eventDate = "2025-12-7",
-            createDate = "2024-12-31",
+            createdDate = "2024-12-31",
             capacities = 10,
             participants = 100,
             isBookmarked = false,
