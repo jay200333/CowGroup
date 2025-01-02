@@ -13,7 +13,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.core)
-    implementation (libs.okhttp3.okhttp)
+    implementation(libs.okhttp3.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.converter.gson)

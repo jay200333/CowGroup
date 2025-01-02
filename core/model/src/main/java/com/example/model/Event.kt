@@ -8,5 +8,5 @@ data class Event(
     val createdDate: String,
     val participants: Int,
     val capacities: Int,
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )

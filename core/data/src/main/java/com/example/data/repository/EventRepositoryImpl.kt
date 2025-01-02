@@ -8,13 +8,13 @@ import java.io.IOException
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
-    //private val eventService: CowGroupService,
+// private val eventService: CowGroupService,
 ) : EventRepository {
     override suspend fun getEvents(): Flow<Resource<List<Event>>> = flow {
         try {
             emit(Resource.Loading())
-            //val networkEvents = eventService.getEvents()
-            //val events = networkEvents.map { it.toEvent() }
+            // val networkEvents = eventService.getEvents()
+            // val events = networkEvents.map { it.toEvent() }
             val dummyEventList: List<Event> = listOf(
                 Event(1, "test1", "test1", "2025-12-7", "2024-12-31", 10, 100, false),
                 Event(2, "test2", "test2", "2025-11-3", "2024-12-30", 20, 200, true),

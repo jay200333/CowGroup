@@ -77,7 +77,7 @@ class HomeViewModel @Inject constructor(
                 is Resource.Error -> {
                     _homeUIState.value = _homeUIState.value.copy(
                         isLoading = false,
-                        error = result.message ?: "북마크 갱신에 실패했습니다."
+                        error = result.message ?: "북마크 갱신에 실패했습니다.",
                     )
                 }
 
