@@ -10,7 +10,8 @@ android {
 
 dependencies {
     implementation(projects.core.common)
-    implementation(projects.core.network)
+    api(projects.core.network)
+    implementation(projects.core.model)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }

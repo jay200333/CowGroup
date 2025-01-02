@@ -16,6 +16,7 @@ dependencies {
     implementation (libs.okhttp3.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit.kotlinx.serialization)
+    implementation(libs.converter.gson)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
