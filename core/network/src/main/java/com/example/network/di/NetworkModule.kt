@@ -1,6 +1,5 @@
 package com.example.network.di
 
-import com.example.network.retrofit.CowGroupService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
