@@ -15,15 +15,13 @@ data class NetworkEvent(
     val isBookmarked: Boolean,
 )
 
-fun NetworkEvent.toEvent(): Event {
-    return Event(
-        id = eventId,
-        name = name,
-        content = content,
-        eventDate = eventDate,
-        createdDate = createdDate,
-        participants = applicants,
-        capacities = capacity,
-        isBookmarked = isBookmarked,
-    )
-}
+fun NetworkEvent.toEvent(): Event = Event(
+    id = eventId,
+    name = name,
+    content = content,
+    eventDate = eventDate,
+    createdDate = createdDate,
+    participants = applicants,
+    capacities = capacity,
+    isBookmarked = isBookmarked,
+)

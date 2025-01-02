@@ -12,18 +12,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     @Provides
     @Singleton
-    fun provideEventApi(): Retrofit {
-        return Retrofit.Builder().baseUrl("https://api.example.com/").addConverterFactory(
-            GsonConverterFactory.create(),
-        ).build()
-    }
-
-    @Provides
-    @Singleton
-    fun eventService(retrofit: Retrofit): CowGroupService {
-        return retrofit.create(CowGroupService::class.java)
-    }
+    fun provideEventApi(): Retrofit =
+        Retrofit.Builder().baseUrl("https://api.example.com/")
+            .addConverterFactory(GsonConverterFactory.create()).build()
 }
+
+@Provides
+@Singleton
+fun eventService(retrofit: Retrofit): CowGroupService = retrofit.create(CowGroupService::class.java)

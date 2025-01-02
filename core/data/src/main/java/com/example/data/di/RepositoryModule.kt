@@ -10,7 +10,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-
     @Binds
     internal abstract fun bindEventRepository(eventRepositoryImpl: EventRepositoryImpl): EventRepository
 }
