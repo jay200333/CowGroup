@@ -12,10 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,17 +22,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.MarkButton
 import com.example.home.R
+import com.example.model.Event
 
 @Composable
-fun HomeItem(itemClick: () -> Unit) {
-    var isBookMarked by remember { mutableStateOf(false) }
+fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(color = MaterialTheme.colorScheme.surface)
             .padding(16.dp)
-            .clickable { itemClick() },
+            .clickable { onEventClick() },
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
@@ -44,14 +40,14 @@ fun HomeItem(itemClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "이벤트 생성자",
+                text = event.name,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            Text(text = "10분 전", style = MaterialTheme.typography.labelSmall)
+            Text(text = event.createdDate, style = MaterialTheme.typography.labelSmall)
         }
         Text(
-            text = "이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용 이벤트 내용",
+            text = event.content,
             maxLines = 4,
             overflow = TextOverflow.Ellipsis,
         )
@@ -60,16 +56,16 @@ fun HomeItem(itemClick: () -> Unit) {
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
         )
-        Text(text = "2024-12-27", style = MaterialTheme.typography.labelMedium)
+        Text(text = event.eventDate, style = MaterialTheme.typography.labelMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            MemberTab(10, 5)
+            MemberTab(event.capacities, event.participants)
             MarkButton(
-                isMarked = false,
-                onMarkClick = { isBookMarked = it },
+                isMarked = event.isBookmarked,
+                onMarkClick = { onBookMarkClick(event.isBookmarked) },
                 markedIconId = R.drawable.baseline_bookmarks_24,
                 unMarkedIconId = R.drawable.baseline_bookmarks_24,
             )
@@ -78,13 +74,13 @@ fun HomeItem(itemClick: () -> Unit) {
 }
 
 @Composable
-fun MemberTab(totalNumber: Int, currentNumber: Int) {
+fun MemberTab(capacities: Int, participants: Int) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             painter = painterResource(R.drawable.baseline_how_to_reg_24),
             contentDescription = "icon_member",
         )
-        Text(text = "$currentNumber / $totalNumber", style = MaterialTheme.typography.labelMedium)
+        Text(text = "$participants / $capacities", style = MaterialTheme.typography.labelMedium)
     }
 }
 
@@ -92,6 +88,17 @@ fun MemberTab(totalNumber: Int, currentNumber: Int) {
 @Composable
 fun HomeItemPreview() {
     HomeItem(
-        itemClick = {},
+        onBookMarkClick = {},
+        onEventClick = {},
+        event = Event(
+            id = 1,
+            name = "test1",
+            content = "test1",
+            eventDate = "2025-12-7",
+            createdDate = "2024-12-31",
+            capacities = 10,
+            participants = 100,
+            isBookmarked = false,
+        ),
     )
 }
