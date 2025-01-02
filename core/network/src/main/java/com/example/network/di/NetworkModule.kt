@@ -19,6 +19,6 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create()).build()
 }
 
-@Provides
-@Singleton
-fun eventService(retrofit: Retrofit): CowGroupService = retrofit.create(CowGroupService::class.java)
+//@Provides
+//@Singleton
+//fun eventService(retrofit: Retrofit): CowGroupService = retrofit.create(CowGroupService::class.java)
