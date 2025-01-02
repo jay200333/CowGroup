@@ -12,6 +12,7 @@ data class NetworkEvent(
     val capacity: Int,
     val applicants: Int,
     val createdDate: String,
+    val isBookmarked: Boolean,
 )
 
 fun NetworkEvent.toEvent(): Event {
@@ -23,6 +24,6 @@ fun NetworkEvent.toEvent(): Event {
         createdDate = createdDate,
         participants = applicants,
         capacities = capacity,
-        isBookmarked = false,
+        isBookmarked = isBookmarked,
     )
 }
