@@ -1,6 +1,5 @@
 package com.example.login.presentation
 
-import android.util.Patterns
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,7 +72,7 @@ fun SignUpScreen(
         ValidatingTextField(
             value = uiState.signUpInfo.email,
             onValueChange = { viewModel.updateEmail(it) },
-            validateCondition = uiState.signUpInfo.email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(uiState.signUpInfo.email).matches(),
+            validateCondition = viewModel.validateEmail(uiState.signUpInfo.email),
             modifier = Modifier.fillMaxWidth(),
             label = "이메일 주소",
             placeholder = "이메일을 입력하세요.",
@@ -91,7 +90,7 @@ fun SignUpScreen(
         ValidatingTextField(
             value = uiState.signUpInfo.password,
             onValueChange = { viewModel.updatePassword(it) },
-            validateCondition = uiState.signUpInfo.password.isEmpty() || uiState.signUpInfo.password.matches(viewModel.getPasswordPattern()),
+            validateCondition = viewModel.validatePassword(uiState.signUpInfo.password),
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호",
             placeholder = "비밀번호를 입력하세요.",
@@ -129,7 +128,10 @@ fun SignUpScreen(
         ValidatingTextField(
             value = uiState.passwordConfirm,
             onValueChange = { viewModel.updatePasswordConfirm(it) },
-            validateCondition = uiState.signUpInfo.password == uiState.passwordConfirm,
+            validateCondition = viewModel.validatePasswordConfirm(
+                uiState.signUpInfo.password,
+                uiState.passwordConfirm,
+            ),
             modifier = Modifier.fillMaxWidth(),
             label = "비밀번호 확인",
             placeholder = "비밀번호를 입력하세요.",

@@ -25,8 +25,6 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
     private val passwordPattern =
         Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
 
-    fun getPasswordPattern(): Regex = passwordPattern
-
     fun updateNickname(nickname: String) {
         _signUpUIState.update { state ->
             val updatedSignUpInfo = state.signUpInfo.copy(nickname = nickname)
@@ -78,8 +76,19 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         state: SignUpUIState,
     ): Boolean {
         val emailCondition = Patterns.EMAIL_ADDRESS.matcher(state.signUpInfo.email).matches()
-        val passwordCondition = state.signUpInfo.password.isNotEmpty() && state.signUpInfo.password.matches(passwordPattern)
+        val passwordCondition =
+            state.signUpInfo.password.isNotEmpty() && state.signUpInfo.password.matches(
+                passwordPattern,
+            )
         val passwordConfirmCondition = state.signUpInfo.password == state.passwordConfirm
         return state.signUpInfo.nickname.isNotEmpty() && emailCondition && passwordCondition && passwordConfirmCondition
     }
+
+    fun validateEmail(email: String): Boolean =
+        email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email).matches()
+
+    fun validatePassword(password: String): Boolean =
+        password.isEmpty() || password.matches(passwordPattern)
+
+    fun validatePasswordConfirm(password: String, passwordConfirm: String): Boolean = password == passwordConfirm
 }
