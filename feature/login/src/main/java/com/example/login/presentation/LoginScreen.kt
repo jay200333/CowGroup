@@ -12,8 +12,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +53,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        TextField(
+        OutlinedTextField(
             value = idText,
             modifier = Modifier
                 .fillMaxWidth()
@@ -63,7 +63,7 @@ fun LoginScreen(
             placeholder = { Text(text = "이메일을 입력하세요.") },
         )
 
-        TextField(
+        OutlinedTextField(
             value = pwText,
             modifier = Modifier
                 .fillMaxWidth()
