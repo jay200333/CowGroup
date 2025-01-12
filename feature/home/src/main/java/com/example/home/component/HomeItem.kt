@@ -65,7 +65,7 @@ fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () 
             MemberTab(event.capacities, event.participants)
             MarkButton(
                 isMarked = event.isBookmarked,
-                onMarkClick = { onBookMarkClick(event.isBookmarked) },
+                onMarkClick = { isBookMarked -> onBookMarkClick(isBookMarked) },
                 markedIconId = R.drawable.baseline_bookmarks_24,
                 unMarkedIconId = R.drawable.baseline_bookmarks_24,
             )

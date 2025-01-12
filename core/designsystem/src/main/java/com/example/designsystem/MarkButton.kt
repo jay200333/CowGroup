@@ -4,10 +4,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,17 +16,15 @@ fun MarkButton(
     markedIconId: Int,
     unMarkedIconId: Int,
 ) {
-    var marked by rememberSaveable { mutableStateOf(isMarked) }
     IconButton(
         onClick = {
-            marked = !marked
-            onMarkClick(marked)
+            onMarkClick(!isMarked)
         },
     ) {
         Icon(
-            painter = painterResource(if (marked) markedIconId else unMarkedIconId),
+            painter = painterResource(if (isMarked) markedIconId else unMarkedIconId),
             contentDescription = "btn_book_mark",
-            tint = if (marked) MaterialTheme.colorScheme.primary else Color.Gray,
+            tint = if (isMarked) MaterialTheme.colorScheme.primary else Color.Gray,
         )
     }
 }
