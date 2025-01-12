@@ -22,11 +22,9 @@ internal class EventRepositoryImpl @Inject constructor() : EventRepository {
         }
     }
 
-    override suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean): Boolean {
-        return try {
-            true
-        } catch (e: IOException) {
-            false
-        }
+    override suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean): Boolean = try {
+        true
+    } catch (e: IOException) {
+        false
     }
 }
