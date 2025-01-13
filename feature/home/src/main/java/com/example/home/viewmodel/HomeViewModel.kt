@@ -25,11 +25,7 @@ class HomeViewModel @Inject constructor(
     private val _homeUIState: MutableStateFlow<HomeUIState> = MutableStateFlow(HomeUIState())
     val homeUIState: StateFlow<HomeUIState> = _homeUIState.asStateFlow()
 
-    init {
-        getEvents()
-    }
-
-    private fun getEvents() {
+    fun getEvents() {
         viewModelScope.launch {
             _homeUIState.value = _homeUIState.value.copy(isLoading = true, error = "")
             try {

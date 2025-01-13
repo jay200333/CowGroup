@@ -12,13 +12,17 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.home.R
 import com.example.home.component.HomeItem
@@ -34,7 +38,20 @@ fun HomeScreen(
     onCreateMeetingClick: () -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) { viewModel.initViewModel() }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState = rememberUpdatedState(lifecycleOwner.lifecycle.currentState)
+
+    DisposableEffect(lifecycleState) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.getEvents()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
