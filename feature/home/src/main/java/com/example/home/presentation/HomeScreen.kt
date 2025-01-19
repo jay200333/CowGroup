@@ -29,6 +29,7 @@ import com.example.home.component.HomeItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
+import com.example.model.Event
 
 @Composable
 fun HomeScreen(
@@ -38,6 +39,16 @@ fun HomeScreen(
     onCreateMeetingClick: () -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsStateWithLifecycle()
+
+    HomeScreen(
+        onLoginButtonClick = onLoginButtonClick,
+        onEventClick = onEventClick,
+        onCreateMeetingClick = onCreateMeetingClick,
+        onBookMarkClick = { eventId, isBookmarked ->
+            viewModel.updateBookmark(eventId, isBookmarked)
+        },
+        eventList = uiState.eventList,
+    )
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState = rememberUpdatedState(lifecycleOwner.lifecycle.currentState)
 
@@ -52,7 +63,16 @@ fun HomeScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+}
 
+@Composable
+fun HomeScreen(
+    onLoginButtonClick: () -> Unit,
+    onEventClick: () -> Unit,
+    onCreateMeetingClick: () -> Unit,
+    onBookMarkClick: (Int, Boolean) -> Unit,
+    eventList: List<Event>,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { HomeScreenSearchBar(onLoginButtonClick, R.drawable.baseline_login_24) },
@@ -76,14 +96,14 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 itemsIndexed(
-                    items = uiState.eventList,
+                    items = eventList,
                     key = { _, event -> event.id },
                 ) { _, event ->
                     HomeItem(
                         event = event,
                         onEventClick = onEventClick,
                         onBookMarkClick = { isBookmarked ->
-                            viewModel.updateBookmark(
+                            onBookMarkClick(
                                 event.id,
                                 isBookmarked,
                             )
@@ -102,5 +122,11 @@ fun HomeScreenPreview() {
         onLoginButtonClick = {},
         onEventClick = {},
         onCreateMeetingClick = {},
+        onBookMarkClick = { _, _ -> },
+        eventList = listOf(
+            Event(1, "test1", "test1", "2025-12-7", "2024-12-31", 10, 100, false),
+            Event(2, "test2", "test2", "2025-11-3", "2024-12-30", 20, 200, true),
+            Event(3, "test3", "test3", "2025-12-2", "2024-12-29", 30, 300, true),
+        ),
     )
 }
