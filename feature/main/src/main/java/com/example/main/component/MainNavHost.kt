@@ -30,6 +30,8 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
             onCreateMeetingClick = navController::navigateCreateMeeting,
             onMemberButtonClick = navController::navigateMember,
             onNavigationButtonClick = navController::navigateUp,
+            onCreateMeetingSuccess = navController::navigateUp,
+            onEditMeetingSuccess = navController::navigateUp,
         )
         mapNavGraph(
             onEventClick = navController::navigateEventDetail,
