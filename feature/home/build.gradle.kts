@@ -10,7 +10,8 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(libs.androidx.core.ktx)
-    implementation(project(":core:navigation"))
+    implementation(projects.core.navigation)
+    implementation(projects.core.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }
