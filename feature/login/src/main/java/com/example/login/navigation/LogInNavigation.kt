@@ -1,5 +1,6 @@
 package com.example.login.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -17,11 +18,15 @@ fun NavController.navigateSignUp() {
 }
 
 fun NavGraphBuilder.loginNavGraph(
+    onLoginSuccess: () -> Unit,
     onSignUpButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
 ) {
     composable<LoginRoute> {
         LoginScreen(
+            onLoginSuccess = onLoginSuccess,
             onSignUpButtonClick = onSignUpButtonClick,
         )
     }
@@ -29,6 +34,9 @@ fun NavGraphBuilder.loginNavGraph(
     composable<SignUpRoute> {
         SignUpScreen(
             onLoginTextClick = onNavigationButtonClick,
+            onSignUpSuccess = onNavigationButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 }

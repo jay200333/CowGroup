@@ -32,6 +32,7 @@ dependencies {
     implementation(projects.feature.map)
     implementation(projects.feature.mypage)
 
+    implementation(projects.core.navigation)
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
     implementation(projects.core.domain)

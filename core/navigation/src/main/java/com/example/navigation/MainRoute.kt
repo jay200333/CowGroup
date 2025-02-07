@@ -10,6 +10,11 @@ sealed class ScreenRouter(
 )
 
 @Serializable
+data object MainGraphRoute {
+    override fun toString() = "main_graph"
+}
+
+@Serializable
 data object HomeScreenRoute : ScreenRouter(
     R.drawable.baseline_home_filled_24,
     "홈",
