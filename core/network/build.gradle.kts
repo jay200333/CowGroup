@@ -9,14 +9,15 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.model)
+    api(projects.core.common)
+    api(projects.core.model)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit.core)
+    api(libs.retrofit.core)
     implementation(libs.okhttp3.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit.kotlinx.serialization)
-    implementation(libs.converter.gson)
+    api(libs.converter.gson)
+    implementation(project(":core:datastore"))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)

@@ -1,3 +1,5 @@
+import org.gradle.internal.declarativedsl.project.projectEvaluationSchema
+
 plugins {
     alias(libs.plugins.cowgroup.feature)
 }
@@ -10,7 +12,8 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(libs.androidx.core.ktx)
-    implementation(project(":core:navigation"))
+    implementation(projects.core.navigation)
+    implementation(projects.core.datastore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }
