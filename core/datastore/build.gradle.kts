@@ -9,8 +9,8 @@ android {
 
 dependencies {
     api(libs.androidx.datastore.core)
-    api(libs.androidx.datastore.preferences)
     api(projects.core.model)
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
