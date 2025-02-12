@@ -1,5 +1,3 @@
-import org.gradle.internal.declarativedsl.project.projectEvaluationSchema
-
 plugins {
     alias(libs.plugins.cowgroup.feature)
 }

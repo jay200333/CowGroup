@@ -8,6 +8,7 @@ import com.example.network.model.CheckDuplicateResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -28,6 +29,7 @@ interface CowGroupApi {
     @GET("/users/email/{email}")
     suspend fun checkEmail(@Path("email") email: String): ApiResponse<CheckDuplicateResponse>
 
+    @Headers("Content-Type: application/json")
     @POST("/users/login")
     suspend fun login(@Body loginInfo: LoginInfo): Response<ApiResponse<Unit>>
 

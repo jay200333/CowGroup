@@ -1,18 +1,21 @@
 package com.example.network.di
 
-import android.util.Log
 import com.example.datastore.TokenDataStore
 import com.example.network.retrofit.CowGroupApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,29 +39,37 @@ object NetworkModule {
     @Provides
     @Singleton
     fun retrofit(okHttpClient: OkHttpClient): CowGroupApi {
-        return Retrofit.Builder().baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create()).client(
-                okHttpClient,
-            ).build().create(CowGroupApi::class.java)
+        return Retrofit.Builder().baseUrl(BASE_URL).client(okHttpClient)
+            .addConverterFactory(NullOnEmptyConverterFactory())
+            .addConverterFactory(GsonConverterFactory.create()).build()
+            .create(CowGroupApi::class.java)
     }
 
     class AppInterceptor @Inject constructor(
         private val tokenDataStore: TokenDataStore,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            val originalRequest = chain.request()
-            val response = chain.proceed(originalRequest)
-            Log.d("NetworkModule", "${response.headers}")
-            val newToken = response.headers
-            Log.d("333", "$newToken")
-            return response
+            val request = chain.request()
+            val accessToken = runBlocking { tokenDataStore.getToken() ?: "" }
+            val newRequest = request.newBuilder().header("Authorization", "Bearer $accessToken").build()
+            val testResponse = chain.proceed(newRequest)
+            return testResponse
+        }
+    }
 
+    class NullOnEmptyConverterFactory : Converter.Factory() {
+        fun converterFactory() = this
+        override fun responseBodyConverter(
+            type: Type,
+            annotations: Array<out Annotation>,
+            retrofit: Retrofit,
+        ) = object :
+            Converter<ResponseBody, Any?> {
+            val nextResponseBodyConverter =
+                retrofit.nextResponseBodyConverter<Any?>(converterFactory(), type, annotations)
 
-            //val accessToken = runBlocking { tokenDataStore.getToken() ?: "" }
-
-            //// 헤더에 authentication라는 key로 JWT 를 넣어준다.
-            //val newRequest = chain.request().newBuilder().addHeader("Authentication", accessToken).build()
-            //return chain.proceed(newRequest)
+            override fun convert(value: ResponseBody) =
+                if (value.contentLength() != 0L) nextResponseBodyConverter.convert(value) else null
         }
     }
 }

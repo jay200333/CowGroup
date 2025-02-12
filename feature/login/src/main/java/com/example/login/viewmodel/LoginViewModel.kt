@@ -1,6 +1,5 @@
 package com.example.login.viewmodel
 
-import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -73,9 +72,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
                 }
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
-                Log.d("loginResult", "$response")
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
-                Log.d("loginResult", "$errorResponse.errors.message")
                 _loginUIState.update { state ->
                     state.copy(
                         isLoading = false,
