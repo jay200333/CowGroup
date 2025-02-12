@@ -1,6 +1,6 @@
 package com.example.network.di
 
-import com.example.datastore.TokenDataStore
+import com.example.datastore.CowGroupDataStore
 import com.example.network.retrofit.CowGroupApi
 import dagger.Module
 import dagger.Provides
@@ -46,7 +46,7 @@ object NetworkModule {
     }
 
     class AppInterceptor @Inject constructor(
-        private val tokenDataStore: TokenDataStore,
+        private val tokenDataStore: CowGroupDataStore,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()

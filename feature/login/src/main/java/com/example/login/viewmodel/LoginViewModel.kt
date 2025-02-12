@@ -4,14 +4,16 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.UserRepository
-import com.example.datastore.TokenDataStore
+import com.example.datastore.CowGroupDataStore
 import com.example.model.LoginInfo
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -26,9 +28,18 @@ data class LoginUIState(
 )
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val userRepository: UserRepository, private val tokenDataStore: TokenDataStore) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val tokenDataStore: CowGroupDataStore,
+) : ViewModel() {
     private val _loginUIState: MutableStateFlow<LoginUIState> = MutableStateFlow(LoginUIState())
-    val loginUIState: StateFlow<LoginUIState> = _loginUIState.asStateFlow()
+    val loginUIState: StateFlow<LoginUIState> = _loginUIState.onStart {
+        checkLogin()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000L),
+        LoginUIState(),
+    )
 
     fun updateEmail(email: String) {
         _loginUIState.update { state ->
@@ -61,7 +72,13 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
                 val token = userRepository.login(loginUIState.value.loginInfo)
                 if (!token.isNullOrEmpty()) {
                     tokenDataStore.saveToken(token)
-                    _loginUIState.update { state -> state.copy(isLoading = false, message = "", isLoginSuccess = true) }
+                    _loginUIState.update { state ->
+                        state.copy(
+                            isLoading = false,
+                            message = "",
+                            isLoginSuccess = true,
+                        )
+                    }
                 } else {
                     _loginUIState.update { state ->
                         state.copy(
@@ -86,6 +103,15 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
                         message = "알 수 없는 오류가 발생했습니다.",
                     )
                 }
+            }
+        }
+    }
+
+    private fun checkLogin() {
+        viewModelScope.launch {
+            val isLogin = tokenDataStore.loginCheck()
+            _loginUIState.update { state ->
+                state.copy(isLoginSuccess = isLogin)
             }
         }
     }
