@@ -30,7 +30,7 @@ fun NavController.navigateMember() {
 }
 
 fun NavGraphBuilder.homeNavGraph(
-    onLoginButtonClick: () -> Unit,
+    onLogoutButtonClick: () -> Unit,
     onEventClick: () -> Unit,
     onCreateMeetingClick: () -> Unit,
     onMemberButtonClick: () -> Unit,
@@ -40,7 +40,7 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     composable<HomeScreenRoute> {
         HomeScreen(
-            onLoginButtonClick = onLoginButtonClick,
+            onLogoutButtonClick = onLogoutButtonClick,
             onEventClick = onEventClick,
             onCreateMeetingClick = onCreateMeetingClick,
         )

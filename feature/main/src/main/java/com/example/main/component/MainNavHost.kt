@@ -8,7 +8,6 @@ import com.example.home.navigation.homeNavGraph
 import com.example.home.navigation.navigateCreateMeeting
 import com.example.home.navigation.navigateEventDetail
 import com.example.home.navigation.navigateMember
-import com.example.login.navigation.navigateLogin
 import com.example.map.navigation.mapNavGraph
 import com.example.mypage.navigation.myPageNavGraph
 import com.example.mypage.navigation.navigateEditProfile
@@ -23,7 +22,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         modifier = modifier,
     ) {
         homeNavGraph(
-            onLoginButtonClick = navController::navigateLogin,
+            onLogoutButtonClick = navController::navigateUp,
             onEventClick = navController::navigateEventDetail,
             onCreateMeetingClick = navController::navigateCreateMeeting,
             onMemberButtonClick = navController::navigateMember,

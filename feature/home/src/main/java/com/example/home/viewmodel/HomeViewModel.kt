@@ -3,17 +3,20 @@ package com.example.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.EventRepository
+import com.example.datastore.CowGroupDataStore
 import com.example.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
 data class HomeUIState(
     val isLoading: Boolean = false,
+    val isLogout: Boolean = false,
     val eventList: List<Event> = emptyList(),
     val error: String = "",
 )
@@ -21,6 +24,7 @@ data class HomeUIState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    private val dataStore: CowGroupDataStore,
 ) : ViewModel() {
     private val _homeUIState: MutableStateFlow<HomeUIState> = MutableStateFlow(HomeUIState())
     val homeUIState: StateFlow<HomeUIState> = _homeUIState.asStateFlow()
@@ -78,6 +82,15 @@ class HomeViewModel @Inject constructor(
                     isLoading = false,
                     error = "알 수 없는 오류가 발생했습니다.",
                 )
+            }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            dataStore.clearToken()
+            _homeUIState.update { state ->
+                state.copy(isLogout = true)
             }
         }
     }
