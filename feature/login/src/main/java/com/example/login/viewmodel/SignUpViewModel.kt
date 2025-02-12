@@ -150,7 +150,6 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                         )
                     }
                 }
-
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
@@ -197,7 +196,6 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                         )
                     }
                 }
-
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
@@ -222,12 +220,12 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
         state: SignUpUIState,
     ): Boolean {
         val passwordCondition = state.signUpInfo.password.isNotEmpty() &&
-                state.signUpInfo.password.matches(passwordPattern)
+            state.signUpInfo.password.matches(passwordPattern)
         val passwordConfirmCondition = state.signUpInfo.password == state.passwordConfirm
         return state.isValidEmail &&
-                state.isValidUsername &&
-                passwordCondition &&
-                passwordConfirmCondition
+            state.isValidUsername &&
+            passwordCondition &&
+            passwordConfirmCondition
     }
 
     fun validateEmail(email: String): Boolean =

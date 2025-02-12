@@ -15,7 +15,7 @@ internal class UserRepositoryImpl @Inject constructor(
             val response = api.login(loginInfo = loginInfo)
             val token = response.headers()["Authorization"]
             Log.d("loginResult", "$token")
-            if(token.isNullOrEmpty()) {
+            if (token.isNullOrEmpty()) {
                 throw Exception("토큰이 없습니다.")
             }
             token
