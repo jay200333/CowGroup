@@ -1,12 +1,17 @@
 package com.example.data.repository
 
+import com.example.model.CreateEvent
 import com.example.model.Event
+import com.example.network.retrofit.CowGroupApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-internal class EventRepositoryImpl @Inject constructor() : EventRepository {
+internal class EventRepositoryImpl @Inject constructor(
+    private val api: CowGroupApi,
+) : EventRepository {
     override suspend fun getEvents(): Flow<List<Event>> = flow {
         try {
             // val networkEvents = eventService.getEvents()
@@ -26,5 +31,15 @@ internal class EventRepositoryImpl @Inject constructor() : EventRepository {
         true
     } catch (e: IOException) {
         false
+    }
+
+    override suspend fun createMeeting(createEvent: CreateEvent) {
+        try {
+            api.createMeeting(createEvent = createEvent)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

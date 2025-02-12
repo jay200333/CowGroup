@@ -1,6 +1,6 @@
 package com.example.network.retrofit
 
-import com.example.model.DetailEvent
+import com.example.model.CreateEvent
 import com.example.model.LoginInfo
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
@@ -33,6 +33,7 @@ interface CowGroupApi {
     @POST("/users/login")
     suspend fun login(@Body loginInfo: LoginInfo): Response<ApiResponse<Unit>>
 
+    @Headers("Content-Type: application/json")
     @POST("/events")
-    suspend fun createMeeting(@Body detailEvent: DetailEvent): Boolean
+    suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
 }
