@@ -1,7 +1,7 @@
 package com.example.datastore.di
 
 import android.content.Context
-import com.example.datastore.TokenDataStore
+import com.example.datastore.CowGroupDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +15,5 @@ object DatastoreModule {
 
     @Provides
     @Singleton
-    fun provideTokenDataStore(@ApplicationContext context: Context): TokenDataStore = TokenDataStore(context)
+    fun provideTokenDataStore(@ApplicationContext context: Context): CowGroupDataStore = CowGroupDataStore(context)
 }
