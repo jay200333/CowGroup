@@ -28,6 +28,8 @@ fun NavGraphBuilder.loginNavGraph(
         LoginScreen(
             onLoginSuccess = onLoginSuccess,
             onSignUpButtonClick = onSignUpButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 

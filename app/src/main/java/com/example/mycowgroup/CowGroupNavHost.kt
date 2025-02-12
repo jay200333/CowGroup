@@ -17,12 +17,12 @@ fun CowGroupNavHost(
     modifier: Modifier,
     navController: NavHostController,
     snackBarHostState: SnackbarHostState,
-    onShowSnackBar: (String) -> Unit,
+    onShowSnackBar: (String) -> Unit
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = LoginRoute,
+        startDestination = LoginRoute
     ) {
         loginNavGraph(
             onLoginSuccess = {
@@ -33,11 +33,11 @@ fun CowGroupNavHost(
             onSignUpButtonClick = navController::navigateSignUp,
             onNavigationButtonClick = navController::navigateUp,
             snackBarHostState = snackBarHostState,
-            onShowSnackBar = onShowSnackBar,
+            onShowSnackBar = onShowSnackBar
         )
 
         composable(MainGraphRoute.toString()) {
-            MainScreen()
+            MainScreen(snackBarHostState, onShowSnackBar)
         }
     }
 }

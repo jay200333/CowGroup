@@ -13,10 +13,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,10 +42,16 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onSignUpButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: LoginUIState by viewModel.loginUIState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
         if (uiState.isLoginSuccess) {
             onLoginSuccess()
         }
@@ -53,6 +63,7 @@ fun LoginScreen(
         updatePassword = { password -> viewModel.updatePassword(password) },
         loginInfo = uiState.loginInfo,
         loginButtonEnabled = uiState.loginButtonEnabled,
+        snackBarHostState = snackBarHostState,
     )
 }
 
@@ -64,74 +75,80 @@ fun LoginScreen(
     updatePassword: (String) -> Unit,
     loginInfo: LoginInfo,
     loginButtonEnabled: Boolean,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = "Cow Group",
-            modifier = Modifier.padding(top = 120.dp),
-            style = MaterialTheme.typography.displayLarge,
-            fontStyle = FontStyle.Italic,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(64.dp))
-
-        OutlinedTextField(
-            value = loginInfo.email,
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            onValueChange = updateEmail,
-            label = { Text(text = "이메일") },
-            placeholder = { Text(text = "이메일을 입력하세요.") },
-        )
-
-        OutlinedTextField(
-            value = loginInfo.password,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            onValueChange = updatePassword,
-            label = { Text(text = "비밀번호") },
-            placeholder = { Text(text = "비밀번호를 입력하세요.") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = PasswordVisualTransformation(),
-        )
-
-        Button(
-            onClick = onLoginButtonClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
-            enabled = loginButtonEnabled,
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(text = "로그인")
-        }
+            Text(
+                text = "Cow Group",
+                modifier = Modifier.padding(top = 120.dp),
+                style = MaterialTheme.typography.displayLarge,
+                fontStyle = FontStyle.Italic,
+                textAlign = TextAlign.Center,
+            )
 
-        Text(
-            text = "회원가입",
-            modifier = Modifier.clickable { onSignUpButtonClick() },
-            color = Color.Gray,
-            textDecoration = TextDecoration.Underline,
-        )
+            Spacer(modifier = Modifier.height(64.dp))
 
-        HorizontalDivider(color = Color.Gray, thickness = 1.dp)
+            OutlinedTextField(
+                value = loginInfo.email,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                onValueChange = updateEmail,
+                label = { Text(text = "이메일") },
+                placeholder = { Text(text = "이메일을 입력하세요.") },
+            )
 
-        Text(text = "SNS 로그인")
+            OutlinedTextField(
+                value = loginInfo.password,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                onValueChange = updatePassword,
+                label = { Text(text = "비밀번호") },
+                placeholder = { Text(text = "비밀번호를 입력하세요.") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
+            )
 
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        ) {
-            Text(text = "구글 로그인 버튼")
+            Button(
+                onClick = onLoginButtonClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+                enabled = loginButtonEnabled,
+            ) {
+                Text(text = "로그인")
+            }
+
+            Text(
+                text = "회원가입",
+                modifier = Modifier.clickable { onSignUpButtonClick() },
+                color = Color.Gray,
+                textDecoration = TextDecoration.Underline,
+            )
+
+            HorizontalDivider(color = Color.Gray, thickness = 1.dp)
+
+            Text(text = "SNS 로그인")
+
+            Button(
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            ) {
+                Text(text = "구글 로그인 버튼")
+            }
         }
     }
 }

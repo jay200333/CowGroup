@@ -1,5 +1,6 @@
 package com.example.main.component
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -15,13 +16,15 @@ import com.example.mypage.navigation.navigateSetting
 import com.example.navigation.HomeScreenRoute
 
 @Composable
-fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
+fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier, snackBarHostState: SnackbarHostState, onShowSnackBar: (String) -> Unit) {
     NavHost(
         navController = navController,
         startDestination = HomeScreenRoute,
         modifier = modifier,
     ) {
         homeNavGraph(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onLogoutButtonClick = navController::navigateUp,
             onEventClick = navController::navigateEventDetail,
             onCreateMeetingClick = navController::navigateCreateMeeting,
