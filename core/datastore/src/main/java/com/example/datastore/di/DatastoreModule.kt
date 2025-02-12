@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatastoreModule {
-
     @Provides
     @Singleton
     fun provideTokenDataStore(@ApplicationContext context: Context): CowGroupDataStore = CowGroupDataStore(context)
