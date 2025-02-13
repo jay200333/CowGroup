@@ -62,6 +62,7 @@ fun CreateMeetingScreen(
         updateContent = { content -> viewModel.updateContent(content) },
         createEvent = uiState.createEvent,
         isEditMode = uiState.isEditMode,
+        createButtonEnabled = uiState.createButtonEnabled,
         snackBarHostState = snackBarHostState,
     )
 
@@ -94,6 +95,7 @@ fun CreateMeetingScreen(
     updateContent: (String) -> Unit,
     createEvent: CreateEvent,
     isEditMode: Boolean,
+    createButtonEnabled: Boolean,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val scrollState = rememberScrollState()
@@ -146,7 +148,10 @@ fun CreateMeetingScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            CategoryDropdown(selectedCategory = Category.toLabel(createEvent.category), onCategorySelected = updateCategory)
+            CategoryDropdown(
+                selectedCategory = Category.toLabel(createEvent.category),
+                onCategorySelected = updateCategory
+            )
             Text(
                 text = "모임 장소",
                 style = MaterialTheme.typography.bodyLarge,
@@ -169,7 +174,7 @@ fun CreateMeetingScreen(
                 date = createEvent.eventDate,
                 labelString = "모임 날짜",
                 onDateSelected = updateEventDate,
-                selectableDateCondition = { utcTimeMillis -> utcTimeMillis <= todayStartOfDayMillis }
+                selectableDateCondition = { utcTimeMillis -> utcTimeMillis >= todayStartOfDayMillis }
             )
             Text(
                 text = "정원",
@@ -204,6 +209,7 @@ fun CreateMeetingScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
+                    enabled = createButtonEnabled
                 ) {
                     Text(text = "편집 완료")
                 }
@@ -213,6 +219,7 @@ fun CreateMeetingScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
+                    enabled = createButtonEnabled
                 ) {
                     Text(text = "모임 생성")
                 }
@@ -235,6 +242,7 @@ fun CreateMeetingScreenPreview() {
         updateCapacity = {},
         updateContent = {},
         isEditMode = false,
+        createButtonEnabled = false,
         createEvent = CreateEvent(
             name = "롤",
             category = "게임",
