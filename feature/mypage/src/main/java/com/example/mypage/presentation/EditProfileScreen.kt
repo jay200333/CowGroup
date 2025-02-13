@@ -10,17 +10,50 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mypage.R
+import com.example.mypage.viewmodel.EditProfileUIState
+import com.example.mypage.viewmodel.EditProfileViewModel
+
+@Composable
+fun EditProfileScreen(
+    viewModel: EditProfileViewModel = hiltViewModel(),
+    onNavigationButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
+) {
+
+    val uiState: EditProfileUIState by viewModel.editProfileUIState.collectAsStateWithLifecycle()
+
+    EditProfileScreen(
+        onNavigationButtonClick = onNavigationButtonClick,
+        snackBarHostState = snackBarHostState,
+    )
+
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+}
 
 @Composable
 fun EditProfileScreen(
     onNavigationButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -45,6 +78,7 @@ fun EditProfileScreen(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

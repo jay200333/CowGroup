@@ -1,5 +1,6 @@
 package com.example.mypage.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -24,6 +25,8 @@ fun NavController.navigateSetting() {
 }
 
 fun NavGraphBuilder.myPageNavGraph(
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
     onEventClick: () -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
@@ -38,6 +41,8 @@ fun NavGraphBuilder.myPageNavGraph(
     }
     composable<EditProfileRoute> {
         EditProfileScreen(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onNavigationButtonClick = onNavigationButtonClick,
         )
     }

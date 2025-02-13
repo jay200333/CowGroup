@@ -37,6 +37,8 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier,
             onEventClick = navController::navigateEventDetail,
         )
         myPageNavGraph(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onEventClick = navController::navigateEventDetail,
             onEditProfileButtonClick = navController::navigateEditProfile,
             onSettingButtonClick = navController::navigateSetting,
