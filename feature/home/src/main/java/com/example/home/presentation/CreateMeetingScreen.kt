@@ -30,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.home.component.Category
+import com.example.home.component.CategoryDropdown
 import com.example.home.component.CowGroupSlider
 import com.example.home.component.DatePickerTextField
 import com.example.home.viewmodel.CreateMeetingUIState
@@ -109,7 +111,7 @@ fun CreateMeetingScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "top_bar_nav_icon_create_meeting",
                         )
                     }
@@ -143,14 +145,7 @@ fun CreateMeetingScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            OutlinedTextField(
-                value = createEvent.category,
-                onValueChange = updateCategory,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "카테고리를 입력하세요.") },
-                placeholder = { Text(text = "카테고리") },
-                singleLine = true,
-            )
+            CategoryDropdown(selectedCategory = Category.toLabel(createEvent.category), onCategorySelected = updateCategory)
             Text(
                 text = "모임 장소",
                 style = MaterialTheme.typography.bodyLarge,
