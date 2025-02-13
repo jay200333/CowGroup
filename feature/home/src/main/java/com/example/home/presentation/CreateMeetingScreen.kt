@@ -30,10 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.common.DateUtil.todayStartOfDayMillis
+import com.example.designsystem.DatePickerTextField
 import com.example.home.component.Category
 import com.example.home.component.CategoryDropdown
 import com.example.home.component.CowGroupSlider
-import com.example.home.component.DatePickerTextField
 import com.example.home.viewmodel.CreateMeetingUIState
 import com.example.home.viewmodel.CreateMeetingViewModel
 import com.example.model.CreateEvent
@@ -166,7 +167,9 @@ fun CreateMeetingScreen(
             )
             DatePickerTextField(
                 date = createEvent.eventDate,
+                labelString = "모임 날짜",
                 onDateSelected = updateEventDate,
+                selectableDateCondition = { utcTimeMillis -> utcTimeMillis <= todayStartOfDayMillis }
             )
             Text(
                 text = "정원",
