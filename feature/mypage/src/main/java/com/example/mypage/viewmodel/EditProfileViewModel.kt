@@ -28,6 +28,12 @@ class EditProfileViewModel @Inject constructor(): ViewModel() {
     private val _editProfileUIState: MutableStateFlow<EditProfileUIState> = MutableStateFlow(EditProfileUIState())
     val editProfileUIState: StateFlow<EditProfileUIState> = _editProfileUIState.asStateFlow()
 
+    fun updateMBTI(mbti: String) {
+        _editProfileUIState.update { state ->
+            state.copy(profile = state.profile.copy(mbti = mbti))
+        }
+    }
+
     fun setMessageClear() {
         _editProfileUIState.update { state ->
             state.copy(message = "")
