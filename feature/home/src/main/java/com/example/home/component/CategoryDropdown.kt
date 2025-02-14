@@ -18,7 +18,7 @@ fun CategoryDropdown(
     selectedCategory: String,
     onCategorySelected: (String) -> Unit
 ) {
-    val categories = Category.entries.map { it.label } // Enum 값을 문자열 리스트로 변환
+    val categories = Category.entries.map { it.label }
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -28,7 +28,7 @@ fun CategoryDropdown(
         OutlinedTextField(
             value = selectedCategory,
             onValueChange = {},
-            readOnly = true, // 사용자가 직접 입력하지 못하도록 설정
+            readOnly = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
