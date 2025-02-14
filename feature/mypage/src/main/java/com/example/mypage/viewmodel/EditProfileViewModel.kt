@@ -46,7 +46,7 @@ class EditProfileViewModel @Inject constructor(
                 state.copy(isLoading = true)
             }
             try {
-                val result = userRepository.getUserInfo()
+                val result = userRepository.getProfile()
                 _editProfileUIState.update { state ->
                     state.copy(profile = result)
                 }

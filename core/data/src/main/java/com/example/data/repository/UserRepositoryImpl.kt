@@ -59,9 +59,9 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserInfo(): Profile {
+    override suspend fun getProfile(): Profile {
         try {
-            val response = api.getUserInfo()
+            val response = api.getProfile()
             return response.data.toProfile()
         } catch (e: HttpException) {
             throw e

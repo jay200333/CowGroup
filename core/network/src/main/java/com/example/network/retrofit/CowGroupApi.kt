@@ -38,5 +38,5 @@ interface CowGroupApi {
     suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
 
     @GET("/users")
-    suspend fun getUserInfo(): ApiResponse<ProfileResponse>
+    suspend fun getProfile(): ApiResponse<ProfileResponse>
 }
