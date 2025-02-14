@@ -40,6 +40,7 @@ import com.example.mypage.viewmodel.EditProfileViewModel
 fun EditProfileScreen(
     viewModel: EditProfileViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
+    onEditProfileSuccess: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -62,6 +63,10 @@ fun EditProfileScreen(
         if (uiState.message.isNotEmpty()) {
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
+        }
+
+        if (uiState.isEditProfileSuccess) {
+            onEditProfileSuccess()
         }
     }
 }

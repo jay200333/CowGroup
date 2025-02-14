@@ -43,6 +43,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier,
             onEditProfileButtonClick = navController::navigateEditProfile,
             onSettingButtonClick = navController::navigateSetting,
             onNavigationButtonClick = navController::navigateUp,
+            onEditProfileSuccess = navController::navigateUp,
         )
     }
 }
