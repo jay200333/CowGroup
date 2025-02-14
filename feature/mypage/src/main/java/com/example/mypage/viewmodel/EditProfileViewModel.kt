@@ -17,7 +17,6 @@ import javax.inject.Inject
 
 data class EditProfileUIState(
     val isLoading: Boolean = false,
-    val editButtonEnabled: Boolean = false,
     val isEditProfileSuccess: Boolean = false,
     val message: String = "",
     val profile: Profile = Profile(
@@ -71,10 +70,52 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
+    private fun editProfile() {}
+
+    fun updateName(name: String) {
+        _editProfileUIState.update { state ->
+            state.copy(profile = state.profile.copy(username = name))
+        }
+    }
+
+    fun updateInstruction(instruction: String) {
+        _editProfileUIState.update { state ->
+            state.copy(profile = state.profile.copy(introduction = instruction))
+        }
+    }
+
+    fun updateLocation(location: String) {
+        _editProfileUIState.update { state ->
+            state.copy(profile = state.profile.copy(localName = location))
+        }
+    }
+
+    fun updateBirth(birth: String) {
+        _editProfileUIState.update { state ->
+            state.copy(profile = state.profile.copy(birth = birth))
+        }
+    }
+
     fun updateMBTI(mbti: String) {
         _editProfileUIState.update { state ->
             state.copy(profile = state.profile.copy(mbti = mbti))
         }
+    }
+
+    fun checkEditCondition() {
+        if (editCondition(_editProfileUIState.value)) {
+            editProfile()
+        } else {
+            _editProfileUIState.update { state ->
+                state.copy(message = "작성을 완료해주세요.")
+            }
+        }
+    }
+
+    private fun editCondition(
+        state: EditProfileUIState
+    ): Boolean = with(state.profile) {
+        listOf(username, localName, introduction, mbti, birth).all { it.isNotEmpty() }
     }
 
     fun setMessageClear() {
