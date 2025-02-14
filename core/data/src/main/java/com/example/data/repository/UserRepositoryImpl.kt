@@ -2,7 +2,9 @@ package com.example.data.repository
 
 import android.util.Log
 import com.example.model.LoginInfo
+import com.example.model.Profile
 import com.example.model.SignUpInfo
+import com.example.network.model.toProfile
 import com.example.network.retrofit.CowGroupApi
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -50,6 +52,17 @@ internal class UserRepositoryImpl @Inject constructor(
         try {
             val response = api.checkEmail(email = email)
             return response.data.exists
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getUserInfo(): Profile {
+        try {
+            val response = api.getUserInfo()
+            return response.data.toProfile()
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

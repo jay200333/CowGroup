@@ -5,6 +5,7 @@ import com.example.model.LoginInfo
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
+import com.example.network.model.ProfileResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -33,7 +34,9 @@ interface CowGroupApi {
     @POST("/users/login")
     suspend fun login(@Body loginInfo: LoginInfo): Response<ApiResponse<Unit>>
 
-    @Headers("Content-Type: application/json")
     @POST("/events")
     suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
+
+    @GET("/users")
+    suspend fun getUserInfo(): ApiResponse<ProfileResponse>
 }
