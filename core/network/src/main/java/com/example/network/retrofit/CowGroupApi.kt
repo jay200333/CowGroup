@@ -2,6 +2,7 @@ package com.example.network.retrofit
 
 import com.example.model.CreateEvent
 import com.example.model.LoginInfo
+import com.example.model.Profile
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
@@ -10,6 +11,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -39,4 +41,7 @@ interface CowGroupApi {
 
     @GET("/users")
     suspend fun getProfile(): ApiResponse<ProfileResponse>
+
+    @PATCH("/users")
+    suspend fun editProfile(@Body profile: Profile): ApiResponse<Unit>
 }

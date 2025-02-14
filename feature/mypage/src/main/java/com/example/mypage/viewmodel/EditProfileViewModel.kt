@@ -70,7 +70,38 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
-    private fun editProfile() {}
+    private fun editProfile() {
+        viewModelScope.launch {
+            _editProfileUIState.update { state ->
+                state.copy(isLoading = true)
+            }
+            try {
+                userRepository.editProfile(_editProfileUIState.value.profile)
+                _editProfileUIState.update { state ->
+                    state.copy(
+                        isEditProfileSuccess = true,
+                        message = "프로필이 수정되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _editProfileUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message,
+                    )
+                }
+            } catch (e: Exception) {
+                _editProfileUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
 
     fun updateName(name: String) {
         _editProfileUIState.update { state ->

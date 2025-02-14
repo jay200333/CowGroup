@@ -14,4 +14,6 @@ interface UserRepository {
     suspend fun checkEmail(email: String): Boolean
 
     suspend fun getProfile(): Profile
+
+    suspend fun editProfile(profile: Profile)
 }

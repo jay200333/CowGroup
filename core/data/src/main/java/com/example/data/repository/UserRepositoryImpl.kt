@@ -69,4 +69,14 @@ internal class UserRepositoryImpl @Inject constructor(
             throw e
         }
     }
+
+    override suspend fun editProfile(profile: Profile) {
+        try {
+            api.editProfile(profile = profile)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 }
