@@ -10,9 +10,7 @@ sealed class ScreenRouter(
 )
 
 @Serializable
-data object MainGraphRoute {
-    override fun toString() = "main_graph"
-}
+data object MainGraphRoute
 
 @Serializable
 data object HomeScreenRoute : ScreenRouter(

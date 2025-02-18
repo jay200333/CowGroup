@@ -1,12 +1,19 @@
 package com.example.mycowgroup
 
+import android.util.Log
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.main.component.MainBottomBar
+import com.example.navigation.bottomBarScreens
 import kotlinx.coroutines.launch
 
 @Composable
@@ -16,15 +23,28 @@ fun CowGroupApp() {
     val onShowSnackBar: (String) -> Unit = { message ->
         coroutineScope.launch {
             snackBarHostState.showSnackbar(
-                message = message,
+                message = message
             )
         }
     }
+    val navController = rememberNavController()
 
-    CowGroupNavHost(
-        modifier = Modifier.fillMaxSize(),
-        navController = rememberNavController(),
-        snackBarHostState = snackBarHostState,
-        onShowSnackBar = onShowSnackBar,
-    )
+    Scaffold(
+        bottomBar = {
+            val currentRoute = navController.currentBackStackEntryAsState().value?.destination
+            Log.d("currentRoute", "$currentRoute")
+            if (bottomBarScreens.any { it.route == currentRoute?.route }) {
+                MainBottomBar(navController)
+            }
+        }
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            CowGroupNavHost(
+                modifier = Modifier.fillMaxSize(),
+                navController = navController,
+                snackBarHostState = snackBarHostState,
+                onShowSnackBar = onShowSnackBar
+            )
+        }
+    }
 }

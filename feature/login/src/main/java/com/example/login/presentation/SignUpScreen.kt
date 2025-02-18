@@ -123,6 +123,7 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            
             Text(
                 text = "회원가입",
                 modifier = Modifier.padding(vertical = 64.dp),
