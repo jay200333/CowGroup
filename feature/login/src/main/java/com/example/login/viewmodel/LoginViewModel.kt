@@ -115,4 +115,10 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun setMessageClear() {
+        _loginUIState.update { state ->
+            state.copy(message = "")
+        }
+    }
 }

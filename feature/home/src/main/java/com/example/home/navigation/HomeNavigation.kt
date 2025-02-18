@@ -1,5 +1,6 @@
 package com.example.home.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -30,6 +31,8 @@ fun NavController.navigateMember() {
 }
 
 fun NavGraphBuilder.homeNavGraph(
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
     onEventClick: () -> Unit,
     onCreateMeetingClick: () -> Unit,
@@ -40,6 +43,8 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     composable<HomeScreenRoute> {
         HomeScreen(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onLogoutButtonClick = onLogoutButtonClick,
             onEventClick = onEventClick,
             onCreateMeetingClick = onCreateMeetingClick,
@@ -47,6 +52,8 @@ fun NavGraphBuilder.homeNavGraph(
     }
     composable<CreateMeetingRoute> {
         CreateMeetingScreen(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onNavigationButtonClick = onNavigationButtonClick,
             onCreateMeetingSuccess = onCreateMeetingSuccess,
             onEditMeetingSuccess = onEditMeetingSuccess,

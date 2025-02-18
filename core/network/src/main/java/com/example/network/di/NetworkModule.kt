@@ -51,7 +51,7 @@ object NetworkModule {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
             val accessToken = runBlocking { tokenDataStore.getToken() ?: "" }
-            val newRequest = request.newBuilder().header("Authorization", "Bearer $accessToken").build()
+            val newRequest = request.newBuilder().header("Authorization", accessToken).build()
             val testResponse = chain.proceed(newRequest)
             return testResponse
         }

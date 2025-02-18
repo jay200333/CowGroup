@@ -11,9 +11,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +41,8 @@ fun HomeScreen(
     onLogoutButtonClick: () -> Unit,
     onEventClick: () -> Unit,
     onCreateMeetingClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsStateWithLifecycle()
 
@@ -48,6 +54,7 @@ fun HomeScreen(
             viewModel.updateBookmark(eventId, isBookmarked)
         },
         eventList = uiState.eventList,
+        snackBarHostState = snackBarHostState,
     )
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState = rememberUpdatedState(lifecycleOwner.lifecycle.currentState)
@@ -64,6 +71,13 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+
     if (uiState.isLogout) {
         onLogoutButtonClick()
     }
@@ -76,6 +90,7 @@ fun HomeScreen(
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
     eventList: List<Event>,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -88,6 +103,7 @@ fun HomeScreen(
                 )
             }
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

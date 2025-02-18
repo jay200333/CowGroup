@@ -18,7 +18,7 @@ data class HomeUIState(
     val isLoading: Boolean = false,
     val isLogout: Boolean = false,
     val eventList: List<Event> = emptyList(),
-    val error: String = "",
+    val message: String = "",
 )
 
 @HiltViewModel
@@ -31,24 +31,24 @@ class HomeViewModel @Inject constructor(
 
     fun getEvents() {
         viewModelScope.launch {
-            _homeUIState.value = _homeUIState.value.copy(isLoading = true, error = "")
+            _homeUIState.value = _homeUIState.value.copy(isLoading = true, message = "")
             try {
                 eventRepository.getEvents().collect { eventList ->
                     _homeUIState.value = _homeUIState.value.copy(
                         isLoading = false,
                         eventList = eventList,
-                        error = if (eventList.isEmpty()) "데이터가 없습니다." else "",
+                        message = if (eventList.isEmpty()) "데이터가 없습니다." else "",
                     )
                 }
             } catch (e: IOException) {
                 _homeUIState.value = _homeUIState.value.copy(
                     isLoading = false,
-                    error = "이벤트 호출에 실패했습니다.",
+                    message = "이벤트 호출에 실패했습니다.",
                 )
             } catch (e: Exception) {
                 _homeUIState.value = _homeUIState.value.copy(
                     isLoading = false,
-                    error = "알 수 없는 오류가 발생했습니다.",
+                    message = "알 수 없는 오류가 발생했습니다.",
                 )
             }
         }
@@ -56,7 +56,7 @@ class HomeViewModel @Inject constructor(
 
     fun updateBookmark(eventId: Int, isBookmarked: Boolean) {
         viewModelScope.launch {
-            _homeUIState.value = _homeUIState.value.copy(isLoading = true, error = "")
+            _homeUIState.value = _homeUIState.value.copy(isLoading = true, message = "")
             try {
                 val result = eventRepository.updateBookmark(eventId, isBookmarked)
                 if (result) {
@@ -75,12 +75,12 @@ class HomeViewModel @Inject constructor(
             } catch (e: IOException) {
                 _homeUIState.value = _homeUIState.value.copy(
                     isLoading = false,
-                    error = "이벤트 호출에 실패했습니다.",
+                    message = "이벤트 호출에 실패했습니다.",
                 )
             } catch (e: Exception) {
                 _homeUIState.value = _homeUIState.value.copy(
                     isLoading = false,
-                    error = "알 수 없는 오류가 발생했습니다.",
+                    message = "알 수 없는 오류가 발생했습니다.",
                 )
             }
         }
@@ -92,6 +92,12 @@ class HomeViewModel @Inject constructor(
             _homeUIState.update { state ->
                 state.copy(isLogout = true)
             }
+        }
+    }
+
+    fun setMessageClear() {
+        _homeUIState.update { state ->
+            state.copy(message = "")
         }
     }
 }

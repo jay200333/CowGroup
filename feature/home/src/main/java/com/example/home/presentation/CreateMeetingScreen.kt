@@ -17,21 +17,27 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.common.DateUtil.todayStartOfDayMillis
+import com.example.designsystem.DatePickerTextField
+import com.example.home.component.Category
+import com.example.home.component.CategoryDropdown
 import com.example.home.component.CowGroupSlider
-import com.example.home.component.DatePickerTextField
 import com.example.home.viewmodel.CreateMeetingUIState
 import com.example.home.viewmodel.CreateMeetingViewModel
-import com.example.model.DetailEvent
+import com.example.model.CreateEvent
 
 @Composable
 fun CreateMeetingScreen(
@@ -39,6 +45,8 @@ fun CreateMeetingScreen(
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: () -> Unit,
     onEditMeetingSuccess: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: CreateMeetingUIState by viewModel.createMeetingUIState.collectAsStateWithLifecycle()
 
@@ -52,20 +60,25 @@ fun CreateMeetingScreen(
         updateEventDate = { eventDate -> viewModel.updateEventDate(eventDate) },
         updateCapacity = { capacity -> viewModel.updateCapacity(capacity) },
         updateContent = { content -> viewModel.updateContent(content) },
-        detailEvent = uiState.detailEvent,
+        createEvent = uiState.createEvent,
         isEditMode = uiState.isEditMode,
+        createButtonEnabled = uiState.createButtonEnabled,
+        snackBarHostState = snackBarHostState,
     )
 
-    if (uiState.isCreateMeetingSuccess) {
-        LaunchedEffect(Unit) {
-            onCreateMeetingSuccess()
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
         }
     }
 
+    if (uiState.isCreateMeetingSuccess) {
+        onCreateMeetingSuccess()
+    }
+
     if (uiState.isEditMeetingSuccess) {
-        LaunchedEffect(Unit) {
-            onEditMeetingSuccess()
-        }
+        onEditMeetingSuccess()
     }
 }
 
@@ -80,8 +93,10 @@ fun CreateMeetingScreen(
     updateEventDate: (String) -> Unit,
     updateCapacity: (Float) -> Unit,
     updateContent: (String) -> Unit,
-    detailEvent: DetailEvent,
+    createEvent: CreateEvent,
     isEditMode: Boolean,
+    createButtonEnabled: Boolean,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val scrollState = rememberScrollState()
 
@@ -99,13 +114,14 @@ fun CreateMeetingScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "top_bar_nav_icon_create_meeting",
                         )
                     }
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -120,7 +136,7 @@ fun CreateMeetingScreen(
                 fontWeight = FontWeight.Bold,
             )
             OutlinedTextField(
-                value = detailEvent.name,
+                value = createEvent.name,
                 onValueChange = updateName,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = "모임 이름을 입력하세요.") },
@@ -132,13 +148,9 @@ fun CreateMeetingScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            OutlinedTextField(
-                value = detailEvent.category,
-                onValueChange = updateCategory,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "카테고리를 입력하세요.") },
-                placeholder = { Text(text = "카테고리") },
-                singleLine = true,
+            CategoryDropdown(
+                selectedCategory = Category.toLabel(createEvent.category),
+                onCategorySelected = updateCategory
             )
             Text(
                 text = "모임 장소",
@@ -146,7 +158,7 @@ fun CreateMeetingScreen(
                 fontWeight = FontWeight.Bold,
             )
             OutlinedTextField(
-                value = detailEvent.location,
+                value = createEvent.location,
                 onValueChange = updateLocation,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = "모임 장소를 입력하세요.") },
@@ -159,8 +171,10 @@ fun CreateMeetingScreen(
                 fontWeight = FontWeight.Bold,
             )
             DatePickerTextField(
-                date = detailEvent.eventDate,
+                date = createEvent.eventDate,
+                labelString = "모임 날짜",
                 onDateSelected = updateEventDate,
+                selectableDateCondition = { utcTimeMillis -> utcTimeMillis >= todayStartOfDayMillis }
             )
             Text(
                 text = "정원",
@@ -168,7 +182,7 @@ fun CreateMeetingScreen(
                 fontWeight = FontWeight.Bold,
             )
             CowGroupSlider(
-                value = detailEvent.capacity.toFloat(),
+                value = createEvent.capacity.toFloat(),
                 steps = 20,
                 valueRange = 5f..100f,
                 onValueChange = updateCapacity,
@@ -180,7 +194,7 @@ fun CreateMeetingScreen(
                 fontWeight = FontWeight.Bold,
             )
             OutlinedTextField(
-                value = detailEvent.content,
+                value = createEvent.content,
                 onValueChange = updateContent,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -195,6 +209,7 @@ fun CreateMeetingScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
+                    enabled = createButtonEnabled
                 ) {
                     Text(text = "편집 완료")
                 }
@@ -204,6 +219,7 @@ fun CreateMeetingScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
+                    enabled = createButtonEnabled
                 ) {
                     Text(text = "모임 생성")
                 }
@@ -226,7 +242,8 @@ fun CreateMeetingScreenPreview() {
         updateCapacity = {},
         updateContent = {},
         isEditMode = false,
-        detailEvent = DetailEvent(
+        createButtonEnabled = false,
+        createEvent = CreateEvent(
             name = "롤",
             category = "게임",
             location = "소환사의 협곡",

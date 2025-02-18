@@ -24,7 +24,7 @@ fun CowGroupNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = AuthRoute
+        startDestination = LoginRoute
     ) {
         navigation<AuthRoute>(startDestination = LoginRoute) {
             loginNavGraph(

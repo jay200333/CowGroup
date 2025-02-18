@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -22,15 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun DatePickerTextField(
     date: String,
+    labelString: String,
     onDateSelected: (String) -> Unit,
+    selectableDateCondition: (Long) -> Boolean
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -40,7 +40,7 @@ fun DatePickerTextField(
             value = date,
             onValueChange = {},
             label = {
-                Text(text = "모임 날짜")
+                Text(text = labelString)
             },
             enabled = false,
             trailingIcon = {
@@ -57,6 +57,7 @@ fun DatePickerTextField(
             CowGroupDatePicker(
                 onDateSelected = { onDateSelected(it?.let { convertMillisToDate(it) } ?: "") },
                 onDismiss = { showDatePicker = false },
+                selectableDateCondition = selectableDateCondition
             )
         }
     }
@@ -66,13 +67,12 @@ fun DatePickerTextField(
 private fun CowGroupDatePicker(
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit,
+    selectableDateCondition: (Long) -> Boolean
 ) {
-    val todayStartOfDayMillis =
-        LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean =
-                utcTimeMillis >= todayStartOfDayMillis
+                selectableDateCondition(utcTimeMillis)
         },
     )
 
@@ -111,5 +111,7 @@ fun DatePickerTextFieldPreview() {
     DatePickerTextField(
         date = "2023-10-01",
         onDateSelected = {},
+        labelString = "날짜",
+        selectableDateCondition = { true }
     )
 }
