@@ -29,9 +29,9 @@ fun ValidatingTextField(
     maxLines: Int = 1,
     minLines: Int = 1,
 ) {
-    Column {
+    Column(modifier = modifier) {
         OutlinedTextField(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             value = value,
             onValueChange = onValueChange,
             label = { Text(text = label) },
@@ -47,7 +47,7 @@ fun ValidatingTextField(
         )
         if (validateCondition.not()) {
             Text(
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier,
                 textAlign = TextAlign.Start,
                 text = errorMessage,
                 color = Color.Red,

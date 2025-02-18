@@ -32,6 +32,7 @@ dependencies {
     implementation(projects.feature.map)
     implementation(projects.feature.mypage)
 
+    implementation(projects.core.navigation)
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
     implementation(projects.core.domain)
@@ -39,6 +40,7 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.common)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.core.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }

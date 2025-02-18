@@ -15,10 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,13 +27,44 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.login.viewmodel.LoginUIState
+import com.example.login.viewmodel.LoginViewModel
+import com.example.model.LoginInfo
+
+@Composable
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    onLoginSuccess: () -> Unit,
+    onSignUpButtonClick: () -> Unit,
+) {
+    val uiState: LoginUIState by viewModel.loginUIState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState) {
+        if (uiState.isLoginSuccess) {
+            onLoginSuccess()
+        }
+    }
+    LoginScreen(
+        onSignUpButtonClick = onSignUpButtonClick,
+        onLoginButtonClick = viewModel::login,
+        updateEmail = { email -> viewModel.updateEmail(email) },
+        updatePassword = { password -> viewModel.updatePassword(password) },
+        loginInfo = uiState.loginInfo,
+        loginButtonEnabled = uiState.loginButtonEnabled,
+    )
+}
 
 @Composable
 fun LoginScreen(
     onSignUpButtonClick: () -> Unit,
+    onLoginButtonClick: () -> Unit,
+    updateEmail: (String) -> Unit,
+    updatePassword: (String) -> Unit,
+    loginInfo: LoginInfo,
+    loginButtonEnabled: Boolean,
 ) {
-    var idText by remember { mutableStateOf("") }
-    var pwText by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,21 +83,21 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(64.dp))
 
         OutlinedTextField(
-            value = idText,
+            value = loginInfo.email,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            onValueChange = { idText = it },
+            onValueChange = updateEmail,
             label = { Text(text = "이메일") },
             placeholder = { Text(text = "이메일을 입력하세요.") },
         )
 
         OutlinedTextField(
-            value = pwText,
+            value = loginInfo.password,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            onValueChange = { pwText = it },
+            onValueChange = updatePassword,
             label = { Text(text = "비밀번호") },
             placeholder = { Text(text = "비밀번호를 입력하세요.") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -76,11 +105,11 @@ fun LoginScreen(
         )
 
         Button(
-            onClick = {},
+            onClick = onLoginButtonClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
-            enabled = idText.isNotEmpty() && pwText.isNotEmpty(),
+            enabled = loginButtonEnabled,
         ) {
             Text(text = "로그인")
         }
@@ -112,5 +141,10 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         onSignUpButtonClick = {},
+        onLoginButtonClick = {},
+        updateEmail = {},
+        updatePassword = {},
+        loginInfo = LoginInfo(email = "", password = ""),
+        loginButtonEnabled = true,
     )
 }

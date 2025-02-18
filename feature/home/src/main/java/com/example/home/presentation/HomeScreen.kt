@@ -34,14 +34,14 @@ import com.example.model.Event
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onLoginButtonClick: () -> Unit,
+    onLogoutButtonClick: () -> Unit,
     onEventClick: () -> Unit,
     onCreateMeetingClick: () -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsStateWithLifecycle()
 
     HomeScreen(
-        onLoginButtonClick = onLoginButtonClick,
+        onLogoutButtonClick = viewModel::logout,
         onEventClick = onEventClick,
         onCreateMeetingClick = onCreateMeetingClick,
         onBookMarkClick = { eventId, isBookmarked ->
@@ -63,11 +63,15 @@ fun HomeScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
+    if (uiState.isLogout) {
+        onLogoutButtonClick()
+    }
 }
 
 @Composable
 fun HomeScreen(
-    onLoginButtonClick: () -> Unit,
+    onLogoutButtonClick: () -> Unit,
     onEventClick: () -> Unit,
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
@@ -75,7 +79,7 @@ fun HomeScreen(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { HomeScreenSearchBar(onLoginButtonClick, R.drawable.baseline_login_24) },
+        topBar = { HomeScreenSearchBar(onLogoutButtonClick, R.drawable.baseline_login_24) },
         floatingActionButton = {
             FloatingActionButton(onClick = onCreateMeetingClick) {
                 Icon(
@@ -119,7 +123,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(
-        onLoginButtonClick = {},
+        onLogoutButtonClick = {},
         onEventClick = {},
         onCreateMeetingClick = {},
         onBookMarkClick = { _, _ -> },
