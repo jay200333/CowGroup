@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -39,6 +40,7 @@ import com.example.mypage.viewmodel.EditProfileViewModel
 fun EditProfileScreen(
     viewModel: EditProfileViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
+    onEditProfileSuccess: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -47,10 +49,14 @@ fun EditProfileScreen(
 
     EditProfileScreen(
         onNavigationButtonClick = onNavigationButtonClick,
+        onEditButtonClick = viewModel::checkEditCondition,
         profile = uiState.profile,
         snackBarHostState = snackBarHostState,
-        updateName = {},
-        updateMBTI = { mbti -> viewModel.updateMBTI(mbti)},
+        updateName = { name -> viewModel.updateName(name) },
+        updateInstruction = { instruction -> viewModel.updateInstruction(instruction) },
+        updateLocation = { location -> viewModel.updateLocation(location) },
+        updateBirth = { birth -> viewModel.updateBirth(birth) },
+        updateMBTI = { mbti -> viewModel.updateMBTI(mbti) },
     )
 
     LaunchedEffect(uiState) {
@@ -58,17 +64,26 @@ fun EditProfileScreen(
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
         }
+
+        if (uiState.isEditProfileSuccess) {
+            onEditProfileSuccess()
+        }
     }
 }
 
 @Composable
 fun EditProfileScreen(
     onNavigationButtonClick: () -> Unit,
+    onEditButtonClick: () -> Unit,
     updateName: (String) -> Unit,
+    updateInstruction: (String) -> Unit,
+    updateLocation: (String) -> Unit,
+    updateBirth: (String) -> Unit,
     updateMBTI: (String) -> Unit,
     profile: Profile,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
+    val maxLength = 200
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -83,7 +98,7 @@ fun EditProfileScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onEditButtonClick) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_save_24),
                             contentDescription = "top_bar_icon_edit_profile_save",
@@ -121,9 +136,14 @@ fun EditProfileScreen(
             )
             OutlinedTextField(
                 value = profile.introduction,
-                onValueChange = updateName,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "소개글을 입력하세요.") },
+                onValueChange = { text ->
+                    if (text.length <= maxLength)
+                        updateInstruction(text)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
+                label = { Text(text = "소개글을 입력하세요.(200자 제한)") },
                 placeholder = { Text(text = "소개") },
             )
             Text(
@@ -133,7 +153,7 @@ fun EditProfileScreen(
             )
             OutlinedTextField(
                 value = profile.localName,
-                onValueChange = updateName,
+                onValueChange = updateLocation,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = "지역을 입력하세요.") },
                 placeholder = { Text(text = "지역") },
@@ -147,7 +167,7 @@ fun EditProfileScreen(
             DatePickerTextField(
                 date = profile.birth,
                 labelString = "생년월일",
-                onDateSelected = updateName,
+                onDateSelected = updateBirth,
                 selectableDateCondition = { utcTimeMillis -> utcTimeMillis <= todayStartOfDayMillis }
             )
             Text(
@@ -165,8 +185,12 @@ fun EditProfileScreen(
 fun EditProfileScreenPreview() {
     EditProfileScreen(
         onNavigationButtonClick = {},
+        onEditButtonClick = {},
         updateName = {},
         updateMBTI = {},
+        updateInstruction = {},
+        updateLocation = {},
+        updateBirth = {},
         profile = Profile(
             username = "",
             introduction = "",
