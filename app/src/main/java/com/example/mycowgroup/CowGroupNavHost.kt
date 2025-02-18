@@ -5,10 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.example.login.navigation.loginNavGraph
 import com.example.login.navigation.navigateSignUp
-import com.example.main.presentation.MainScreen
+import com.example.main.navigation.mainNavGraph
+import com.example.navigation.AuthRoute
+import com.example.navigation.HomeScreenRoute
 import com.example.navigation.LoginRoute
 import com.example.navigation.MainGraphRoute
 
@@ -24,20 +26,26 @@ fun CowGroupNavHost(
         navController = navController,
         startDestination = LoginRoute
     ) {
-        loginNavGraph(
-            onLoginSuccess = {
-                navController.navigate(MainGraphRoute.toString()) {
-                    popUpTo(LoginRoute) { inclusive = true }
-                }
-            },
-            onSignUpButtonClick = navController::navigateSignUp,
-            onNavigationButtonClick = navController::navigateUp,
-            snackBarHostState = snackBarHostState,
-            onShowSnackBar = onShowSnackBar
-        )
+        navigation<AuthRoute>(startDestination = LoginRoute) {
+            loginNavGraph(
+                onLoginSuccess = {
+                    navController.navigate(MainGraphRoute) {
+                        popUpTo(AuthRoute) { inclusive = true }
+                    }
+                },
+                onSignUpButtonClick = navController::navigateSignUp,
+                onNavigationButtonClick = navController::navigateUp,
+                snackBarHostState = snackBarHostState,
+                onShowSnackBar = onShowSnackBar
+            )
+        }
 
-        composable(MainGraphRoute.toString()) {
-            MainScreen(snackBarHostState, onShowSnackBar)
+        navigation<MainGraphRoute>(startDestination = HomeScreenRoute) {
+            mainNavGraph(
+                snackBarHostState = snackBarHostState,
+                onShowSnackBar = onShowSnackBar,
+                navController = navController
+            )
         }
     }
 }
