@@ -1,27 +1,29 @@
 package com.example.network.model
 
-import com.example.model.Event
-import kotlinx.serialization.Serializable
 
-@Serializable
+import com.example.model.Event
+
 data class NetworkEvent(
+    val applicants: Int,
+    val author: String,
+    val capacity: Int,
+    val content: String,
+    val createdDate: String,
+    val eventDate: String,
     val eventId: Int,
     val name: String,
-    val content: String,
-    val eventDate: String,
-    val capacity: Int,
-    val applicants: Int,
-    val createdDate: String,
-    val isBookmarked: Boolean,
+    val bookmarkStatus: String,
 )
 
-fun NetworkEvent.toEvent(): Event = Event(
-    id = eventId,
-    name = name,
-    content = content,
-    eventDate = eventDate,
-    createdDate = createdDate,
-    participants = applicants,
-    capacities = capacity,
-    isBookmarked = isBookmarked,
-)
+fun NetworkEvent.toEvent(): Event {
+    return Event(
+        id = eventId,
+        name = name,
+        content = content,
+        eventDate = eventDate,
+        createdDate = createdDate,
+        participants = applicants,
+        capacities = capacity,
+        isBookmarked = bookmarkStatus == "BOOKMARK"
+    )
+}
