@@ -6,6 +6,7 @@ import com.example.model.Profile
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
+import com.example.network.model.PagingEventResponse
 import com.example.network.model.ProfileResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,8 +18,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CowGroupApi {
-    @GET("/events?")
-    suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int)
+    @GET("/events")
+    suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingEventResponse>
 
     @POST("/bookmarks/{event-id}")
     suspend fun updateBookmark(@Path("event-id") eventId: Int): Response<Any>
