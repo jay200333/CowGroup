@@ -24,6 +24,7 @@ class CowGroupFeaturePlugin : Plugin<Project> {
                 implementation(libs.getBundle("navigation"))
                 implementation(libs.findLibrary("kotlinx.serialization.json").get())
                 implementation(libs.findLibrary("androidx.paging.runtime").get())
+                implementation(libs.findLibrary("androidx.paging.compose").get())
                 testImplementation(libs.getBundle("test"))
             }
         }
