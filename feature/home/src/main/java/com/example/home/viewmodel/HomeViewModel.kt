@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.example.data.repository.EventRepository
 import com.example.datastore.CowGroupDataStore
 import com.example.model.Event
@@ -12,15 +13,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class HomeUIState(
     val isLoading: Boolean = false,
     val isLogout: Boolean = false,
-    val eventList: List<Event> = emptyList(),
+    val eventList: PagingData<Event> = PagingData.empty(),
     val message: String = "",
 )
 
@@ -32,68 +35,51 @@ class HomeViewModel @Inject constructor(
     private val _homeUIState: MutableStateFlow<HomeUIState> = MutableStateFlow(HomeUIState())
     val homeUIState: StateFlow<HomeUIState> = _homeUIState.asStateFlow()
 
-    val pagingEvents: Flow<PagingData<Event>> =
+    private val pagingEvents: Flow<PagingData<Event>> =
         eventRepository.getPagingEvents(10).cachedIn(viewModelScope)
 
-//    fun getEvents() {
-//        viewModelScope.launch {
-//            _homeUIState.update { it.copy(isLoading = true, message = "") }
-//            try {
-//                eventRepository.getEvents().collect { eventList ->
-//                    _homeUIState.update {
-//                        it.copy(
-//                            isLoading = false,
-//                            eventList = eventList,
-//                            message = if (eventList.isEmpty()) "데이터가 없습니다." else "",
-//                        )
-//                    }
-//                }
-//            } catch (e: IOException) {
-//                _homeUIState.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        message = "이벤트 호출에 실패했습니다.",
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                _homeUIState.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        message = "알 수 없는 오류가 발생했습니다.",
-//                    )
-//                }
-//            }
-//        }
-//    }
+    init {
+        pagingEvents.onEach { pagingEvents ->
+            _homeUIState.update {
+                it.copy(
+                    isLoading = false,
+                    eventList = pagingEvents
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun updateBookmark(eventId: Int, isBookmarked: Boolean) {
         viewModelScope.launch {
-            _homeUIState.value = _homeUIState.value.copy(isLoading = true, message = "")
+            _homeUIState.update { it.copy(isLoading = true, message = "") }
             try {
-                val result = eventRepository.updateBookmark(eventId, isBookmarked)
-                if (result) {
-                    val updatedEventList = _homeUIState.value.eventList.map { event ->
-                        if (event.id == eventId) {
-                            event.copy(isBookmarked = isBookmarked)
-                        } else {
-                            event
-                        }
-                    }
-                    _homeUIState.value = _homeUIState.value.copy(
+                eventRepository.updateBookmark(eventId, isBookmarked)
+                _homeUIState.update {
+                    it.copy(
                         isLoading = false,
-                        eventList = updatedEventList,
+                        message = "북마크 업데이트가 되었습니다.",
+                        eventList = it.eventList.map { event ->
+                            if (event.id == eventId) {
+                                event.copy(isBookmarked = isBookmarked.not())
+                            } else {
+                                event
+                            }
+                        })
+                }
+            } catch (e: HttpException) {
+                _homeUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "북마크 업데이트에 실패했습니다.",
                     )
                 }
-            } catch (e: IOException) {
-                _homeUIState.value = _homeUIState.value.copy(
-                    isLoading = false,
-                    message = "이벤트 호출에 실패했습니다.",
-                )
             } catch (e: Exception) {
-                _homeUIState.value = _homeUIState.value.copy(
-                    isLoading = false,
-                    message = "알 수 없는 오류가 발생했습니다.",
-                )
+                _homeUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
             }
         }
     }

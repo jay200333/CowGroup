@@ -14,23 +14,23 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.example.home.R
 import com.example.home.component.HomeItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
 import com.example.model.Event
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun HomeScreen(
@@ -41,8 +41,10 @@ fun HomeScreen(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
-    val uiState: HomeUIState by viewModel.homeUIState.collectAsStateWithLifecycle()
-    val pagingEvents = viewModel.pagingEvents.collectAsLazyPagingItems()
+    val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
+    val pagingEvents = remember(uiState.eventList) {
+        flow { emit(uiState.eventList) }
+    }.collectAsLazyPagingItems()
 
     HomeScreen(
         onLogoutButtonClick = viewModel::logout,
@@ -53,25 +55,11 @@ fun HomeScreen(
                 eventId,
                 isBookmarked
             )
+            pagingEvents.refresh()
         },
         eventList = pagingEvents,
         snackBarHostState = snackBarHostState,
     )
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val lifecycleState = rememberUpdatedState(lifecycleOwner.lifecycle.currentState)
-
-//    DisposableEffect(lifecycleState) {
-//        val observer = LifecycleEventObserver { _, event ->
-//            if (event == Lifecycle.Event.ON_RESUME) {
-//                viewModel.getEvents()
-//            }
-//        }
-//        lifecycleOwner.lifecycle.addObserver(observer)
-//        onDispose {
-//            lifecycleOwner.lifecycle.removeObserver(observer)
-//        }
-//    }
 
     LaunchedEffect(uiState) {
         if (uiState.message.isNotEmpty()) {
@@ -114,23 +102,25 @@ fun HomeScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(eventList.itemCount)
-                { index ->
-                    val event = eventList[index]
-                    if (event != null) {
-                        HomeItem(
-                            event = event,
-                            onEventClick = onEventClick,
-                            onBookMarkClick = { isBookmarked ->
-                                onBookMarkClick(
-                                    event.id,
-                                    isBookmarked,
-                                )
-                            },
-                        )
+            if (eventList.itemCount != 0) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(eventList.itemCount, key = eventList.itemKey { it.id })
+                    { index ->
+                        val event = eventList[index]
+                        if (event != null) {
+                            HomeItem(
+                                event = event,
+                                onEventClick = onEventClick,
+                                onBookMarkClick = {
+                                    onBookMarkClick(
+                                        event.id,
+                                        event.isBookmarked,
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
             }

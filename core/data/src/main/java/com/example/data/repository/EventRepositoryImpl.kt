@@ -20,7 +20,11 @@ internal class EventRepositoryImpl @Inject constructor(
 
     override fun getPagingEvents(pageSize: Int): Flow<PagingData<Event>> {
         return Pager(
-            config = PagingConfig(initialLoadSize = INITIAL_LOAD_SIZE, pageSize = pageSize, enablePlaceholders = false),
+            config = PagingConfig(
+                initialLoadSize = INITIAL_LOAD_SIZE,
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
             pagingSourceFactory = { EventPagingSource(api) }
         ).flow
     }
@@ -35,10 +39,18 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean): Boolean = try {
-        true
-    } catch (e: IOException) {
-        false
+    override suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean) {
+        try {
+            if (isBookmarked) {
+                api.deleteBookmark(eventId)
+            } else {
+                api.addBookmark(eventId)
+            }
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     override suspend fun createMeeting(createEvent: CreateEvent) {
@@ -50,6 +62,7 @@ internal class EventRepositoryImpl @Inject constructor(
             throw e
         }
     }
+
     companion object {
         private const val INITIAL_LOAD_SIZE = 10
     }

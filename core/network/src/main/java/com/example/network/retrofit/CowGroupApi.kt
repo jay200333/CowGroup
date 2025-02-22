@@ -22,7 +22,10 @@ interface CowGroupApi {
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingEventResponse>
 
     @POST("/bookmarks/{event-id}")
-    suspend fun updateBookmark(@Path("event-id") eventId: Int): Response<Any>
+    suspend fun addBookmark(@Path("event-id") eventId: Int): ApiResponse<Unit>
+
+    @PATCH("/bookmarks/{event-id}")
+    suspend fun deleteBookmark(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
     @POST("/users/signUp")
     suspend fun signUp(@Body signUpInfo: SignUpInfo): ApiResponse<Unit>
