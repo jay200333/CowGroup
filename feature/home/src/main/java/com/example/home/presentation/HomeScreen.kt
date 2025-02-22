@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -30,7 +31,7 @@ import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
 import com.example.model.Event
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun HomeScreen(
@@ -42,9 +43,7 @@ fun HomeScreen(
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
-    val pagingEvents = remember(uiState.eventList) {
-        flow { emit(uiState.eventList) }
-    }.collectAsLazyPagingItems()
+    val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
 
     HomeScreen(
         onLogoutButtonClick = viewModel::logout,
@@ -55,7 +54,6 @@ fun HomeScreen(
                 eventId,
                 isBookmarked
             )
-            pagingEvents.refresh()
         },
         eventList = pagingEvents,
         snackBarHostState = snackBarHostState,
@@ -82,6 +80,7 @@ fun HomeScreen(
     eventList: LazyPagingItems<Event>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    val listState = rememberLazyListState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { HomeScreenSearchBar(onLogoutButtonClick, R.drawable.baseline_login_24) },
@@ -105,6 +104,7 @@ fun HomeScreen(
             if (eventList.itemCount != 0) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
+                    state = listState
                 ) {
                     items(eventList.itemCount, key = eventList.itemKey { it.id })
                     { index ->

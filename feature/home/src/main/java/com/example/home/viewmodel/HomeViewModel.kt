@@ -57,7 +57,7 @@ class HomeViewModel @Inject constructor(
                 _homeUIState.update {
                     it.copy(
                         isLoading = false,
-                        message = "북마크 업데이트가 되었습니다.",
+                        message = "북마크가 업데이트 되었습니다.",
                         eventList = it.eventList.map { event ->
                             if (event.id == eventId) {
                                 event.copy(isBookmarked = isBookmarked.not())
