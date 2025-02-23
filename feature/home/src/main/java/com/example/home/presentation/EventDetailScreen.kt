@@ -14,10 +14,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +41,8 @@ fun EventDetailScreen(
     viewModel: EventDetailViewModel = hiltViewModel(),
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
 
@@ -45,7 +51,15 @@ fun EventDetailScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         detailEvent = uiState.detailEvent,
+        snackBarHostState = snackBarHostState,
     )
+
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
 }
 
 @Composable
@@ -54,14 +68,13 @@ fun EventDetailScreen(
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
     detailEvent: DetailEvent,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    //var isBookMarked by remember { mutableStateOf(false) }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = {},
+                title = {Text(text = "상세 보기")},
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
@@ -81,11 +94,13 @@ fun EventDetailScreen(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding).padding(16.dp),
+                .padding(innerPadding)
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
@@ -93,10 +108,17 @@ fun EventDetailScreen(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
-            Text(text = detailEvent.category, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+            Text(
+                text = detailEvent.category,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray
+            )
             Text(text = detailEvent.eventDate, style = MaterialTheme.typography.labelMedium)
             Button(onClick = {}) {
-                Icon(painter = painterResource(R.drawable.baseline_gps_fixed_24), contentDescription = "btn_event_detail_map")
+                Icon(
+                    painter = painterResource(R.drawable.baseline_gps_fixed_24),
+                    contentDescription = "btn_event_detail_map"
+                )
                 Text(text = "지도로 보기", modifier = Modifier.padding(start = 8.dp))
             }
             Text(text = detailEvent.content, style = MaterialTheme.typography.bodyMedium)
@@ -106,7 +128,12 @@ fun EventDetailScreen(
                 Text(text = "전체 참여자 목록 보기")
             }
             Spacer(modifier = Modifier.weight(1f))
-            Button(onClick = {}, modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
+            Button(
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+            ) {
                 Text(text = "참석 하기")
             }
         }
@@ -119,5 +146,20 @@ fun EventDetailPreview() {
     EventDetailScreen(
         onMemberButtonClick = {},
         onNavigationButtonClick = {},
+        onBookmarkButtonClick = {},
+        detailEvent = DetailEvent(
+            id = 0,
+            name = "test",
+            author = "android",
+            category = "Sports",
+            createdDate = "2025-10-25",
+            address = "주소",
+            location = "장소",
+            content = "내용",
+            eventDate = "2025-10-28",
+            capacity = 100,
+            applicants = 20,
+            isBookmarked = false
+        )
     )
 }

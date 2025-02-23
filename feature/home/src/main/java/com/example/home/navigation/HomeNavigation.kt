@@ -61,6 +61,8 @@ fun NavGraphBuilder.homeNavGraph(
     }
     composable<EventDetailRoute> {
         EventDetailScreen(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onMemberButtonClick = onMemberButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
         )
