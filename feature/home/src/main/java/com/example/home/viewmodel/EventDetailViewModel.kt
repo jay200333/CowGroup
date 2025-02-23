@@ -85,6 +85,34 @@ class EventDetailViewModel @Inject constructor(
         }
     }
 
+    fun joinEvent() {
+        viewModelScope.launch {
+            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            try {
+                eventRepository.joinEvent(eventId)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "모임에 참여 되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "참여에 실패했습니다." //errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _eventDetailUIState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
     fun updateBookmark(isBookmarked: Boolean) {
         viewModelScope.launch {
             _eventDetailUIState.update { it.copy(isLoading = true, message = "") }

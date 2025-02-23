@@ -50,6 +50,7 @@ fun EventDetailScreen(
         onMemberButtonClick = onMemberButtonClick,
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
+        onJoinButtonClick = viewModel::joinEvent,
         detailEvent = uiState.detailEvent,
         snackBarHostState = snackBarHostState,
     )
@@ -65,6 +66,7 @@ fun EventDetailScreen(
 @Composable
 fun EventDetailScreen(
     onMemberButtonClick: () -> Unit,
+    onJoinButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
     detailEvent: DetailEvent,
@@ -129,7 +131,7 @@ fun EventDetailScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = {},
+                onClick = onJoinButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
@@ -145,6 +147,7 @@ fun EventDetailScreen(
 fun EventDetailPreview() {
     EventDetailScreen(
         onMemberButtonClick = {},
+        onJoinButtonClick = {},
         onNavigationButtonClick = {},
         onBookmarkButtonClick = {},
         detailEvent = DetailEvent(

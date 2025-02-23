@@ -44,6 +44,9 @@ interface CowGroupApi {
     @POST("/events")
     suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
 
+    @POST("/events/{event-id}/join")
+    suspend fun joinEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
+
     @GET("/events/{event-id}")
     suspend fun getEventDetail(@Path("event-id") eventId: Int): ApiResponse<DetailEventResponse>
 
