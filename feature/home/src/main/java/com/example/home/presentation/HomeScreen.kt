@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.map
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogoutButtonClick: () -> Unit,
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
     onCreateMeetingClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
@@ -47,7 +47,7 @@ fun HomeScreen(
 
     HomeScreen(
         onLogoutButtonClick = viewModel::logout,
-        onEventClick = onEventClick,
+        onEventClick = { eventId -> onEventClick(eventId) },
         onCreateMeetingClick = onCreateMeetingClick,
         onBookMarkClick = { eventId, isBookmarked ->
             viewModel.updateBookmark(
@@ -74,7 +74,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     onLogoutButtonClick: () -> Unit,
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
     eventList: LazyPagingItems<Event>,
@@ -112,7 +112,7 @@ fun HomeScreen(
                         if (event != null) {
                             HomeItem(
                                 event = event,
-                                onEventClick = onEventClick,
+                                onEventClick = { onEventClick(event.id) },
                                 onBookMarkClick = {
                                     onBookMarkClick(
                                         event.id,

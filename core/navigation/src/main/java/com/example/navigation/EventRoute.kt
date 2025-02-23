@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data object CreateMeetingRoute
 
 @Serializable
-data object EventDetailRoute
+data class EventDetailRoute(val eventId: Int)
 
 @Serializable
 data object MemberRoute

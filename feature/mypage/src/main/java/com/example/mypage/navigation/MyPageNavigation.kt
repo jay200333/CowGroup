@@ -27,7 +27,7 @@ fun NavController.navigateSetting() {
 fun NavGraphBuilder.myPageNavGraph(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
@@ -35,7 +35,7 @@ fun NavGraphBuilder.myPageNavGraph(
 ) {
     composable<MyPageScreenRoute> {
         MyPageScreen(
-            onEventClick = onEventClick,
+            onEventClick = { eventId -> onEventClick(eventId) },
             onEditProfileButtonClick = onEditProfileButtonClick,
             onSettingButtonClick = onSettingButtonClick,
         )

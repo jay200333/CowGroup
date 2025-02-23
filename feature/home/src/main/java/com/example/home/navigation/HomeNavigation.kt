@@ -22,8 +22,8 @@ fun NavController.navigateCreateMeeting() {
     navigate(CreateMeetingRoute)
 }
 
-fun NavController.navigateEventDetail() {
-    navigate(EventDetailRoute)
+fun NavController.navigateEventDetail(eventId: Int) {
+    navigate(EventDetailRoute(eventId))
 }
 
 fun NavController.navigateMember() {
@@ -34,7 +34,7 @@ fun NavGraphBuilder.homeNavGraph(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
     onCreateMeetingClick: () -> Unit,
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
@@ -46,7 +46,7 @@ fun NavGraphBuilder.homeNavGraph(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
             onLogoutButtonClick = onLogoutButtonClick,
-            onEventClick = onEventClick,
+            onEventClick = { eventId -> onEventClick(eventId) },
             onCreateMeetingClick = onCreateMeetingClick,
         )
     }

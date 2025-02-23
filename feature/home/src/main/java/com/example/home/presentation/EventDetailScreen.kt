@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,13 +28,32 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.MarkButton
 import com.example.home.R
+import com.example.home.viewmodel.EventDetailUIState
+import com.example.home.viewmodel.EventDetailViewModel
+
+@Composable
+fun EventDetailScreen(
+    viewModel: EventDetailViewModel = hiltViewModel(),
+    onMemberButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
+) {
+    val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
+
+    EventDetailScreen(
+        onMemberButtonClick = onMemberButtonClick,
+        onNavigationButtonClick = onNavigationButtonClick,
+        uiState = uiState,
+    )
+}
 
 @Composable
 fun EventDetailScreen(
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
+    uiState: EventDetailUIState,
 ) {
     var isBookMarked by remember { mutableStateOf(false) }
     val totalMember: Int = 10
