@@ -85,6 +85,33 @@ class EventDetailViewModel @Inject constructor(
         }
     }
 
+    fun updateBookmark(isBookmarked: Boolean) {
+        viewModelScope.launch {
+            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            try {
+                eventRepository.updateBookmark(eventId, isBookmarked)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "북마크가 업데이트 되었습니다.",
+                        detailEvent = it.detailEvent.copy(isBookmarked = isBookmarked.not())
+                    )
+                }
+            } catch (e: HttpException) {
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "북마크 업데이트에 실패했습니다."
+                    )
+                }
+            } catch (e: Exception) {
+                _eventDetailUIState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
     fun setMessageClear() {
         _eventDetailUIState.update { state ->
             state.copy(message = "")

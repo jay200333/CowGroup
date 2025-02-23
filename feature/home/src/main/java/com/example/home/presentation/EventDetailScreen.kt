@@ -18,9 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +43,7 @@ fun EventDetailScreen(
     EventDetailScreen(
         onMemberButtonClick = onMemberButtonClick,
         onNavigationButtonClick = onNavigationButtonClick,
+        onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         detailEvent = uiState.detailEvent,
     )
 }
@@ -54,9 +52,10 @@ fun EventDetailScreen(
 fun EventDetailScreen(
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
+    onBookmarkButtonClick: (Boolean) -> Unit,
     detailEvent: DetailEvent,
 ) {
-    var isBookMarked by remember { mutableStateOf(false) }
+    //var isBookMarked by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -71,11 +70,11 @@ fun EventDetailScreen(
                         )
                     }
                 },
-                // bookMark 상태 값 반영해야함
+
                 actions = {
                     MarkButton(
                         isMarked = detailEvent.isBookmarked,
-                        onMarkClick = { isBookMarked = it },
+                        onMarkClick = { onBookmarkButtonClick(detailEvent.isBookmarked) },
                         markedIconId = R.drawable.baseline_bookmarks_24,
                         unMarkedIconId = R.drawable.baseline_bookmarks_24,
                     )
