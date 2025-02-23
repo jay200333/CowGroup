@@ -5,7 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.data.paging.EventPagingSource
 import com.example.model.CreateEvent
+import com.example.model.DetailEvent
 import com.example.model.Event
+import com.example.network.model.toDetailEvent
 import com.example.network.model.toEvent
 import com.example.network.retrofit.CowGroupApi
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +37,18 @@ internal class EventRepositoryImpl @Inject constructor(
             val events = networkEvents.data.content.map { it.toEvent() }
             emit(events)
         } catch (e: IOException) {
+            throw e
+        }
+    }
+
+    override suspend fun getEventDetail(eventId: Int): Flow<DetailEvent> = flow {
+        try {
+            val response = api.getEventDetail(eventId)
+            val detailEvent = response.data.toDetailEvent()
+            emit(detailEvent)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
             throw e
         }
     }
