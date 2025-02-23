@@ -84,4 +84,10 @@ class EventDetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun setMessageClear() {
+        _eventDetailUIState.update { state ->
+            state.copy(message = "")
+        }
+    }
 }

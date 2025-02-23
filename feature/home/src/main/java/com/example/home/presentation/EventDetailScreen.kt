@@ -33,6 +33,7 @@ import com.example.designsystem.MarkButton
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
+import com.example.model.DetailEvent
 
 @Composable
 fun EventDetailScreen(
@@ -45,7 +46,7 @@ fun EventDetailScreen(
     EventDetailScreen(
         onMemberButtonClick = onMemberButtonClick,
         onNavigationButtonClick = onNavigationButtonClick,
-        uiState = uiState,
+        detailEvent = uiState.detailEvent,
     )
 }
 
@@ -53,18 +54,15 @@ fun EventDetailScreen(
 fun EventDetailScreen(
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
-    uiState: EventDetailUIState,
+    detailEvent: DetailEvent,
 ) {
     var isBookMarked by remember { mutableStateOf(false) }
-    val totalMember: Int = 10
-    val currentMember: Int = 5
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
@@ -76,7 +74,7 @@ fun EventDetailScreen(
                 // bookMark 상태 값 반영해야함
                 actions = {
                     MarkButton(
-                        isMarked = true,
+                        isMarked = detailEvent.isBookmarked,
                         onMarkClick = { isBookMarked = it },
                         markedIconId = R.drawable.baseline_bookmarks_24,
                         unMarkedIconId = R.drawable.baseline_bookmarks_24,
@@ -92,19 +90,19 @@ fun EventDetailScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = "이벤트 제목",
+                text = detailEvent.name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
-            Text(text = "카테고리1", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-            Text(text = "2024-12-27.01:22", style = MaterialTheme.typography.labelMedium)
+            Text(text = detailEvent.category, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+            Text(text = detailEvent.eventDate, style = MaterialTheme.typography.labelMedium)
             Button(onClick = {}) {
                 Icon(painter = painterResource(R.drawable.baseline_gps_fixed_24), contentDescription = "btn_event_detail_map")
                 Text(text = "지도로 보기", modifier = Modifier.padding(start = 8.dp))
             }
-            Text(text = "같이 운동하실 분 구합니다.\n같이 프레스 운동하면서 서로 보조해주실 분 구합니다.", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "정원 : ${totalMember}명")
-            Text(text = "참여 인원 : ${currentMember}명")
+            Text(text = detailEvent.content, style = MaterialTheme.typography.bodyMedium)
+            Text(text = "정원 : ${detailEvent.capacity}명")
+            Text(text = "참여 인원 : ${detailEvent.applicants}명")
             Button(onClick = onMemberButtonClick) {
                 Text(text = "전체 참여자 목록 보기")
             }
