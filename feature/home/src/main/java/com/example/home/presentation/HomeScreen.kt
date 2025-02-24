@@ -30,6 +30,7 @@ import com.example.home.component.HomeItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
+import com.example.model.CreateEvent
 import com.example.model.Event
 import kotlinx.coroutines.flow.map
 
@@ -38,17 +39,25 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
-    onCreateMeetingClick: () -> Unit,
+    onCreateMeetingClick: (Boolean, CreateEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
     val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
+    val createEvent: CreateEvent = CreateEvent(
+        name = "",
+        category = "",
+        location = "",
+        eventDate = "",
+        capacity = 0,
+        content = "",
+    )
 
     HomeScreen(
         onLogoutButtonClick = viewModel::logout,
         onEventClick = { eventId -> onEventClick(eventId) },
-        onCreateMeetingClick = onCreateMeetingClick,
+        onCreateMeetingClick = { onCreateMeetingClick(false, createEvent) },
         onBookMarkClick = { eventId, isBookmarked ->
             viewModel.updateBookmark(
                 eventId,

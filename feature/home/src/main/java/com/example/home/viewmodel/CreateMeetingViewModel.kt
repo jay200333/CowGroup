@@ -1,5 +1,6 @@
 package com.example.home.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.EventRepository
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -35,10 +37,31 @@ data class CreateMeetingUIState(
 @HiltViewModel
 class CreateMeetingViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _createMeetingUIState: MutableStateFlow<CreateMeetingUIState> =
         MutableStateFlow(CreateMeetingUIState())
     val createMeetingUIState: StateFlow<CreateMeetingUIState> = _createMeetingUIState.asStateFlow()
+    private val isEditMode: Boolean =
+        requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
+    private val event: CreateEvent = requireNotNull(
+        savedStateHandle.get<String>("event")
+            ?.let { string -> Json.decodeFromString<CreateEvent>(string) }) { "event is required." }
+
+    init {
+        checkEditMode()
+    }
+
+    private fun checkEditMode() {
+        _createMeetingUIState.update { state ->
+            state.copy(isEditMode = isEditMode)
+        }
+        if (isEditMode) {
+            _createMeetingUIState.update { state ->
+                state.copy(createEvent = event)
+            }
+        }
+    }
 
     fun createMeeting() {
         viewModelScope.launch {

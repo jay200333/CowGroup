@@ -2,12 +2,15 @@ package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
@@ -34,6 +37,7 @@ import com.example.designsystem.MarkButton
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
+import com.example.model.CreateEvent
 import com.example.model.DetailEvent
 
 @Composable
@@ -41,16 +45,29 @@ fun EventDetailScreen(
     viewModel: EventDetailViewModel = hiltViewModel(),
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
+    onEditButtonClick: (Boolean, CreateEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
+    val event = with(uiState.detailEvent) {
+        CreateEvent(
+            name = name,
+            category = category,
+            location = location,
+            eventDate = eventDate,
+            capacity = capacity,
+            content = content
+        )
+    }
 
     EventDetailScreen(
         onMemberButtonClick = onMemberButtonClick,
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::joinEvent,
+        onDeleteButtonClick = {},
+        onEditButtonClick = { onEditButtonClick(true, event) },
         detailEvent = uiState.detailEvent,
         snackBarHostState = snackBarHostState,
     )
@@ -69,6 +86,8 @@ fun EventDetailScreen(
     onJoinButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
+    onDeleteButtonClick: () -> Unit,
+    onEditButtonClick: () -> Unit,
     detailEvent: DetailEvent,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -76,7 +95,7 @@ fun EventDetailScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = {Text(text = "상세 보기")},
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
@@ -87,13 +106,28 @@ fun EventDetailScreen(
                 },
 
                 actions = {
-                    MarkButton(
-                        isMarked = detailEvent.isBookmarked,
-                        onMarkClick = { onBookmarkButtonClick(detailEvent.isBookmarked) },
-                        markedIconId = R.drawable.baseline_bookmarks_24,
-                        unMarkedIconId = R.drawable.baseline_bookmarks_24,
-                    )
-                },
+                    Row {
+                        IconButton(onClick = onDeleteButtonClick) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "btn_event_detail_delete"
+                            )
+                        }
+
+                        IconButton(onClick = onEditButtonClick) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "btn_event_detail_edit"
+                            )
+                        }
+                        MarkButton(
+                            isMarked = detailEvent.isBookmarked,
+                            onMarkClick = { onBookmarkButtonClick(detailEvent.isBookmarked) },
+                            markedIconId = R.drawable.baseline_bookmarks_24,
+                            unMarkedIconId = R.drawable.baseline_bookmarks_24,
+                        )
+                    }
+                }
             )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
@@ -150,6 +184,8 @@ fun EventDetailPreview() {
         onJoinButtonClick = {},
         onNavigationButtonClick = {},
         onBookmarkButtonClick = {},
+        onDeleteButtonClick = {},
+        onEditButtonClick = {},
         detailEvent = DetailEvent(
             id = 0,
             name = "test",
