@@ -21,6 +21,7 @@ import javax.inject.Inject
 data class EventDetailUIState(
     val isLoading: Boolean = false,
     val isLogout: Boolean = false,
+    val isDeleteSuccess: Boolean = false,
     val detailEvent: DetailEvent = DetailEvent(
         id = 0,
         name = "",
@@ -56,15 +57,13 @@ class EventDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _eventDetailUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                eventRepository.getEventDetail(eventId)
-                    .collect { detailEvent ->
-                        _eventDetailUIState.update { state ->
-                            state.copy(
-                                detailEvent = detailEvent,
-                                isLoading = false
-                            )
-                        }
-                    }
+                val detailEvent = eventRepository.getEventDetail(eventId)
+                _eventDetailUIState.update { state ->
+                    state.copy(
+                        detailEvent = detailEvent,
+                        isLoading = false
+                    )
+                }
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
@@ -103,6 +102,35 @@ class EventDetailViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         message = "참여에 실패했습니다." //errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _eventDetailUIState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
+    fun deleteEvent() {
+        viewModelScope.launch {
+            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            try {
+                eventRepository.deleteEvent(eventId)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        isDeleteSuccess = true,
+                        message = "모임이 성공적으로 삭제되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "모임 삭제에 실패했습니다." //errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {

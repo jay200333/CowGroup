@@ -48,6 +48,7 @@ import com.example.model.DetailEvent
 @Composable
 fun EventDetailScreen(
     viewModel: EventDetailViewModel = hiltViewModel(),
+    onDeleteMeetingSuccess: () -> Unit,
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onEditButtonClick: (Int, Boolean, CreateEvent) -> Unit,
@@ -71,7 +72,7 @@ fun EventDetailScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::joinEvent,
-        onDeleteButtonClick = {},
+        onDeleteButtonClick = viewModel::deleteEvent,
         onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true, event) },
         detailEvent = uiState.detailEvent,
         snackBarHostState = snackBarHostState,
@@ -81,6 +82,9 @@ fun EventDetailScreen(
         if (uiState.message.isNotEmpty()) {
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
+        }
+        if (uiState.isDeleteSuccess) {
+            onDeleteMeetingSuccess()
         }
         viewModel.getEventDetail()
     }

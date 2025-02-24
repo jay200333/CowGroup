@@ -11,6 +11,7 @@ import com.example.network.model.PagingEventResponse
 import com.example.network.model.ProfileResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.PATCH
@@ -49,6 +50,9 @@ interface CowGroupApi {
 
     @GET("/events/{event-id}")
     suspend fun getEventDetail(@Path("event-id") eventId: Int): ApiResponse<DetailEventResponse>
+
+    @DELETE("/events/{event-id}")
+    suspend fun deleteEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
     @PATCH("/events/{event-id}")
     suspend fun editEvent(@Path("event-id") eventId: Int, @Body createEvent: CreateEvent): ApiResponse<Unit>

@@ -41,17 +41,16 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEventDetail(eventId: Int): Flow<DetailEvent> = flow {
+    override suspend fun getEventDetail(eventId: Int): DetailEvent =
         try {
             val response = api.getEventDetail(eventId)
             val detailEvent = response.data.toDetailEvent()
-            emit(detailEvent)
+            detailEvent
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {
             throw e
         }
-    }
 
     override suspend fun joinEvent(eventId: Int) {
         try {
@@ -66,6 +65,16 @@ internal class EventRepositoryImpl @Inject constructor(
     override suspend fun editEvent(eventId: Int, event: CreateEvent) {
         try {
             api.editEvent(eventId, event)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun deleteEvent(eventId: Int) {
+        try {
+            api.deleteEvent(eventId)
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

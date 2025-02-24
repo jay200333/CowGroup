@@ -45,6 +45,7 @@ fun NavGraphBuilder.homeNavGraph(
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: () -> Unit,
     onEditMeetingSuccess: () -> Unit,
+    onDeleteMeetingSuccess: () -> Unit,
 ) {
     composable<HomeScreenRoute> {
         HomeScreen(
@@ -73,6 +74,7 @@ fun NavGraphBuilder.homeNavGraph(
             onMemberButtonClick = onMemberButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
             onEditButtonClick = { eventId, isEditMode, event -> onCreateMeetingClick(eventId, isEditMode, event) },
+            onDeleteMeetingSuccess = onDeleteMeetingSuccess
         )
     }
     composable<MemberRoute> {
