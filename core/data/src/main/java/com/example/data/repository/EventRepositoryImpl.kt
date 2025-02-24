@@ -63,6 +63,16 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun editEvent(eventId: Int, event: CreateEvent) {
+        try {
+            api.editEvent(eventId, event)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     override suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean) {
         try {
             if (isBookmarked) {

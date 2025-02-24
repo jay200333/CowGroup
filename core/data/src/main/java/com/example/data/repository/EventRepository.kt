@@ -18,4 +18,6 @@ interface EventRepository {
     suspend fun getEventDetail(eventId: Int): Flow<DetailEvent>
 
     suspend fun joinEvent(eventId: Int)
+
+    suspend fun editEvent(eventId: Int, event: CreateEvent)
 }

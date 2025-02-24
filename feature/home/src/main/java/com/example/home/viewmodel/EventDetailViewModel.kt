@@ -52,7 +52,7 @@ class EventDetailViewModel @Inject constructor(
         getEventDetail()
     }
 
-    private fun getEventDetail() {
+    fun getEventDetail() {
         viewModelScope.launch {
             _eventDetailUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {

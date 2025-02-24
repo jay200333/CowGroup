@@ -4,7 +4,7 @@ import com.example.model.CreateEvent
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateMeetingRoute(val isEditMode: Boolean, val event: CreateEvent)
+data class CreateMeetingRoute(val eventId: Int, val isEditMode: Boolean, val event: CreateEvent)
 
 @Serializable
 data class EventDetailRoute(val eventId: Int)

@@ -45,7 +45,7 @@ fun EventDetailScreen(
     viewModel: EventDetailViewModel = hiltViewModel(),
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
-    onEditButtonClick: (Boolean, CreateEvent) -> Unit,
+    onEditButtonClick: (Int, Boolean, CreateEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -67,7 +67,7 @@ fun EventDetailScreen(
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::joinEvent,
         onDeleteButtonClick = {},
-        onEditButtonClick = { onEditButtonClick(true, event) },
+        onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true, event) },
         detailEvent = uiState.detailEvent,
         snackBarHostState = snackBarHostState,
     )
@@ -77,6 +77,7 @@ fun EventDetailScreen(
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
         }
+        viewModel.getEventDetail()
     }
 }
 

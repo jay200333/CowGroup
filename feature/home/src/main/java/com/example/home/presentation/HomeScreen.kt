@@ -39,13 +39,13 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
-    onCreateMeetingClick: (Boolean, CreateEvent) -> Unit,
+    onCreateMeetingClick: (Int, Boolean, CreateEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
     val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
-    val createEvent: CreateEvent = CreateEvent(
+    val createEvent = CreateEvent(
         name = "",
         category = "",
         location = "",
@@ -57,7 +57,7 @@ fun HomeScreen(
     HomeScreen(
         onLogoutButtonClick = viewModel::logout,
         onEventClick = { eventId -> onEventClick(eventId) },
-        onCreateMeetingClick = { onCreateMeetingClick(false, createEvent) },
+        onCreateMeetingClick = { onCreateMeetingClick(0, false, createEvent) },
         onBookMarkClick = { eventId, isBookmarked ->
             viewModel.updateBookmark(
                 eventId,

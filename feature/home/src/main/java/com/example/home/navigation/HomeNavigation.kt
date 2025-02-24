@@ -23,8 +23,8 @@ fun NavController.navigateHome() {
     }
 }
 
-fun NavController.navigateCreateMeeting(isEditMode: Boolean, event: CreateEvent) {
-    navigate(CreateMeetingRoute(isEditMode, event))
+fun NavController.navigateCreateMeeting(eventId: Int, isEditMode: Boolean, event: CreateEvent) {
+    navigate(CreateMeetingRoute(eventId, isEditMode, event))
 }
 
 fun NavController.navigateEventDetail(eventId: Int) {
@@ -40,7 +40,7 @@ fun NavGraphBuilder.homeNavGraph(
     onShowSnackBar: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
-    onCreateMeetingClick: (Boolean, CreateEvent) -> Unit,
+    onCreateMeetingClick: (Int, Boolean, CreateEvent) -> Unit,
     onMemberButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: () -> Unit,
@@ -52,7 +52,7 @@ fun NavGraphBuilder.homeNavGraph(
             onShowSnackBar = onShowSnackBar,
             onLogoutButtonClick = onLogoutButtonClick,
             onEventClick = { eventId -> onEventClick(eventId) },
-            onCreateMeetingClick = {  isEditMode, event -> onCreateMeetingClick(isEditMode, event) },
+            onCreateMeetingClick = { eventId, isEditMode, event -> onCreateMeetingClick(eventId, isEditMode, event) },
         )
     }
     composable<CreateMeetingRoute>(
@@ -72,7 +72,7 @@ fun NavGraphBuilder.homeNavGraph(
             onShowSnackBar = onShowSnackBar,
             onMemberButtonClick = onMemberButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
-            onEditButtonClick = { isEditMode, event -> onCreateMeetingClick(isEditMode, event) },
+            onEditButtonClick = { eventId, isEditMode, event -> onCreateMeetingClick(eventId, isEditMode, event) },
         )
     }
     composable<MemberRoute> {

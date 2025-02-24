@@ -42,6 +42,8 @@ class CreateMeetingViewModel @Inject constructor(
     private val _createMeetingUIState: MutableStateFlow<CreateMeetingUIState> =
         MutableStateFlow(CreateMeetingUIState())
     val createMeetingUIState: StateFlow<CreateMeetingUIState> = _createMeetingUIState.asStateFlow()
+    private val eventId: Int =
+        requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
     private val isEditMode: Boolean =
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
     private val event: CreateEvent = requireNotNull(
@@ -97,18 +99,32 @@ class CreateMeetingViewModel @Inject constructor(
 
     fun editMeeting() {
         viewModelScope.launch {
-            _createMeetingUIState.value =
-                _createMeetingUIState.value.copy(isLoading = true, message = "")
+            _createMeetingUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                _createMeetingUIState.value = _createMeetingUIState.value.copy(
-                    isLoading = false,
-                    isEditMeetingSuccess = true,
-                )
+                eventRepository.editEvent(eventId, createMeetingUIState.value.createEvent)
+                _createMeetingUIState.update { state ->
+                    state.copy(
+                        isCreateMeetingSuccess = true,
+                        isLoading = false,
+                        message = "모임 수정이 완료되었습니다.",
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _createMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "모임 수정이 실패하였습니다."//errorResponse.errors.message,
+                    )
+                }
             } catch (e: Exception) {
-                _createMeetingUIState.value = _createMeetingUIState.value.copy(
-                    isLoading = false,
-                    message = "알 수 없는 오류가 발생했습니다.",
-                )
+                _createMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
             }
         }
     }

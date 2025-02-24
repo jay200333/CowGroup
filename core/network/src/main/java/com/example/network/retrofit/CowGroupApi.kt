@@ -50,6 +50,9 @@ interface CowGroupApi {
     @GET("/events/{event-id}")
     suspend fun getEventDetail(@Path("event-id") eventId: Int): ApiResponse<DetailEventResponse>
 
+    @PATCH("/events/{event-id}")
+    suspend fun editEvent(@Path("event-id") eventId: Int, @Body createEvent: CreateEvent): ApiResponse<Unit>
+
     @POST("/bookmarks/{event-id}")
     suspend fun addBookmark(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
