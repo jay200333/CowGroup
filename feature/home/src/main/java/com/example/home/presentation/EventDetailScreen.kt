@@ -30,14 +30,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.designsystem.CowGroupDialog
 import com.example.designsystem.MarkButton
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
@@ -56,6 +60,7 @@ fun EventDetailScreen(
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
     val event = with(uiState.detailEvent) {
         CreateEvent(
             name = name,
@@ -72,9 +77,15 @@ fun EventDetailScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::joinEvent,
-        onDeleteButtonClick = viewModel::deleteEvent,
+        onDeleteButtonClick = { showDialog = true },
         onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true, event) },
         detailEvent = uiState.detailEvent,
+        showDialog = showDialog,
+        onDismissDialog = { showDialog = false },
+        onConfirmDialog = {
+            viewModel.deleteEvent()
+            showDialog = false
+        },
         snackBarHostState = snackBarHostState,
     )
 
@@ -99,8 +110,13 @@ fun EventDetailScreen(
     onDeleteButtonClick: () -> Unit,
     onEditButtonClick: () -> Unit,
     detailEvent: DetailEvent,
+    showDialog: Boolean,
+    onDismissDialog: () -> Unit,
+    onConfirmDialog: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -145,6 +161,24 @@ fun EventDetailScreen(
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
+        if (showDialog) {
+            CowGroupDialog(
+                title = "모임 삭제",
+                confirmButtonMessage = "확인",
+                dismissButtonMessage = "취소",
+                onDismissRequest = onDismissDialog,
+                onDismiss = onDismissDialog,
+                content = {
+                    Text(
+                        text = "정말 모임을 삭제하시겠습니까?",
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center
+                    )
+                },
+                onConfirm = onConfirmDialog
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -200,14 +234,18 @@ fun EventDetailScreen(
                 }
             }
 
-           Card(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp),
-               shape = MaterialTheme.shapes.large,
-               elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+                shape = MaterialTheme.shapes.large,
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
                     Text(
                         "모임 내용",
                         style = MaterialTheme.typography.titleMedium,
@@ -284,6 +322,9 @@ fun EventDetailPreview() {
             capacity = 100,
             applicants = 20,
             isBookmarked = false
-        )
+        ),
+        showDialog = false,
+        onDismissDialog = {},
+        onConfirmDialog = {}
     )
 }
