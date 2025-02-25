@@ -88,15 +88,22 @@ fun EventDetailScreen(
         },
         snackBarHostState = snackBarHostState,
     )
+    LaunchedEffect(uiState.isDeleteSuccess) {
+        if (uiState.isDeleteSuccess) {
+            onDeleteMeetingSuccess()
+            viewModel.setDeleteState(false)
+            return@LaunchedEffect
+        }
+    }
 
     LaunchedEffect(uiState) {
         if (uiState.message.isNotEmpty()) {
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
         }
-        if (uiState.isDeleteSuccess) {
-            onDeleteMeetingSuccess()
-        }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.getEventDetail()
     }
 }

@@ -168,6 +168,14 @@ class EventDetailViewModel @Inject constructor(
         }
     }
 
+    fun setDeleteState(deleteState: Boolean) {
+        viewModelScope.launch {
+            _eventDetailUIState.update { state ->
+                state.copy(isDeleteSuccess = deleteState)
+            }
+        }
+    }
+
     fun setMessageClear() {
         _eventDetailUIState.update { state ->
             state.copy(message = "")
