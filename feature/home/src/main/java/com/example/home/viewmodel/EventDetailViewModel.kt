@@ -28,7 +28,6 @@ data class EventDetailUIState(
         author = "",
         category = "",
         createdDate = "",
-        address = "",
         location = "",
         content = "",
         eventDate = "",

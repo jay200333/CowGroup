@@ -322,7 +322,6 @@ fun EventDetailPreview() {
             author = "android",
             category = "Sports",
             createdDate = "2025-10-25",
-            address = "주소",
             location = "장소",
             content = "내용",
             eventDate = "2025-10-28",

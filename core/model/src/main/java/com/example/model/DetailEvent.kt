@@ -6,7 +6,6 @@ data class DetailEvent(
     val author: String,
     val category: String,
     val createdDate: String,
-    val address: String,
     val location: String,
     val content: String,
     val eventDate: String,
