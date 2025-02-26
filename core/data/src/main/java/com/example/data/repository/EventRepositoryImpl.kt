@@ -52,9 +52,13 @@ internal class EventRepositoryImpl @Inject constructor(
             throw e
         }
 
-    override suspend fun joinEvent(eventId: Int) {
+    override suspend fun updateJoinEvent(eventId: Int, hasJoined: Boolean) {
         try {
-            api.joinEvent(eventId)
+            if (hasJoined) {
+                api.unJoinEvent(eventId)
+            } else {
+                api.joinEvent(eventId)
+            }
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

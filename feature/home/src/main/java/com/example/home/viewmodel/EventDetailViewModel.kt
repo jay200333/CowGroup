@@ -33,7 +33,9 @@ data class EventDetailUIState(
         eventDate = "",
         capacity = 0,
         applicants = 0,
-        isBookmarked = false
+        isBookmarked = false,
+        editRights = false,
+        isParticipated = false
     ),
     val message: String = "",
 )
@@ -83,15 +85,16 @@ class EventDetailViewModel @Inject constructor(
         }
     }
 
-    fun joinEvent() {
+    fun updateJoinEvent() {
         viewModelScope.launch {
             _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
             try {
-                eventRepository.joinEvent(eventId)
+                eventRepository.updateJoinEvent(eventId, _eventDetailUIState.value.detailEvent.isParticipated)
                 _eventDetailUIState.update {
                     it.copy(
                         isLoading = false,
-                        message = "모임에 참여 되었습니다."
+                        detailEvent = it.detailEvent.copy(isParticipated = it.detailEvent.isParticipated.not()),
+                        message = "모임 참석 여부가 업데이트 되었습니다."
                     )
                 }
             } catch (e: HttpException) {
@@ -100,7 +103,7 @@ class EventDetailViewModel @Inject constructor(
                 _eventDetailUIState.update {
                     it.copy(
                         isLoading = false,
-                        message = "참여에 실패했습니다." //errorResponse.errors.message
+                        message = "업데이트에 실패했습니다." //errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {

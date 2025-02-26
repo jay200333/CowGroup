@@ -17,7 +17,7 @@ interface EventRepository {
 
     suspend fun getEventDetail(eventId: Int): DetailEvent
 
-    suspend fun joinEvent(eventId: Int)
+    suspend fun updateJoinEvent(eventId: Int, hasJoined: Boolean)
 
     suspend fun editEvent(eventId: Int, event: CreateEvent)
 

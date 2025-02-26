@@ -76,7 +76,7 @@ fun EventDetailScreen(
         onMemberButtonClick = onMemberButtonClick,
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
-        onJoinButtonClick = viewModel::joinEvent,
+        onJoinButtonClick = viewModel::updateJoinEvent,
         onDeleteButtonClick = { showDialog = true },
         onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true, event) },
         detailEvent = uiState.detailEvent,
@@ -298,9 +298,15 @@ fun EventDetailScreen(
                 onClick = onJoinButtonClick,
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (detailEvent.isParticipated) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                )
             ) {
-                Text(text = "참석하기", color = Color.White)
+                Text(text = if (detailEvent.isParticipated) "나가기" else "참석하기", color = Color.White)
             }
         }
     }
@@ -327,7 +333,9 @@ fun EventDetailPreview() {
             eventDate = "2025-10-28",
             capacity = 100,
             applicants = 20,
-            isBookmarked = false
+            isBookmarked = false,
+            editRights = false,
+            isParticipated = false
         ),
         showDialog = false,
         onDismissDialog = {},
