@@ -7,14 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,52 +27,65 @@ import com.example.model.Event
 
 @Composable
 fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
-            .clickable { onEventClick() },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .clickable { onEventClick() },
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = event.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = DateUtil.timeAgoFromISOString(event.createdDate),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = event.author,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.labelMedium
+                )
+                MarkButton(
+                    isMarked = event.isBookmarked,
+                    onMarkClick = { isBookMarked -> onBookMarkClick(isBookMarked) },
+                    markedIconId = R.drawable.baseline_bookmarks_24,
+                    unMarkedIconId = R.drawable.baseline_bookmarks_24,
+                )
+            }
             Text(
-                text = event.name,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(text = DateUtil.timeAgoFromISOString(event.createdDate), style = MaterialTheme.typography.labelSmall)
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
                 text = event.content,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,
             )
-            MarkButton(
-                isMarked = event.isBookmarked,
-                onMarkClick = { isBookMarked -> onBookMarkClick(isBookMarked) },
-                markedIconId = R.drawable.baseline_bookmarks_24,
-                unMarkedIconId = R.drawable.baseline_bookmarks_24,
-            )
-        }
 
-        Text(
-            text = "이벤트 일시",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(text = event.eventDate, style = MaterialTheme.typography.labelMedium)
-        MemberTab(event.capacities, event.participants)
+            Text(
+                text = "이벤트 일시",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(text = event.eventDate, style = MaterialTheme.typography.labelMedium)
+            MemberTab(event.capacities, event.participants)
+        }
     }
 }
 
@@ -96,6 +109,7 @@ fun HomeItemPreview() {
         event = Event(
             id = 1,
             name = "test1",
+            author = "홍길동",
             content = "test1",
             eventDate = "2025-12-7",
             createdDate = "2024-12-31",
