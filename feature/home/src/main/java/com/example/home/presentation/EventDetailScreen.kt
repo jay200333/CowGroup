@@ -103,6 +103,10 @@ fun EventDetailScreen(
         }
     }
 
+    LaunchedEffect(uiState.detailEvent.isParticipated) {
+        viewModel.getEventDetail()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.getEventDetail()
     }
