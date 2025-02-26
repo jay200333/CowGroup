@@ -14,6 +14,8 @@ data class DetailEventResponse(
     val capacity: Int,
     val applicants: Int,
     val bookmarkStatus: String,
+    val registeredByMe: Boolean,
+    val participated: Boolean,
 )
 
 fun DetailEventResponse.toDetailEvent(): DetailEvent {
@@ -28,6 +30,9 @@ fun DetailEventResponse.toDetailEvent(): DetailEvent {
         eventDate = eventDate,
         capacity = capacity,
         applicants = applicants,
-        isBookmarked = bookmarkStatus == "BOOKMARK"
+        isBookmarked = bookmarkStatus == "BOOKMARK",
+        editRights = registeredByMe,
+        isParticipated = participated,
+
     )
 }

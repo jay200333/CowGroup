@@ -11,5 +11,7 @@ data class DetailEvent(
     val eventDate: String,
     val capacity: Int,
     val applicants: Int,
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
+    val editRights: Boolean,
+    val isParticipated: Boolean,
 )
