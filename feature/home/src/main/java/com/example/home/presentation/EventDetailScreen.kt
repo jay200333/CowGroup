@@ -144,17 +144,19 @@ fun EventDetailScreen(
                 },
                 actions = {
                     Row {
-                        IconButton(onClick = onEditButtonClick) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "수정하기"
-                            )
-                        }
-                        IconButton(onClick = onDeleteButtonClick) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "삭제하기"
-                            )
+                        if (detailEvent.editRights) {
+                            IconButton(onClick = onEditButtonClick) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "수정하기"
+                                )
+                            }
+                            IconButton(onClick = onDeleteButtonClick) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "삭제하기"
+                                )
+                            }
                         }
                         MarkButton(
                             isMarked = detailEvent.isBookmarked,
