@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.common.DateUtil
 import com.example.designsystem.MarkButton
 import com.example.home.R
 import com.example.model.Event
@@ -44,7 +45,7 @@ fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () 
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-            Text(text = event.createdDate, style = MaterialTheme.typography.labelSmall)
+            Text(text = DateUtil.timeAgoFromISOString(event.createdDate), style = MaterialTheme.typography.labelSmall)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
