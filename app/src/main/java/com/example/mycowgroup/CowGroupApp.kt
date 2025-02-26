@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.main.component.MainBottomBar
 import com.example.navigation.bottomBarScreens
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -21,9 +22,9 @@ fun CowGroupApp() {
     val coroutineScope = rememberCoroutineScope()
     val onShowSnackBar: (String) -> Unit = { message ->
         coroutineScope.launch {
-            snackBarHostState.showSnackbar(
-                message = message
-            )
+            val job = launch { snackBarHostState.showSnackbar(message = message) }
+            delay(2000L)
+            job.cancel()
         }
     }
     val navController = rememberNavController()
