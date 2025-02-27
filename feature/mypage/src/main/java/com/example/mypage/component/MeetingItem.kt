@@ -23,10 +23,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.MarkButton
+import com.example.model.MyPageEvent
 import com.example.mypage.R
 
 @Composable
-fun MeetingItem() {
+fun MeetingItem(event: MyPageEvent) {
     Card(
         modifier = Modifier.width(250.dp),
         shape = MaterialTheme.shapes.large,
@@ -46,32 +47,32 @@ fun MeetingItem() {
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = "모임 이름 모임 이름",
+                    text = event.eventName,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 MarkButton(
-                    isMarked = false,
+                    isMarked = event.isBookMarked,
                     onMarkClick = { },
                     markedIconId = R.drawable.baseline_bookmarks_24,
                     unMarkedIconId = R.drawable.baseline_bookmarks_24,
                 )
             }
             Text(
-                text = "모임 날짜",
+                text = event.eventDate,
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = "주최자",
+                text = event.author,
                 style = MaterialTheme.typography.bodyMedium,
             )
             Row(modifier = Modifier.fillMaxWidth()) {
                 Icon(imageVector = Icons.Default.Person, contentDescription = "icon_people")
                 Spacer(modifier = Modifier.padding(start = 4.dp))
                 Text(
-                    text = "참여인원 / 정원",
+                    text = "${event.applicants} / ${event.capacity}",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -82,5 +83,15 @@ fun MeetingItem() {
 @Preview
 @Composable
 fun MeetingItemPreview() {
-    MeetingItem()
+    MeetingItem(
+        event = MyPageEvent(
+            eventName = "안드로이드",
+            eventDate = "1997-10-26",
+            author = "안드로이드",
+            applicants = 1,
+            capacity = 2,
+            isBookMarked = false,
+            id = 1
+        )
+    )
 }

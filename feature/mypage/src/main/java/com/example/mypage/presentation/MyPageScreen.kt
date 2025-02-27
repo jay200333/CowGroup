@@ -18,20 +18,55 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.model.MyPageInfo
+import com.example.model.MyPageUserInfo
+import com.example.mypage.R
 import com.example.mypage.component.MeetingItem
+import com.example.mypage.viewmodel.MyPageUIState
+import com.example.mypage.viewmodel.MyPageViewModel
+
+@Composable
+fun MyPageScreen(
+    viewModel: MyPageViewModel = hiltViewModel(),
+    onEventClick: (Int) -> Unit,
+    onEditProfileButtonClick: () -> Unit,
+    onSettingButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit
+) {
+    val uiState: MyPageUIState by viewModel.myPageUIState.collectAsStateWithLifecycle()
+
+    MyPageScreen(
+        onEventClick = onEventClick,
+        onEditProfileButtonClick = onEditProfileButtonClick,
+        onSettingButtonClick = onSettingButtonClick,
+        myPageInfo = uiState.myPageInfo,
+        snackBarHostState = snackBarHostState,
+    )
+}
 
 @Composable
 fun MyPageScreen(
     onEventClick: (Int) -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
+    myPageInfo: MyPageInfo,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -55,6 +90,7 @@ fun MyPageScreen(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -75,28 +111,42 @@ fun MyPageScreen(
                 ) {
                     Text(
                         text = "닉네임",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = "이름 성별",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = myPageInfo.userInfo.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+
+                        Icon(
+                            modifier = Modifier.padding(start = 8.dp),
+                            painter = painterResource(
+                                if (myPageInfo.userInfo.gender == "MALE") R.drawable.baseline_male_24 else R.drawable.baseline_female_24,
+                            ),
+                            contentDescription = "gender_icon",
+                            tint = if (myPageInfo.userInfo.gender == "MALE") Color(0XFF2E27F9) else Color(
+                                0XFFF674D6
+                            ),
+                        )
+                    }
+
                     Text(
                         text = "생일",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "1997-08-17",
-                        style = MaterialTheme.typography.titleMedium
+                        text = myPageInfo.userInfo.birth,
+                        style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
                         text = "MBTI",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = "ESTP", style = MaterialTheme.typography.titleMedium)
+                    Text(text = myPageInfo.userInfo.mbti, style = MaterialTheme.typography.bodyLarge)
                 }
             }
 
@@ -106,7 +156,8 @@ fun MyPageScreen(
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -126,9 +177,13 @@ fun MyPageScreen(
                         )
                     }
 
-                    LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(count = 5) {
-                            MeetingItem()
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(myPageInfo.eventList.size) { index ->
+                            val event = myPageInfo.eventList[index]
+                            MeetingItem(event)
                         }
                     }
                 }
@@ -140,7 +195,8 @@ fun MyPageScreen(
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -161,8 +217,9 @@ fun MyPageScreen(
                     }
 
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(count = 5) {
-                            MeetingItem()
+                        items(myPageInfo.bookmarkList.size) { index ->
+                            val event = myPageInfo.bookmarkList[index]
+                            MeetingItem(event)
                         }
                     }
                 }
@@ -182,5 +239,15 @@ fun MyPageScreenPreview() {
         onEventClick = {},
         onEditProfileButtonClick = {},
         onSettingButtonClick = {},
+        myPageInfo = MyPageInfo(
+            userInfo = MyPageUserInfo(
+                name = "안드로이드",
+                gender = "MALE",
+                birth = "1997-06-25",
+                mbti = "ISFP",
+            ),
+            eventList = emptyList(),
+            bookmarkList = emptyList()
+        )
     )
 }

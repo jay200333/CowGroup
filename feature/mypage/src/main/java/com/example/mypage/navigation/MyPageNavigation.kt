@@ -35,6 +35,8 @@ fun NavGraphBuilder.myPageNavGraph(
 ) {
     composable<MyPageScreenRoute> {
         MyPageScreen(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onEventClick = { eventId -> onEventClick(eventId) },
             onEditProfileButtonClick = onEditProfileButtonClick,
             onSettingButtonClick = onSettingButtonClick,
