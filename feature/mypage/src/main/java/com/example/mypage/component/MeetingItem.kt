@@ -1,5 +1,6 @@
 package com.example.mypage.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,9 +28,15 @@ import com.example.model.MyPageEvent
 import com.example.mypage.R
 
 @Composable
-fun MeetingItem(event: MyPageEvent) {
+fun MeetingItem(
+    event: MyPageEvent,
+    onBookMarkClick: (Int, Boolean) -> Unit,
+    onEventClick: (Int) -> Unit
+) {
     Card(
-        modifier = Modifier.width(250.dp),
+        modifier = Modifier
+            .width(250.dp)
+            .clickable { onEventClick(event.id) },
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = Color.LightGray
@@ -55,7 +62,7 @@ fun MeetingItem(event: MyPageEvent) {
                 )
                 MarkButton(
                     isMarked = event.isBookMarked,
-                    onMarkClick = { },
+                    onMarkClick = { onBookMarkClick(event.id, event.isBookMarked) },
                     markedIconId = R.drawable.baseline_bookmarks_24,
                     unMarkedIconId = R.drawable.baseline_bookmarks_24,
                 )
@@ -92,6 +99,8 @@ fun MeetingItemPreview() {
             capacity = 2,
             isBookMarked = false,
             id = 1
-        )
+        ),
+        onBookMarkClick = { _, _ -> },
+        onEventClick = {}
     )
 }

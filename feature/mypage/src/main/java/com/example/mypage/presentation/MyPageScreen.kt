@@ -22,6 +22,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -56,13 +57,31 @@ fun MyPageScreen(
         onEditProfileButtonClick = onEditProfileButtonClick,
         onSettingButtonClick = onSettingButtonClick,
         myPageInfo = uiState.myPageInfo,
+        onBookMarkClick = { eventId, isBookmarked ->
+            viewModel.updateBookMark(
+                eventId,
+                isBookmarked
+            )
+        },
         snackBarHostState = snackBarHostState,
     )
+
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getMyPage()
+    }
 }
 
 @Composable
 fun MyPageScreen(
     onEventClick: (Int) -> Unit,
+    onBookMarkClick: (Int, Boolean) -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
     myPageInfo: MyPageInfo,
@@ -146,7 +165,10 @@ fun MyPageScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = myPageInfo.userInfo.mbti, style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = myPageInfo.userInfo.mbti,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
 
@@ -183,7 +205,7 @@ fun MyPageScreen(
                     ) {
                         items(myPageInfo.eventList.size) { index ->
                             val event = myPageInfo.eventList[index]
-                            MeetingItem(event)
+                            MeetingItem(event, onBookMarkClick, onEventClick)
                         }
                     }
                 }
@@ -219,7 +241,7 @@ fun MyPageScreen(
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(myPageInfo.bookmarkList.size) { index ->
                             val event = myPageInfo.bookmarkList[index]
-                            MeetingItem(event)
+                            MeetingItem(event, onBookMarkClick, onEventClick)
                         }
                     }
                 }
@@ -248,6 +270,7 @@ fun MyPageScreenPreview() {
             ),
             eventList = emptyList(),
             bookmarkList = emptyList()
-        )
+        ),
+        onBookMarkClick = { _, _ -> },
     )
 }

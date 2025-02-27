@@ -2,6 +2,7 @@ package com.example.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.repository.EventRepository
 import com.example.data.repository.UserRepository
 import com.example.model.MyPageInfo
 import com.example.model.MyPageUserInfo
@@ -33,7 +34,7 @@ data class MyPageUIState(
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository, private val eventRepository: EventRepository
 ) : ViewModel() {
 
     private val _myPageUIState: MutableStateFlow<MyPageUIState> = MutableStateFlow(MyPageUIState())
@@ -43,7 +44,7 @@ class MyPageViewModel @Inject constructor(
         getMyPage()
     }
 
-    private fun getMyPage() {
+    fun getMyPage() {
         viewModelScope.launch {
             _myPageUIState.update { state -> state.copy(isLoading = true) }
             try {
@@ -71,6 +72,48 @@ class MyPageViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun updateBookMark(eventId: Int, isBookmarked: Boolean) {
+        viewModelScope.launch {
+            _myPageUIState.update { state -> state.copy(isLoading = true) }
+            try {
+                eventRepository.updateBookmark(eventId, isBookmarked)
+                _myPageUIState.update {
+                    val updatedEventList = it.myPageInfo.eventList.map { event ->
+                        if (event.id == eventId) event.copy(isBookMarked = isBookmarked.not()) else event
+                    }
+                    val updatedBookMarkList = it.myPageInfo.bookmarkList.map { event ->
+                        if (event.id == eventId) event.copy(isBookMarked = isBookmarked.not()) else event
+                    }
+                    it.copy(
+                        isLoading = false,
+                        message = "북마크가 업데이트 되었습니다.",
+                        myPageInfo = it.myPageInfo.copy(
+                            eventList = updatedEventList,
+                            bookmarkList = updatedBookMarkList
+                        )
+                    )
+                }
+            } catch (e: HttpException) {
+                _myPageUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "북마크 업데이트에 실패했습니다."
+                    )
+                }
+            } catch (e: Exception) {
+                _myPageUIState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
+    fun setMessageClear() {
+        _myPageUIState.update { state ->
+            state.copy(message = "")
         }
     }
 }
