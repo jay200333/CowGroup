@@ -7,6 +7,7 @@ import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
 import com.example.network.model.DetailEventResponse
+import com.example.network.model.MyPageResponse
 import com.example.network.model.PagingEventResponse
 import com.example.network.model.ProfileResponse
 import retrofit2.Response
@@ -38,6 +39,10 @@ interface CowGroupApi {
 
     @GET("/users/email/{email}")
     suspend fun checkEmail(@Path("email") email: String): ApiResponse<CheckDuplicateResponse>
+
+    @GET("/users/my-page")
+    suspend fun getMyPage(): ApiResponse<MyPageResponse>
+
 
     @GET("/events")
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingEventResponse>
