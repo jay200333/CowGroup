@@ -26,6 +26,8 @@ data class MyPageUIState(
             gender = "",
             birth = "",
             mbti = "",
+            location = "",
+            introduction = "안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이"
         ),
         eventList = emptyList(),
         bookmarkList = emptyList()

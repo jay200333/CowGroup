@@ -125,20 +125,27 @@ fun MyPageScreen(
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(
-                        text = "닉네임",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "닉네임",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
                         Text(
                             text = myPageInfo.userInfo.name,
                             style = MaterialTheme.typography.bodyLarge,
                         )
-
+                        Text(
+                            text = "성별",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
                         Icon(
                             modifier = Modifier.padding(start = 8.dp),
                             painter = painterResource(
@@ -151,23 +158,46 @@ fun MyPageScreen(
                         )
                     }
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "지역",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = myPageInfo.userInfo.location,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "생일",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = myPageInfo.userInfo.birth,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "MBTI",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = myPageInfo.userInfo.mbti,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                     Text(
-                        text = "생일",
+                        text = "소개",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = myPageInfo.userInfo.birth,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = "MBTI",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = myPageInfo.userInfo.mbti,
-                        style = MaterialTheme.typography.bodyLarge
+                        text = myPageInfo.userInfo.introduction,
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
@@ -190,9 +220,7 @@ fun MyPageScreen(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-
                         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
                         Text(
                             text = "전체 보기 >",
                             style = MaterialTheme.typography.titleSmall,
@@ -229,9 +257,7 @@ fun MyPageScreen(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-
                         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
                         Text(
                             text = "전체 보기 >",
                             style = MaterialTheme.typography.titleSmall,
@@ -246,10 +272,6 @@ fun MyPageScreen(
                     }
                 }
             }
-//            // eventId 넘겨야 함
-//            Button(onClick = { onEventClick(123) }) {
-//                Text(text = "이벤트 클릭")
-//            }
         }
     }
 }
@@ -263,10 +285,12 @@ fun MyPageScreenPreview() {
         onSettingButtonClick = {},
         myPageInfo = MyPageInfo(
             userInfo = MyPageUserInfo(
-                name = "안드로이드",
+                name = " 안드로이드",
                 gender = "MALE",
                 birth = "1997-06-25",
                 mbti = "ISFP",
+                location = "서울",
+                introduction = "안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이"
             ),
             eventList = emptyList(),
             bookmarkList = emptyList()

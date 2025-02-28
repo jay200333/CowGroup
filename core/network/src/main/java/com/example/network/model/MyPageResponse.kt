@@ -14,7 +14,9 @@ data class UserDto(
     val name: String,
     val gender: String,
     val birth: String?,
-    val mbti: String?
+    val mbti: String?,
+    val location: String?,
+    val introduction: String?
 )
 
 data class MyPageEventDto(
@@ -37,7 +39,9 @@ fun UserDto.toUserInfo(): MyPageUserInfo = MyPageUserInfo(
     name = name,
     gender = gender,
     birth = birth ?: "",
-    mbti = mbti ?: ""
+    mbti = mbti ?: "",
+    location = location ?: "",
+    introduction = introduction ?: ""
 )
 
 fun MyPageEventDto.toMyPageEvent(): MyPageEvent = MyPageEvent(

@@ -83,7 +83,7 @@ fun EditProfileScreen(
     profile: Profile,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
-    val maxLength = 200
+    val maxLength = 100
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -143,7 +143,7 @@ fun EditProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp),
-                label = { Text(text = "소개글을 입력하세요.(200자 제한)") },
+                label = { Text(text = "소개글을 입력하세요.(100자 제한)") },
                 placeholder = { Text(text = "소개") },
             )
             Text(

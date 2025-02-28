@@ -10,7 +10,9 @@ data class MyPageUserInfo(
     val name: String,
     val gender: String,
     val birth: String,
-    val mbti: String
+    val mbti: String,
+    val location: String,
+    val introduction: String
 )
 
 data class MyPageEvent(
