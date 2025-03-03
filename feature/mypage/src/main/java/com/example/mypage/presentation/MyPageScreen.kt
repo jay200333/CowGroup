@@ -1,5 +1,6 @@
 package com.example.mypage.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ fun MyPageScreen(
     onEventClick: (Int) -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
+    onFullMeetingButtonClick: (Boolean) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit
 ) {
@@ -56,6 +58,7 @@ fun MyPageScreen(
         onEventClick = onEventClick,
         onEditProfileButtonClick = onEditProfileButtonClick,
         onSettingButtonClick = onSettingButtonClick,
+        onFullMeetingButtonClick = { isBookmarkPage -> onFullMeetingButtonClick(isBookmarkPage) },
         myPageInfo = uiState.myPageInfo,
         onBookMarkClick = { eventId, isBookmarked ->
             viewModel.updateBookMark(
@@ -84,6 +87,7 @@ fun MyPageScreen(
     onBookMarkClick: (Int, Boolean) -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
+    onFullMeetingButtonClick: (Boolean) -> Unit,
     myPageInfo: MyPageInfo,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
@@ -222,6 +226,7 @@ fun MyPageScreen(
                         )
                         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
                         Text(
+                            modifier = Modifier.clickable { onFullMeetingButtonClick(false) },
                             text = "전체 보기 >",
                             style = MaterialTheme.typography.titleSmall,
                         )
@@ -259,6 +264,7 @@ fun MyPageScreen(
                         )
                         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
                         Text(
+                            modifier = Modifier.clickable { onFullMeetingButtonClick(true) },
                             text = "전체 보기 >",
                             style = MaterialTheme.typography.titleSmall,
                         )
@@ -283,6 +289,7 @@ fun MyPageScreenPreview() {
         onEventClick = {},
         onEditProfileButtonClick = {},
         onSettingButtonClick = {},
+        onFullMeetingButtonClick = {},
         myPageInfo = MyPageInfo(
             userInfo = MyPageUserInfo(
                 name = " 안드로이드",

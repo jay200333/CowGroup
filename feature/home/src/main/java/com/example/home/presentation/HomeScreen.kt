@@ -25,8 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.example.designsystem.PagingMeetingItem
 import com.example.home.R
-import com.example.home.component.HomeItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
@@ -78,6 +78,10 @@ fun HomeScreen(
     if (uiState.isLogout) {
         onLogoutButtonClick()
     }
+
+    LaunchedEffect(Unit) {
+        pagingEvents.refresh()
+    }
 }
 
 @Composable
@@ -119,7 +123,7 @@ fun HomeScreen(
                     { index ->
                         val event = eventList[index]
                         if (event != null) {
-                            HomeItem(
+                            PagingMeetingItem(
                                 event = event,
                                 onEventClick = { onEventClick(event.id) },
                                 onBookMarkClick = {
