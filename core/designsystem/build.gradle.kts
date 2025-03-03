@@ -7,6 +7,7 @@ android {
     namespace = "com.example.cowgroup.core.designsystem"
 }
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.core.model)
     implementation(libs.bundles.coil)
     testImplementation(libs.junit)

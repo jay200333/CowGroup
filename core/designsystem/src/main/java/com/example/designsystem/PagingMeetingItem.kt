@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,12 +21,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.common.DateUtil
-import com.example.designsystem.MarkButton
-import com.example.home.R
+import com.example.cowgroup.core.designsystem.R
 import com.example.model.Event
 
 @Composable
-fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () -> Unit) {
+fun PagingMeetingItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
@@ -102,8 +101,8 @@ fun MemberTab(capacities: Int, participants: Int) {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeItemPreview() {
-    HomeItem(
+fun MeetingItemPreview() {
+    PagingMeetingItem(
         onBookMarkClick = {},
         onEventClick = {},
         event = Event(
