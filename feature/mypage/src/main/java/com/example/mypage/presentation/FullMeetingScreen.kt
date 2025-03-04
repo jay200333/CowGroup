@@ -18,14 +18,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.example.designsystem.PagingMeetingItem
 import com.example.model.Event
 import com.example.mypage.viewmodel.FullMeetingUIState
 import com.example.mypage.viewmodel.FullMeetingViewModel
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun FullMeetingScreen(
@@ -36,11 +39,13 @@ fun FullMeetingScreen(
     onShowSnackBar: (String) -> Unit
 ) {
     val uiState: FullMeetingUIState by viewModel.fullMeetingUIState.collectAsStateWithLifecycle()
+    val pagingEvents = viewModel.fullMeetingUIState.map { it.eventList }.collectAsLazyPagingItems()
 
     FullMeetingScreen(
         onEventClick = onEventClick,
         onNavigationButtonClick = onNavigationButtonClick,
         isBookmarkPage = uiState.isBookmarkPage,
+        eventList = pagingEvents,
         snackBarHostState = snackBarHostState,
     )
 
@@ -57,6 +62,7 @@ fun FullMeetingScreen(
     onEventClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     isBookmarkPage: Boolean,
+    eventList: LazyPagingItems<Event>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     Scaffold(
@@ -82,32 +88,28 @@ fun FullMeetingScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(count = 10) {
-                PagingMeetingItem(
-                    event = Event(
-                        id = 1,
-                        name = "test1",
-                        author = "홍길동",
-                        content = "test1",
-                        eventDate = "2025-12-7",
-                        createdDate = "2025-03-01T12:06:33.445",
-                        capacities = 10,
-                        participants = 100,
-                        isBookmarked = false,
-                    ),
-                    onEventClick = { onEventClick(123) }, onBookMarkClick = {}
-                )
+            items(eventList.itemCount, key = eventList.itemKey { it.id }) { index ->
+                val event = eventList[index]
+                if (event != null) {
+                    PagingMeetingItem(
+                        event = event,
+                        onEventClick = { onEventClick(event.id) },
+                        onBookMarkClick = { },
+                    )
+                }
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun FullMeetingScreenPreview() {
-    FullMeetingScreen(
-        onEventClick = {},
-        onNavigationButtonClick = {},
-        isBookmarkPage = false
-    )
-}
+//@Preview
+//@Composable
+//fun FullMeetingScreenPreview() {
+//    val pagingData = PagingData.from(emptyList<Event>())
+//    FullMeetingScreen(
+//        onEventClick = {},
+//        onNavigationButtonClick = {},
+//        eventList = LazyPagingItems(pagingData),
+//        isBookmarkPage = false
+//    )
+//}
