@@ -1,6 +1,5 @@
 package com.example.mycowgroup
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,7 +31,6 @@ fun CowGroupApp() {
     Scaffold(
         bottomBar = {
             val currentRoute = navController.currentBackStackEntryAsState().value?.destination
-            Log.d("currentRoute", "$currentRoute")
             if (bottomBarScreens.any { it.route == currentRoute?.route }) {
                 MainBottomBar(navController)
             }

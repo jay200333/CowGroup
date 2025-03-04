@@ -51,7 +51,7 @@ fun HomeScreenSearchBar(onTopBarActionButtonClick: () -> Unit, iconId: Int) {
         ) {
             SearchBar(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 16.dp)
+                    .padding(horizontal = 8.dp)
                     .semantics { traversalIndex = 0f },
                 inputField = {
                     SearchBarDefaults.InputField(

@@ -1,6 +1,5 @@
 package com.example.data.repository
 
-import android.util.Log
 import com.example.model.LoginInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
@@ -16,7 +15,6 @@ internal class UserRepositoryImpl @Inject constructor(
         try {
             val response = api.login(loginInfo = loginInfo)
             val token = response.headers()["Authorization"]
-            Log.d("loginResult", "$token")
             if (token.isNullOrEmpty()) {
                 throw Exception("토큰이 없습니다.")
             }

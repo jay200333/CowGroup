@@ -46,23 +46,17 @@ fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () 
             )
             Text(text = event.createdDate, style = MaterialTheme.typography.labelSmall)
         }
-        Text(
-            text = event.content,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = "이벤트 일시",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(text = event.eventDate, style = MaterialTheme.typography.labelMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            MemberTab(event.capacities, event.participants)
+            Text(
+                modifier = Modifier.weight(1f),
+                text = event.content,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+            )
             MarkButton(
                 isMarked = event.isBookmarked,
                 onMarkClick = { isBookMarked -> onBookMarkClick(isBookMarked) },
@@ -70,6 +64,14 @@ fun HomeItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () 
                 unMarkedIconId = R.drawable.baseline_bookmarks_24,
             )
         }
+
+        Text(
+            text = "이벤트 일시",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(text = event.eventDate, style = MaterialTheme.typography.labelMedium)
+        MemberTab(event.capacities, event.participants)
     }
 }
 
