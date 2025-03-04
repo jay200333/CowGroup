@@ -42,7 +42,7 @@ class FullMeetingViewModel @Inject constructor(
     private val isBookmarkPage: Boolean = savedStateHandle.toRoute<FullMeetingRoute>().isBookmarkPage
     private val pagingEvents: Flow<PagingData<Event>> = flow {
         val flow = if (isBookmarkPage) {
-            eventRepository.getPagingHomeEvents(10)
+            eventRepository.getPagingBookmarkEvents(10)
         } else {
             eventRepository.getPagingParticipateEvents(10)
         }

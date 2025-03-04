@@ -2,12 +2,14 @@ package com.example.network.model
 
 
 import com.example.model.Event
+import com.google.gson.annotations.SerializedName
 
 data class NetworkEvent(
     val applicants: Int,
     val author: String,
     val capacity: Int,
     val content: String,
+    @SerializedName("createdDateTime")
     val createdDate: String,
     val eventDate: String,
     val id: Int,

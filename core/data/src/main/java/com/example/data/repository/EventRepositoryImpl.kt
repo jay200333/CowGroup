@@ -3,6 +3,7 @@ package com.example.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.data.paging.BookmarkEventPagingSource
 import com.example.data.paging.HomeEventPagingSource
 import com.example.data.paging.ParticipateEventPagingSource
 import com.example.model.CreateEvent
@@ -60,6 +61,27 @@ internal class EventRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { ParticipateEventPagingSource(api) }
+        ).flow
+    }
+
+    override suspend fun getBookmarkEvents(page: Int, size: Int): Flow<List<Event>> = flow {
+        try {
+            val bookmarkEvents = api.getBookmarkEvents(page, size)
+            val events = bookmarkEvents.data.bookmarkEvents.map { it.toEvent() }
+            emit(events)
+        } catch (e: IOException) {
+            throw e
+        }
+    }
+
+    override fun getPagingBookmarkEvents(pageSize: Int): Flow<PagingData<Event>> {
+        return Pager(
+            config = PagingConfig(
+                initialLoadSize = INITIAL_LOAD_SIZE,
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { BookmarkEventPagingSource(api) }
         ).flow
     }
 

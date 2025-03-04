@@ -8,6 +8,7 @@ import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
 import com.example.network.model.DetailEventResponse
 import com.example.network.model.MyPageResponse
+import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.ProfileResponse
@@ -74,6 +75,9 @@ interface CowGroupApi {
 
     @GET("/events/participating")
     suspend fun getParticipateEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingParticipatingEventResponse>
+
+    @GET("/events/bookmarks")
+    suspend fun getBookmarkEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingBookmarkEventResponse>
 
 
 
