@@ -7,7 +7,9 @@ import com.example.model.Event
 import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
-    fun getPagingEvents(pageSize: Int): Flow<PagingData<Event>>
+    fun getPagingHomeEvents(pageSize: Int): Flow<PagingData<Event>>
+
+    fun getPagingParticipateEvents(pageSize: Int): Flow<PagingData<Event>>
 
     suspend fun getEvents(page: Int, size: Int): Flow<List<Event>>
 
@@ -22,4 +24,6 @@ interface EventRepository {
     suspend fun editEvent(eventId: Int, event: CreateEvent)
 
     suspend fun deleteEvent(eventId: Int)
+
+    suspend fun getParticipateEvents(page: Int, size: Int): Flow<List<Event>>
 }

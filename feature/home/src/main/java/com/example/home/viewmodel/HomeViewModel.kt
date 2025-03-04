@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
     val homeUIState: StateFlow<HomeUIState> = _homeUIState.asStateFlow()
 
     private val pagingEvents: Flow<PagingData<Event>> =
-        eventRepository.getPagingEvents(10).cachedIn(viewModelScope)
+        eventRepository.getPagingHomeEvents(10).cachedIn(viewModelScope)
 
     init {
         pagingEvents.onEach { pagingEvents ->

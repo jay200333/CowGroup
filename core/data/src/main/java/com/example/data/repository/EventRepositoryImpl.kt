@@ -3,7 +3,8 @@ package com.example.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.data.paging.EventPagingSource
+import com.example.data.paging.HomeEventPagingSource
+import com.example.data.paging.ParticipateEventPagingSource
 import com.example.model.CreateEvent
 import com.example.model.DetailEvent
 import com.example.model.Event
@@ -20,14 +21,14 @@ internal class EventRepositoryImpl @Inject constructor(
     private val api: CowGroupApi,
 ) : EventRepository {
 
-    override fun getPagingEvents(pageSize: Int): Flow<PagingData<Event>> {
+    override fun getPagingHomeEvents(pageSize: Int): Flow<PagingData<Event>> {
         return Pager(
             config = PagingConfig(
                 initialLoadSize = INITIAL_LOAD_SIZE,
                 pageSize = pageSize,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { EventPagingSource(api) }
+            pagingSourceFactory = { HomeEventPagingSource(api) }
         ).flow
     }
 
@@ -39,6 +40,27 @@ internal class EventRepositoryImpl @Inject constructor(
         } catch (e: IOException) {
             throw e
         }
+    }
+
+    override suspend fun getParticipateEvents(page: Int, size: Int): Flow<List<Event>> = flow {
+        try {
+            val participateEvents = api.getParticipateEvents(page, size)
+            val events = participateEvents.data.participatingEvents.map { it.toEvent() }
+            emit(events)
+        } catch (e: IOException) {
+            throw e
+        }
+    }
+
+    override fun getPagingParticipateEvents(pageSize: Int): Flow<PagingData<Event>> {
+        return Pager(
+            config = PagingConfig(
+                initialLoadSize = INITIAL_LOAD_SIZE,
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { ParticipateEventPagingSource(api) }
+        ).flow
     }
 
     override suspend fun getEventDetail(eventId: Int): DetailEvent =
