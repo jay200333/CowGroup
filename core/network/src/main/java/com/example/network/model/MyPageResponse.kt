@@ -3,6 +3,7 @@ package com.example.network.model
 import com.example.model.MyPageEvent
 import com.example.model.MyPageInfo
 import com.example.model.MyPageUserInfo
+import com.google.gson.annotations.SerializedName
 
 data class MyPageResponse(
     val userDto: UserDto,
@@ -24,6 +25,7 @@ data class MyPageEventDto(
     val author: String,
     val name: String,
     val eventDate: String,
+    @SerializedName("bookmarkStatus")
     val status: String,
     val applicants: Int,
     val capacity: Int
