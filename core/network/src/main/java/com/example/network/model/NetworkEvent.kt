@@ -10,14 +10,14 @@ data class NetworkEvent(
     val content: String,
     val createdDate: String,
     val eventDate: String,
-    val eventId: Int,
+    val id: Int,
     val name: String,
     val bookmarkStatus: String,
 )
 
 fun NetworkEvent.toEvent(): Event {
     return Event(
-        id = eventId,
+        id = id,
         name = name,
         author = author,
         content = content,

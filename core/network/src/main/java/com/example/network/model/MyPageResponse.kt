@@ -22,7 +22,7 @@ data class UserDto(
 data class MyPageEventDto(
     val id: Int,
     val author: String,
-    val eventName: String,
+    val name: String,
     val eventDate: String,
     val status: String,
     val applicants: Int,
@@ -47,7 +47,7 @@ fun UserDto.toUserInfo(): MyPageUserInfo = MyPageUserInfo(
 fun MyPageEventDto.toMyPageEvent(): MyPageEvent = MyPageEvent(
     id = id,
     author = author,
-    eventName = eventName,
+    eventName = name,
     eventDate = eventDate,
     isBookMarked = status == "BOOKMARK",
     applicants = applicants,
