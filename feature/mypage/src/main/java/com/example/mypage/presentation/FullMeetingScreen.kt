@@ -44,6 +44,12 @@ fun FullMeetingScreen(
     FullMeetingScreen(
         onEventClick = onEventClick,
         onNavigationButtonClick = onNavigationButtonClick,
+        onBookMarkClick = { eventId, isBookmarked ->
+            viewModel.updateBookmark(
+                eventId,
+                isBookmarked
+            )
+        },
         isBookmarkPage = uiState.isBookmarkPage,
         eventList = pagingEvents,
         snackBarHostState = snackBarHostState,
@@ -55,12 +61,17 @@ fun FullMeetingScreen(
             viewModel.setMessageClear()
         }
     }
+
+    LaunchedEffect(Unit) {
+        pagingEvents.refresh()
+    }
 }
 
 @Composable
 fun FullMeetingScreen(
     onEventClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
+    onBookMarkClick: (Int, Boolean) -> Unit,
     isBookmarkPage: Boolean,
     eventList: LazyPagingItems<Event>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
@@ -94,7 +105,7 @@ fun FullMeetingScreen(
                     PagingMeetingItem(
                         event = event,
                         onEventClick = { onEventClick(event.id) },
-                        onBookMarkClick = { },
+                        onBookMarkClick = { onBookMarkClick(event.id, event.isBookmarked) },
                     )
                 }
             }
