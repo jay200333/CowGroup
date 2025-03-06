@@ -54,7 +54,7 @@ import com.example.model.DetailEvent
 fun EventDetailScreen(
     viewModel: EventDetailViewModel = hiltViewModel(),
     onDeleteMeetingSuccess: () -> Unit,
-    onMemberButtonClick: () -> Unit,
+    onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onEditButtonClick: (Int, Boolean, CreateEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
@@ -74,7 +74,7 @@ fun EventDetailScreen(
     }
 
     EventDetailScreen(
-        onMemberButtonClick = onMemberButtonClick,
+        onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::updateJoinEvent,
@@ -115,7 +115,7 @@ fun EventDetailScreen(
 
 @Composable
 fun EventDetailScreen(
-    onMemberButtonClick: () -> Unit,
+    onMemberButtonClick: (Int) -> Unit,
     onJoinButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
@@ -127,8 +127,6 @@ fun EventDetailScreen(
     onConfirmDialog: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -209,7 +207,10 @@ fun EventDetailScreen(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             modifier = Modifier.weight(1f),
                             text = detailEvent.name,
@@ -298,7 +299,7 @@ fun EventDetailScreen(
             }
 
             Button(
-                onClick = onMemberButtonClick,
+                onClick = { onMemberButtonClick(detailEvent.id) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonDefaults.filledTonalButtonColors()

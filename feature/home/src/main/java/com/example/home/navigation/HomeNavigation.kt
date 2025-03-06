@@ -31,8 +31,8 @@ fun NavController.navigateEventDetail(eventId: Int) {
     navigate(EventDetailRoute(eventId))
 }
 
-fun NavController.navigateMember() {
-    navigate(MemberRoute)
+fun NavController.navigateMember(eventId: Int) {
+    navigate(MemberRoute(eventId))
 }
 
 fun NavGraphBuilder.homeNavGraph(
@@ -41,7 +41,7 @@ fun NavGraphBuilder.homeNavGraph(
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean, CreateEvent) -> Unit,
-    onMemberButtonClick: () -> Unit,
+    onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: () -> Unit,
     onEditMeetingSuccess: () -> Unit,
@@ -71,7 +71,7 @@ fun NavGraphBuilder.homeNavGraph(
         EventDetailScreen(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
-            onMemberButtonClick = onMemberButtonClick,
+            onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
             onNavigationButtonClick = onNavigationButtonClick,
             onEditButtonClick = { eventId, isEditMode, event -> onCreateMeetingClick(eventId, isEditMode, event) },
             onDeleteMeetingSuccess = onDeleteMeetingSuccess
@@ -79,6 +79,8 @@ fun NavGraphBuilder.homeNavGraph(
     }
     composable<MemberRoute> {
         MemberScreen(
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
             onNavigationButtonClick = onNavigationButtonClick,
         )
     }
