@@ -3,6 +3,7 @@ package com.example.home.viewmodel
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.data.repository.UserRepository
 import com.example.model.MemberInfo
@@ -11,6 +12,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class MemberUIState(
@@ -33,6 +37,35 @@ class MemberViewModel @Inject constructor(
     }
 
     private fun getMemberList() {
-        Log.d("MemberViewModel", "$eventId")
+        viewModelScope.launch {
+            _memberUIState.value = MemberUIState(isLoading = true)
+            try {
+                val memberList = userRepository.getMemberList(eventId)
+                Log.d("MemberViewModel", "$memberList")
+                _memberUIState.update {
+                    it.copy(isLoading = false, memberList = memberList)
+                }
+            } catch (e: HttpException) {
+                _memberUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "멤버 리스트를 가져오는데 실패했습니다."
+                    )
+                }
+            } catch (e: Exception) {
+                _memberUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
+    }
+
+    fun setMessageClear() {
+        _memberUIState.update { state ->
+            state.copy(message = "")
+        }
     }
 }

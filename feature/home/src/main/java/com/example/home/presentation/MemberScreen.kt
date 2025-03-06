@@ -15,6 +15,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.home.component.MemberItem
 import com.example.home.viewmodel.MemberUIState
 import com.example.home.viewmodel.MemberViewModel
+import com.example.model.MemberInfo
 
 @Composable
 fun MemberScreen(
@@ -38,13 +40,22 @@ fun MemberScreen(
 
     MemberScreen(
         onNavigationButtonClick = onNavigationButtonClick,
+        memberList = uiState.memberList,
         snackBarHostState = snackBarHostState,
     )
+
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
 }
 
 @Composable
 fun MemberScreen(
     onNavigationButtonClick: () -> Unit,
+    memberList: List<MemberInfo>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -72,8 +83,9 @@ fun MemberScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(count = 10) {
-                    MemberItem("male")
+                items(memberList.size) { index ->
+                    val memberInfo = memberList[index]
+                    MemberItem(memberInfo)
                 }
             }
         }
@@ -85,5 +97,8 @@ fun MemberScreen(
 fun MemberScreenPreview() {
     MemberScreen(
         onNavigationButtonClick = {},
+        memberList = listOf(
+            MemberInfo("안드로이드", "MALE")
+        )
     )
 }
