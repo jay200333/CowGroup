@@ -7,6 +7,7 @@ import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
 import com.example.network.model.DetailEventResponse
+import com.example.network.model.MemberResponse
 import com.example.network.model.MyPageResponse
 import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
@@ -45,6 +46,8 @@ interface CowGroupApi {
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>
 
+    @GET("/users/events/{event-id}")
+    suspend fun getMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
 
     @GET("/events")
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
