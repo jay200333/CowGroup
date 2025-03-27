@@ -1,8 +1,10 @@
 package com.example.data.repository
 
 import com.example.model.LoginInfo
+import com.example.model.MyPageInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
+import com.example.network.model.toMyPageInfo
 import com.example.network.model.toProfile
 import com.example.network.retrofit.CowGroupApi
 import retrofit2.HttpException
@@ -71,6 +73,17 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun editProfile(profile: Profile) {
         try {
             api.editProfile(profile = profile)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getMyPage(): MyPageInfo {
+        try {
+            val response = api.getMyPage()
+            return response.data.toMyPageInfo()
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {
