@@ -10,6 +10,7 @@ import com.example.home.navigation.navigateMember
 import com.example.map.navigation.mapNavGraph
 import com.example.mypage.navigation.myPageNavGraph
 import com.example.mypage.navigation.navigateEditProfile
+import com.example.mypage.navigation.navigateFullMeeting
 import com.example.mypage.navigation.navigateSetting
 import com.example.navigation.LoginRoute
 import com.example.navigation.MainGraphRoute
@@ -44,6 +45,7 @@ fun NavGraphBuilder.mainNavGraph(
         onEventClick = navController::navigateEventDetail,
         onEditProfileButtonClick = navController::navigateEditProfile,
         onSettingButtonClick = navController::navigateSetting,
+        onFullMeetingButtonClick = navController::navigateFullMeeting,
         onNavigationButtonClick = navController::navigateUp,
         onEditProfileSuccess = navController::navigateUp,
     )
