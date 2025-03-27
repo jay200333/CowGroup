@@ -10,4 +10,4 @@ data class CreateMeetingRoute(val eventId: Int, val isEditMode: Boolean, val eve
 data class EventDetailRoute(val eventId: Int)
 
 @Serializable
-data object MemberRoute
+data class MemberRoute(val eventId: Int)

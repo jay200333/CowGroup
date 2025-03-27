@@ -1,9 +1,12 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.example.model.LoginInfo
+import com.example.model.MemberInfo
 import com.example.model.MyPageInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
+import com.example.network.model.toMemberInfo
 import com.example.network.model.toMyPageInfo
 import com.example.network.model.toProfile
 import com.example.network.retrofit.CowGroupApi
@@ -84,6 +87,19 @@ internal class UserRepositoryImpl @Inject constructor(
         try {
             val response = api.getMyPage()
             return response.data.toMyPageInfo()
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getMemberList(eventId: Int): List<MemberInfo> {
+        try {
+            val response = api.getMemberList(eventId)
+            val memberList = response.data.participants.map { it.toMemberInfo() }
+            Log.d("UserRepository", "$memberList")
+            return memberList
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {
