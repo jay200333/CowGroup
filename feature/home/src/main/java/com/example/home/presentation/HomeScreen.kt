@@ -25,8 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.example.data.model.SearchHistory
 import com.example.designsystem.PagingMeetingItem
-import com.example.home.R
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
@@ -45,6 +45,7 @@ fun HomeScreen(
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
     val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
+    val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
     val createEvent = CreateEvent(
         name = "",
         category = "",
@@ -55,6 +56,8 @@ fun HomeScreen(
     )
 
     HomeScreen(
+        onSearchButtonClick = viewModel::insertQuery,
+        onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         onLogoutButtonClick = viewModel::logout,
         onEventClick = { eventId -> onEventClick(eventId) },
         onCreateMeetingClick = { onCreateMeetingClick(0, false, createEvent) },
@@ -65,6 +68,7 @@ fun HomeScreen(
             )
         },
         eventList = pagingEvents,
+        recentSearches = recentSearches,
         snackBarHostState = snackBarHostState,
     )
 
@@ -86,17 +90,27 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreen(
+    onSearchButtonClick: (String) -> Unit,
+    onDeleteSearchHistoryButtonClick: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
     eventList: LazyPagingItems<Event>,
+    recentSearches: List<SearchHistory>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val listState = rememberLazyListState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { HomeScreenSearchBar(onLogoutButtonClick, R.drawable.baseline_login_24) },
+        topBar = {
+            HomeScreenSearchBar(
+                onSearchButtonClick,
+                onDeleteSearchHistoryButtonClick,
+                onLogoutButtonClick,
+                recentSearches,
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = onCreateMeetingClick) {
                 Icon(
