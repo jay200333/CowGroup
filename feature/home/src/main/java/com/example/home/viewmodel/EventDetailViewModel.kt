@@ -103,7 +103,7 @@ class EventDetailViewModel @Inject constructor(
                 _eventDetailUIState.update {
                     it.copy(
                         isLoading = false,
-                        message = "업데이트에 실패했습니다." //errorResponse.errors.message
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {

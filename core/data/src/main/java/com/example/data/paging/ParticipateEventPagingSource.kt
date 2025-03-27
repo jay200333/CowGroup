@@ -9,5 +9,5 @@ class ParticipateEventPagingSource(
     api.getParticipateEvents(
         page,
         size
-    ).data.content.map { it.toEvent() }
+    ).data.participatingEvents.map { it.toEvent() }
 })

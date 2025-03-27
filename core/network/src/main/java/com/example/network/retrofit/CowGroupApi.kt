@@ -8,7 +8,9 @@ import com.example.network.model.ApiResponse
 import com.example.network.model.CheckDuplicateResponse
 import com.example.network.model.DetailEventResponse
 import com.example.network.model.MyPageResponse
-import com.example.network.model.PagingEventResponse
+import com.example.network.model.PagingBookmarkEventResponse
+import com.example.network.model.PagingHomeEventResponse
+import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.ProfileResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -45,7 +47,7 @@ interface CowGroupApi {
 
 
     @GET("/events")
-    suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingEventResponse>
+    suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
 
     @POST("/events")
     suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
@@ -70,6 +72,12 @@ interface CowGroupApi {
 
     @PATCH("/bookmarks/{event-id}")
     suspend fun deleteBookmark(@Path("event-id") eventId: Int): ApiResponse<Unit>
+
+    @GET("/events/participating")
+    suspend fun getParticipateEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingParticipatingEventResponse>
+
+    @GET("/events/bookmarks")
+    suspend fun getBookmarkEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingBookmarkEventResponse>
 
 
 
