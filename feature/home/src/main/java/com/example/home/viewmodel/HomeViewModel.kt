@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.example.data.model.SearchHistory
 import com.example.data.repository.EventRepository
+import com.example.data.repository.SearchHistoryRepository
 import com.example.datastore.CowGroupDataStore
 import com.example.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +32,7 @@ data class HomeUIState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
     private val dataStore: CowGroupDataStore,
 ) : ViewModel() {
     private val _homeUIState: MutableStateFlow<HomeUIState> = MutableStateFlow(HomeUIState())
@@ -97,5 +100,23 @@ class HomeViewModel @Inject constructor(
         _homeUIState.update { state ->
             state.copy(message = "")
         }
+    }
+
+    fun insertQuery(query: String) {
+        if (query.isNotBlank()) {
+            viewModelScope.launch {
+                searchHistoryRepository.insertSearchHistory(query)
+            }
+        }
+    }
+
+    fun deleteSearchHistory(query: String) {
+        viewModelScope.launch {
+            searchHistoryRepository.deleteSearchHistory(query)
+        }
+    }
+
+    fun getRecentSearches(): Flow<List<SearchHistory>> {
+        return searchHistoryRepository.getRecentSearches()
     }
 }
