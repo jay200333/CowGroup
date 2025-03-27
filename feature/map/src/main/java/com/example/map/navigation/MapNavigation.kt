@@ -11,11 +11,11 @@ fun NavController.navigateMap() {
 }
 
 fun NavGraphBuilder.mapNavGraph(
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
 ) {
     composable<MapScreenRoute> {
         MapScreen(
-            onEventClick = onEventClick,
+            onEventClick = { eventId -> onEventClick(eventId) },
         )
     }
 }

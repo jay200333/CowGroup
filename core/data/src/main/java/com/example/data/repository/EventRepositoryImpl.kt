@@ -5,7 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.data.paging.EventPagingSource
 import com.example.model.CreateEvent
+import com.example.model.DetailEvent
 import com.example.model.Event
+import com.example.network.model.toDetailEvent
 import com.example.network.model.toEvent
 import com.example.network.retrofit.CowGroupApi
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +37,51 @@ internal class EventRepositoryImpl @Inject constructor(
             val events = networkEvents.data.content.map { it.toEvent() }
             emit(events)
         } catch (e: IOException) {
+            throw e
+        }
+    }
+
+    override suspend fun getEventDetail(eventId: Int): DetailEvent =
+        try {
+            val response = api.getEventDetail(eventId)
+            val detailEvent = response.data.toDetailEvent()
+            detailEvent
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+
+    override suspend fun updateJoinEvent(eventId: Int, hasJoined: Boolean) {
+        try {
+            if (hasJoined) {
+                api.unJoinEvent(eventId)
+            } else {
+                api.joinEvent(eventId)
+            }
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun editEvent(eventId: Int, event: CreateEvent) {
+        try {
+            api.editEvent(eventId, event)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun deleteEvent(eventId: Int) {
+        try {
+            api.deleteEvent(eventId)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
             throw e
         }
     }

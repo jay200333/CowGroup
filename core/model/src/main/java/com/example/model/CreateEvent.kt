@@ -1,5 +1,8 @@
 package com.example.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CreateEvent(
     val name: String,
     val category: String,

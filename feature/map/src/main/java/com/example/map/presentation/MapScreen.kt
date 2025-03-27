@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MapScreen(
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -26,7 +26,8 @@ fun MapScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(text = "MapScreen", style = MaterialTheme.typography.displayLarge)
-            Button(onClick = onEventClick) {
+            // eventId 넘겨야 함
+            Button(onClick = { onEventClick(123)} ) {
                 Text(text = "이벤트 클릭")
             }
         }

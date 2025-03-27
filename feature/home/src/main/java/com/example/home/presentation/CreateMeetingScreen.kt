@@ -39,6 +39,8 @@ import com.example.home.viewmodel.CreateMeetingUIState
 import com.example.home.viewmodel.CreateMeetingViewModel
 import com.example.model.CreateEvent
 
+const val MAX_LENGTH_OF_CONTENT = 300
+
 @Composable
 fun CreateMeetingScreen(
     viewModel: CreateMeetingViewModel = hiltViewModel(),
@@ -127,7 +129,7 @@ fun CreateMeetingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
@@ -195,13 +197,17 @@ fun CreateMeetingScreen(
             )
             OutlinedTextField(
                 value = createEvent.content,
-                onValueChange = updateContent,
+                onValueChange = { content ->
+                    if (content.length <= MAX_LENGTH_OF_CONTENT)
+                        updateContent(content)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .verticalScroll(scrollState),
-                label = { Text(text = "상세 내용을 입력하세요.") },
+                label = { Text(text = "상세 내용을 입력하세요. (300자 제한)") },
                 placeholder = { Text(text = "상세 내용") },
+                maxLines = 10
             )
             if (isEditMode) {
                 Button(

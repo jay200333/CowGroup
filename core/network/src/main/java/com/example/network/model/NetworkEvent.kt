@@ -19,6 +19,7 @@ fun NetworkEvent.toEvent(): Event {
     return Event(
         id = eventId,
         name = name,
+        author = author,
         content = content,
         eventDate = eventDate,
         createdDate = createdDate,

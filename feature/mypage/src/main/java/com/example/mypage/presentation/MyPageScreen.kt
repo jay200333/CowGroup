@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MyPageScreen(
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
     onEditProfileButtonClick: () -> Unit,
     onSettingButtonClick: () -> Unit,
 ) {
@@ -49,7 +49,8 @@ fun MyPageScreen(
             Button(onClick = onEditProfileButtonClick) {
                 Text(text = "프로필 편집")
             }
-            Button(onClick = onEventClick) {
+            // eventId 넘겨야 함
+            Button(onClick = { onEventClick(123) }) {
                 Text(text = "이벤트 클릭")
             }
         }

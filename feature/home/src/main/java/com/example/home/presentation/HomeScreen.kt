@@ -30,6 +30,7 @@ import com.example.home.component.HomeItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
+import com.example.model.CreateEvent
 import com.example.model.Event
 import kotlinx.coroutines.flow.map
 
@@ -37,18 +38,26 @@ import kotlinx.coroutines.flow.map
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogoutButtonClick: () -> Unit,
-    onEventClick: () -> Unit,
-    onCreateMeetingClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
+    onCreateMeetingClick: (Int, Boolean, CreateEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
     val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
+    val createEvent = CreateEvent(
+        name = "",
+        category = "",
+        location = "",
+        eventDate = "",
+        capacity = 0,
+        content = "",
+    )
 
     HomeScreen(
         onLogoutButtonClick = viewModel::logout,
-        onEventClick = onEventClick,
-        onCreateMeetingClick = onCreateMeetingClick,
+        onEventClick = { eventId -> onEventClick(eventId) },
+        onCreateMeetingClick = { onCreateMeetingClick(0, false, createEvent) },
         onBookMarkClick = { eventId, isBookmarked ->
             viewModel.updateBookmark(
                 eventId,
@@ -74,7 +83,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     onLogoutButtonClick: () -> Unit,
-    onEventClick: () -> Unit,
+    onEventClick: (Int) -> Unit,
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
     eventList: LazyPagingItems<Event>,
@@ -112,7 +121,7 @@ fun HomeScreen(
                         if (event != null) {
                             HomeItem(
                                 event = event,
-                                onEventClick = onEventClick,
+                                onEventClick = { onEventClick(event.id) },
                                 onBookMarkClick = {
                                     onBookMarkClick(
                                         event.id,

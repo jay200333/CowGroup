@@ -33,6 +33,7 @@ fun NavGraphBuilder.mainNavGraph(
         onNavigationButtonClick = navController::navigateUp,
         onCreateMeetingSuccess = navController::navigateUp,
         onEditMeetingSuccess = navController::navigateUp,
+        onDeleteMeetingSuccess = navController::navigateUp
     )
     mapNavGraph(
         onEventClick = navController::navigateEventDetail,
