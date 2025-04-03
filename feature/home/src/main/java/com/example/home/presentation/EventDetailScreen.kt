@@ -133,7 +133,7 @@ fun EventDetailScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "모임 편집",
+                        text = "모임 상세",
                         style = MaterialTheme.typography.titleMedium
                     )
                 },

@@ -32,4 +32,10 @@ object DateUtil {
             else -> "${differenceInYears}년 전"
         }
     }
+
+    fun timeStampFormat(timestamp: Long): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate = dateFormat.format(Date(timestamp))
+        return formattedDate
+    }
 }

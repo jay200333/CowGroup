@@ -67,6 +67,9 @@ ktlint = "11.6.1"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
 
+# Room
+room = "2.6.1"
+
 # Test
 junit = "4.13.2"
 androidx-junit = "1.2.1"
@@ -148,6 +151,11 @@ retrofit-bom = { group = "com.squareup.retrofit2", name = "retrofit-bom", versio
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit" }
 retrofit-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 
+# Room
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+
 # Test Libraries
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
@@ -164,6 +172,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-datastore-preferences-core-jvm = { group = "androidx.datastore", name = "datastore-preferences-core-jvm", version.ref = "datastorePreferencesCoreJvm" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 [bundles]
 # AndroidX Core Libraries
@@ -251,6 +260,7 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+room = { id = "androidx.room", version.ref = "room" }
 
 # Custom Plugins (Build Logic)
 cowgroup-android-application = { id = "cowgroup.android.application", version = "unspecified" }
@@ -259,4 +269,4 @@ cowgroup-android-compose = { id = "cowgroup.android.compose", version = "unspeci
 cowgroup-android-hilt = { id = "cowgroup.android.hilt", version = "unspecified" }
 cowgroup-feature = { id = "cowgroup.feature", version = "unspecified" }
 cowgroup-java-library = { id = "cowgroup.java.library", version = "unspecified" }
-
+cowgroup-android-room = { id = "cowgroup.android.room" }

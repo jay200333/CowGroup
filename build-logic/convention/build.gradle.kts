@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.compose.compiler.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -46,6 +47,11 @@ gradlePlugin {
         register("javaLibrary") {
             id = "cowgroup.java.library"
             implementationClass = "JavaLibraryPlugin"
+        }
+
+        register("androidRoom") {
+            id = "cowgroup.android.room"
+            implementationClass = "RoomPlugin"
         }
     }
 }
