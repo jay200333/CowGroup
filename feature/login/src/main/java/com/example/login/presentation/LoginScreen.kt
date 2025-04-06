@@ -199,7 +199,7 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onSecondary,
                 )
 
-                VerticalDivider(color = MaterialTheme.colorScheme.secondary, thickness = 1.dp)
+                VerticalDivider(color = MaterialTheme.colorScheme.onPrimary, thickness = 1.dp)
 
                 Text(
                     text = "회원가입",

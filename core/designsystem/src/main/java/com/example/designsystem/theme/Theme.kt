@@ -36,7 +36,7 @@ private val darkScheme = lightColorScheme(
 )
 
 private val lightExtendedColors = ExtendedColors(
-    success = Color(0xFF03FF96),
+    success = Color(0xFF02851A),
     onSuccess = Color(0xFF002817),
 )
 
