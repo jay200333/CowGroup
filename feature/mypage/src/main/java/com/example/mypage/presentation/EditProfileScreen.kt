@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.common.DateUtil.todayStartOfDayMillis
-import com.example.designsystem.DatePickerTextField
+import com.example.designsystem.component.DatePickerTextField
 import com.example.model.Profile
 import com.example.mypage.R
 import com.example.mypage.component.MBTIGridButtons

@@ -24,7 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.example.designsystem.PagingMeetingItem
+import com.example.designsystem.component.PagingMeetingItem
 import com.example.model.Event
 import com.example.mypage.viewmodel.FullMeetingUIState
 import com.example.mypage.viewmodel.FullMeetingViewModel
