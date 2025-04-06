@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.designsystem.theme.CowGroupTheme
 import com.example.main.component.MainBottomBar
 import com.example.navigation.bottomBarScreens
 import kotlinx.coroutines.delay
@@ -29,21 +30,23 @@ fun CowGroupApp() {
     }
     val navController = rememberNavController()
 
-    Scaffold(
-        bottomBar = {
-            val currentRoute = navController.currentBackStackEntryAsState().value?.destination
-            if (bottomBarScreens.any { it.route == currentRoute?.route }) {
-                MainBottomBar(navController)
+    CowGroupTheme {
+        Scaffold(
+            bottomBar = {
+                val currentRoute = navController.currentBackStackEntryAsState().value?.destination
+                if (bottomBarScreens.any { it.route == currentRoute?.route }) {
+                    MainBottomBar(navController)
+                }
             }
-        }
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            CowGroupNavHost(
-                modifier = Modifier.fillMaxSize(),
-                navController = navController,
-                snackBarHostState = snackBarHostState,
-                onShowSnackBar = onShowSnackBar
-            )
+        ) { innerPadding ->
+            Column(modifier = Modifier.padding(innerPadding)) {
+                CowGroupNavHost(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController,
+                    snackBarHostState = snackBarHostState,
+                    onShowSnackBar = onShowSnackBar
+                )
+            }
         }
     }
 }
