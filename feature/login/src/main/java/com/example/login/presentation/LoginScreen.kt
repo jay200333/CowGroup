@@ -125,7 +125,7 @@ fun LoginScreen(
                         Icon(
                             modifier = Modifier.clickable { updateEmail("") },
                             painter = painterResource(R.drawable.baseline_cancel_24),
-                            tint = Color(0xFFB3B3B3),
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = "email_clear",
                         )
                     }
@@ -139,7 +139,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = updatePassword,
                 placeholder = { Text(text = "비밀번호") },
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF221E1F)),
+                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(10.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -149,7 +149,7 @@ fun LoginScreen(
                             Icon(
                                 painter = painterResource(R.drawable.baseline_visibility_24),
                                 contentDescription = "hide_password",
-                                tint = Color(0xFFB3B3B3)
+                                tint = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     } else {
@@ -159,7 +159,7 @@ fun LoginScreen(
                             Icon(
                                 painter = painterResource(R.drawable.baseline_visibility_off_24),
                                 contentDescription = "hide_password",
-                                tint = Color(0xFFB3B3B3)
+                                tint = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     }
@@ -174,7 +174,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF221E1F)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = loginButtonEnabled,
             ) {
                 Text(text = "로그인", color = Color.White, fontSize = 18.sp)
@@ -195,19 +195,19 @@ fun LoginScreen(
                     modifier = Modifier
                         .clickable { onSignUpButtonClick() }
                         .padding(horizontal = 30.dp),
-                    fontSize = 12.sp,
-                    color = Color(0xFF3D3D3D),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
 
-                VerticalDivider(color = Color.Gray, thickness = 1.dp)
+                VerticalDivider(color = MaterialTheme.colorScheme.secondary, thickness = 1.dp)
 
                 Text(
                     text = "회원가입",
                     modifier = Modifier
                         .clickable { onSignUpButtonClick() }
                         .padding(horizontal = 30.dp),
-                    fontSize = 12.sp,
-                    color = Color(0xFF3D3D3D),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             }
         }
