@@ -59,7 +59,7 @@ fun SignUpExtraInfoScreen(
                 title = {
                     Text(
                         text = "회원가입",
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
@@ -130,7 +130,6 @@ fun SignUpExtraInfoScreen(
                 Text(modifier = Modifier.padding(vertical = 10.dp), text = "회원가입", fontWeight = FontWeight.SemiBold, fontSize = 18.sp, color = Color.White)
             }
         }
-
     }
 }
 

@@ -56,6 +56,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onSignUpButtonClick: () -> Unit,
+    onForgotPasswordButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -72,6 +73,7 @@ fun LoginScreen(
     }
     LoginScreen(
         onSignUpButtonClick = onSignUpButtonClick,
+        onForgotPasswordButtonClick = onForgotPasswordButtonClick,
         onLoginButtonClick = viewModel::login,
         updateEmail = { email -> viewModel.updateEmail(email) },
         updatePassword = { password -> viewModel.updatePassword(password) },
@@ -84,6 +86,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreen(
     onSignUpButtonClick: () -> Unit,
+    onForgotPasswordButtonClick: () -> Unit,
     onLoginButtonClick: () -> Unit,
     updateEmail: (String) -> Unit,
     updatePassword: (String) -> Unit,
@@ -193,7 +196,7 @@ fun LoginScreen(
                 Text(
                     text = "비밀번호 찾기",
                     modifier = Modifier
-                        .clickable { onSignUpButtonClick() }
+                        .clickable { onForgotPasswordButtonClick() }
                         .padding(horizontal = 30.dp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSecondary,
@@ -219,6 +222,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         onSignUpButtonClick = {},
+        onForgotPasswordButtonClick = {},
         onLoginButtonClick = {},
         updateEmail = {},
         updatePassword = {},

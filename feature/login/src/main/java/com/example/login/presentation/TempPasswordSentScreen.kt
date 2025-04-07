@@ -32,13 +32,13 @@ import com.example.designsystem.theme.CowGroupTheme
 @Composable
 fun TempPasswordSentScreen(
     onNavigationButtonClick: () -> Unit,
-    onLoginButtonClick: () -> Unit,
+    onToLoginButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     TempPasswordSentScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        onLoginButtonClick = onLoginButtonClick,
+        onToLoginButtonClick = onToLoginButtonClick,
         snackBarHostState = snackBarHostState,
     )
 }
@@ -46,7 +46,7 @@ fun TempPasswordSentScreen(
 @Composable
 fun TempPasswordSentScreen(
     onNavigationButtonClick: () -> Unit,
-    onLoginButtonClick: () -> Unit,
+    onToLoginButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -86,7 +86,7 @@ fun TempPasswordSentScreen(
             Spacer(modifier = Modifier.height(150.dp))
 
             Button(
-                onClick = onLoginButtonClick,
+                onClick = onToLoginButtonClick,
                 modifier = Modifier
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
@@ -111,7 +111,7 @@ fun TempPasswordSentScreenPreview() {
     CowGroupTheme {
         TempPasswordSentScreen(
             onNavigationButtonClick = {},
-            onLoginButtonClick = {},
+            onToLoginButtonClick = {},
         )
     }
 }
