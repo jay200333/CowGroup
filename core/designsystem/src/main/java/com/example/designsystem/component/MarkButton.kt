@@ -1,4 +1,4 @@
-package com.example.designsystem
+package com.example.designsystem.component
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton

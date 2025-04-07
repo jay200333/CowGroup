@@ -7,7 +7,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
 import com.example.login.navigation.loginNavGraph
+import com.example.login.navigation.navigateForgotPassword
 import com.example.login.navigation.navigateSignUp
+import com.example.login.navigation.navigateSignUpExtraInfo
+import com.example.login.navigation.navigateTempPasswordSent
 import com.example.main.navigation.mainNavGraph
 import com.example.navigation.AuthRoute
 import com.example.navigation.HomeScreenRoute
@@ -33,7 +36,15 @@ fun CowGroupNavHost(
                         popUpTo(AuthRoute) { inclusive = true }
                     }
                 },
+                onToLoginButtonClick = {
+                    navController.navigate(LoginRoute) {
+                        popUpTo(AuthRoute) { inclusive = true }
+                    }
+                },
+                onNextButtonClick = navController::navigateSignUpExtraInfo,
                 onSignUpButtonClick = navController::navigateSignUp,
+                onForgotPasswordButtonClick = navController::navigateForgotPassword,
+                onTempPasswordSentButtonClick = navController::navigateTempPasswordSent,
                 onNavigationButtonClick = navController::navigateUp,
                 snackBarHostState = snackBarHostState,
                 onShowSnackBar = onShowSnackBar

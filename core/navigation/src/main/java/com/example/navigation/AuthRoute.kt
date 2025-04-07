@@ -10,3 +10,12 @@ data object LoginRoute
 
 @Serializable
 data object SignUpRoute
+
+@Serializable
+data object SignUpExtraInfoRoute
+
+@Serializable
+data object ForgotPasswordRoute
+
+@Serializable
+data object TempPasswordSentRoute

@@ -19,6 +19,7 @@ import javax.inject.Inject
 
 data class SignUpUIState(
     val signUpInfo: SignUpInfo = SignUpInfo("", Gender.MALE, "", ""),
+    val authNumber: String = "",
     val passwordConfirm: String = "",
     val signUpButtonEnabled: Boolean = false,
     val validateUsernameButtonEnabled: Boolean = false,

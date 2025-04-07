@@ -3,36 +3,50 @@ package com.example.login.presentation
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.login.R
 import com.example.login.viewmodel.LoginUIState
 import com.example.login.viewmodel.LoginViewModel
 import com.example.model.LoginInfo
@@ -42,6 +56,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onSignUpButtonClick: () -> Unit,
+    onForgotPasswordButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -58,6 +73,7 @@ fun LoginScreen(
     }
     LoginScreen(
         onSignUpButtonClick = onSignUpButtonClick,
+        onForgotPasswordButtonClick = onForgotPasswordButtonClick,
         onLoginButtonClick = viewModel::login,
         updateEmail = { email -> viewModel.updateEmail(email) },
         updatePassword = { password -> viewModel.updatePassword(password) },
@@ -70,6 +86,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreen(
     onSignUpButtonClick: () -> Unit,
+    onForgotPasswordButtonClick: () -> Unit,
     onLoginButtonClick: () -> Unit,
     updateEmail: (String) -> Unit,
     updatePassword: (String) -> Unit,
@@ -77,6 +94,8 @@ fun LoginScreen(
     loginButtonEnabled: Boolean,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    var showPassword by remember { mutableStateOf(false) }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
@@ -85,69 +104,114 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Cow Group",
-                modifier = Modifier.padding(top = 120.dp),
-                style = MaterialTheme.typography.displayLarge,
-                fontStyle = FontStyle.Italic,
+                modifier = Modifier.padding(top = 150.dp),
+                style = MaterialTheme.typography.displayMedium,
+                fontFamily = FontFamily(Font(R.font.kcchyerim, FontWeight.Normal)),
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.height(64.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             OutlinedTextField(
                 value = loginInfo.email,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 onValueChange = updateEmail,
-                label = { Text(text = "이메일") },
-                placeholder = { Text(text = "이메일을 입력하세요.") },
+                placeholder = { Text(text = "이메일") },
+                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF221E1F)),
+                shape = RoundedCornerShape(10.dp),
+                trailingIcon = {
+                    if (loginInfo.email.isEmpty().not()) {
+                        Icon(
+                            modifier = Modifier.clickable { updateEmail("") },
+                            painter = painterResource(R.drawable.baseline_cancel_24),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = "email_clear",
+                        )
+                    }
+                },
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedTextField(
                 value = loginInfo.password,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 onValueChange = updatePassword,
-                label = { Text(text = "비밀번호") },
-                placeholder = { Text(text = "비밀번호를 입력하세요.") },
+                placeholder = { Text(text = "비밀번호") },
+                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary),
+                shape = RoundedCornerShape(10.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    if (showPassword) {
+                        IconButton(onClick = { showPassword = showPassword.not() }) {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_visibility_24),
+                                contentDescription = "hide_password",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    } else {
+                        IconButton(
+                            onClick = { showPassword = showPassword.not() },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_visibility_off_24),
+                                contentDescription = "hide_password",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                },
             )
+
+            Spacer(modifier = Modifier.height(30.dp))
 
             Button(
                 onClick = onLoginButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+                    .height(50.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = loginButtonEnabled,
             ) {
-                Text(text = "로그인")
+                Text(text = "로그인", color = Color.White, fontSize = 18.sp)
             }
 
-            Text(
-                text = "회원가입",
-                modifier = Modifier.clickable { onSignUpButtonClick() },
-                color = Color.Gray,
-                textDecoration = TextDecoration.Underline,
-            )
+            Spacer(modifier = Modifier.height(20.dp))
 
-            HorizontalDivider(color = Color.Gray, thickness = 1.dp)
-
-            Text(text = "SNS 로그인")
-
-            Button(
-                onClick = {},
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .height(IntrinsicSize.Min)
+                    .align(Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "구글 로그인 버튼")
+                Text(
+                    text = "비밀번호 찾기",
+                    modifier = Modifier
+                        .clickable { onForgotPasswordButtonClick() }
+                        .padding(horizontal = 30.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                )
+
+                VerticalDivider(color = MaterialTheme.colorScheme.onPrimary, thickness = 1.dp)
+
+                Text(
+                    text = "회원가입",
+                    modifier = Modifier
+                        .clickable { onSignUpButtonClick() }
+                        .padding(horizontal = 30.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                )
             }
         }
     }
@@ -158,6 +222,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         onSignUpButtonClick = {},
+        onForgotPasswordButtonClick = {},
         onLoginButtonClick = {},
         updateEmail = {},
         updatePassword = {},

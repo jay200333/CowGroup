@@ -1,4 +1,4 @@
-package com.example.designsystem
+package com.example.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
