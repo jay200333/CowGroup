@@ -38,7 +38,7 @@ fun MbtiSelectionGrid(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimary),
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimary, shape = RoundedCornerShape(10.dp)),
     ) {
         items(mbtiList.size) { index ->
             val mbti = mbtiList[index]
@@ -67,7 +67,7 @@ fun MbtiSelectionGrid(
 fun MbtiGridPreview() {
     CowGroupTheme {
         MbtiSelectionGrid(
-            selectedMbti = "ESTP",
+            selectedMbti = "ISTJ",
             onMbtiSelected = {}
         )
     }

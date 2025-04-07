@@ -6,19 +6,21 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.login.presentation.ForgotPasswordScreen
 import com.example.login.presentation.LoginScreen
+import com.example.login.presentation.SignUpExtraInfoScreen
 import com.example.login.presentation.SignUpScreen
 import com.example.login.presentation.TempPasswordSentScreen
 import com.example.navigation.ForgotPasswordRoute
 import com.example.navigation.LoginRoute
+import com.example.navigation.SignUpExtraInfoRoute
 import com.example.navigation.SignUpRoute
 import com.example.navigation.TempPasswordSentRoute
 
-fun NavController.navigateLogin() {
-    navigate(LoginRoute)
-}
-
 fun NavController.navigateSignUp() {
     navigate(SignUpRoute)
+}
+
+fun NavController.navigateSignUpExtraInfo() {
+    navigate(SignUpExtraInfoRoute)
 }
 
 fun NavController.navigateForgotPassword() {
@@ -32,6 +34,7 @@ fun NavController.navigateTempPasswordSent() {
 fun NavGraphBuilder.loginNavGraph(
     onLoginSuccess: () -> Unit,
     onSignUpButtonClick: () -> Unit,
+    onNextButtonClick: () -> Unit,
     onForgotPasswordButtonClick: () -> Unit,
     onTempPasswordSentButtonClick: () -> Unit,
     onToLoginButtonClick: () -> Unit,
@@ -51,8 +54,18 @@ fun NavGraphBuilder.loginNavGraph(
 
     composable<SignUpRoute> {
         SignUpScreen(
+            onNextButtonClick = onNextButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
             onSignUpSuccess = onNavigationButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
+        )
+    }
+
+    composable<SignUpExtraInfoRoute> {
+        SignUpExtraInfoScreen(
+            onSignUpButtonClick = onToLoginButtonClick,
+            onNavigationButtonClick = onNavigationButtonClick,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
         )

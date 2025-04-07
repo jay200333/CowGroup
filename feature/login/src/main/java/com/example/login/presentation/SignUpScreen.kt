@@ -4,25 +4,26 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,13 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.theme.CowGroupTheme
 import com.example.login.R
 import com.example.login.component.ValidatingTextField
 import com.example.login.viewmodel.SignUpUIState
@@ -50,7 +54,8 @@ import com.example.model.SignUpInfo
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    onLoginTextClick: () -> Unit,
+    onNextButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
     onSignUpSuccess: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
@@ -68,8 +73,8 @@ fun SignUpScreen(
     }
 
     SignUpScreen(
-        onLoginTextClick = onLoginTextClick,
-        onSignUpButtonClick = viewModel::signUp,
+        onNavigationButtonClick = onNavigationButtonClick,
+        onNextButtonClick = onNextButtonClick,
         updateNickname = { nickname -> viewModel.updateNickname(nickname) },
         updateEmail = { email -> viewModel.updateEmail(email) },
         updatePassword = { password -> viewModel.updatePassword(password) },
@@ -85,14 +90,16 @@ fun SignUpScreen(
         signUpButtonEnabled = uiState.signUpButtonEnabled,
         validateUsernameButtonEnabled = uiState.validateUsernameButtonEnabled,
         validateEmailButtonEnabled = uiState.validateEmailButtonEnabled,
+        isValidUsername = uiState.isValidUsername,
+        isValidEmail = uiState.isValidEmail,
         snackBarHostState = snackBarHostState,
     )
 }
 
 @Composable
 fun SignUpScreen(
-    onLoginTextClick: () -> Unit,
-    onSignUpButtonClick: () -> Unit,
+    onNavigationButtonClick: () -> Unit,
+    onNextButtonClick: () -> Unit,
     updateNickname: (String) -> Unit,
     updateEmail: (String) -> Unit,
     updatePassword: (String) -> Unit,
@@ -103,6 +110,8 @@ fun SignUpScreen(
     validatePasswordConfirm: (String, String) -> Boolean,
     validateUsernameButtonEnabled: Boolean,
     validateEmailButtonEnabled: Boolean,
+    isValidUsername: Boolean,
+    isValidEmail: Boolean,
     checkUsername: () -> Unit,
     checkEmail: () -> Unit,
     passwordConfirm: String,
@@ -110,107 +119,154 @@ fun SignUpScreen(
     signUpButtonEnabled: Boolean,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    var showUsernameMessage by remember { mutableStateOf(false) }
+    var showEmailMessage by remember { mutableStateOf(false) }
+    var showAuthNumberMessage by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
     var showPasswordConfirm by remember { mutableStateOf(false) }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "회원가입",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigationButtonClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "뒤로가기"
+                        )
+                    }
+                },
+            )
+        },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(24.dp),
+                .padding(top = 80.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            
-            Text(
-                text = "회원가입",
-                modifier = Modifier.padding(vertical = 64.dp),
-                style = MaterialTheme.typography.displaySmall,
+            ValidatingTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = signUpInfo.username,
+                onValueChange = {
+                    updateNickname(it)
+                    showUsernameMessage = false
+                },
+                validateCondition = isValidUsername,
+                showMessage = showUsernameMessage,
+                label = "닉네임",
+                singleLine = true,
+                errorMessage = "이미 사용하고 있는 닉네임입니다.", /* api로 부터 받은 에러 메시지 전달하기 */
+                successMessage = "사용할 수 있는 닉네임입니다.",
+                trailingIcon = {
+                    Row(
+                        modifier = Modifier.padding(end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (signUpInfo.username.isNotEmpty()) {
+                            Icon(
+                                modifier = Modifier.clickable {
+                                    updateNickname("")
+                                    showUsernameMessage = false
+                                },
+                                painter = painterResource(R.drawable.baseline_cancel_24),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = "username_clear",
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(
+                            onClick = {
+                                checkUsername()
+                                showUsernameMessage = true
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                            enabled = isValidUsername.not()
+                        ) {
+                            Text(text = "중복 확인", color = Color.White)
+                        }
+                    }
+                }
             )
 
-            Row(
+            ValidatingTextField(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier.weight(1f),
-                    value = signUpInfo.username,
-                    onValueChange = updateNickname,
-                    label = { Text(text = "닉네임") },
-                    placeholder = { Text(text = "닉네임을 입력하세요.") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Filled.Person, contentDescription = "icon_person")
-                    },
-                    singleLine = true,
-                )
+                value = signUpInfo.email,
+                onValueChange = updateEmail,
+                validateCondition = isValidEmail,
+                label = "이메일 주소",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                errorMessage = "이메일 형식에 맞게 입력해 주세요.", /* api로 부터 받은 에러 메시지 전달하기 */
+                successMessage = "인증 요청 이메일이 전송되었습니다.",
+                showMessage = false,
+                trailingIcon = {
+                    Button(
+                        onClick = { checkEmail() },
+                        modifier = Modifier.padding(end = 8.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                        enabled = isValidEmail.not()
+                    ) {
+                        Text(text = "인증하기", color = Color.White)
+                    }
+                },
+            )
 
-                Button(
-                    modifier = Modifier.wrapContentWidth(),
-                    onClick = { checkUsername() },
-                    enabled = validateUsernameButtonEnabled,
-                ) {
-                    Text(text = "중복 확인", style = MaterialTheme.typography.labelSmall)
-                }
-            }
-
-            Row(
+            ValidatingTextField(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                ValidatingTextField(
-                    value = signUpInfo.email,
-                    onValueChange = updateEmail,
-                    validateCondition = validateEmail(signUpInfo.email),
-                    modifier = Modifier.weight(1f),
-                    label = "이메일 주소",
-                    placeholder = "이메일을 입력하세요.",
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Email,
-                            contentDescription = "icon_person",
-                        )
-                    },
-                    errorMessage = "이메일 형식에 맞게 입력해 주세요.",
-                )
-                Button(
-                    modifier = Modifier.wrapContentWidth(),
-                    onClick = { checkEmail() },
-                    enabled = validateEmailButtonEnabled,
-                ) {
-                    Text(text = "중복 확인", style = MaterialTheme.typography.labelSmall)
-                }
-            }
+                value = signUpInfo.email,
+                onValueChange = updateEmail,
+                validateCondition = isValidEmail.not(),
+                label = "인증번호 입력",
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                errorMessage = "인증번호가 올바르지 않습니다.", /* api로 부터 받은 에러 메시지 전달하기 */
+                successMessage = "이메일 인증이 완료되었습니다.",
+                showMessage = false,
+                trailingIcon = {
+                    Button(
+                        onClick = { checkEmail() },
+                        modifier = Modifier.padding(end = 8.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                        enabled = isValidEmail
+                    ) {
+                        Text(text = "인증 확인", color = Color.White)
+                    }
+                },
+            )
 
             ValidatingTextField(
                 value = signUpInfo.password,
                 onValueChange = updatePassword,
                 validateCondition = validatePassword(signUpInfo.password),
                 modifier = Modifier.fillMaxWidth(),
-                label = "비밀번호",
-                placeholder = "비밀번호를 입력하세요.",
+                label = "비밀번호 (숫자, 특수문자 포함 8~20자)",
                 errorMessage = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~16자리여야 합니다.",
+                successMessage = "",
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        contentDescription = "PasswordIcon",
-                    )
-                },
+                showMessage = true,
                 trailingIcon = {
                     if (showPassword) {
                         IconButton(onClick = { showPassword = showPassword.not() }) {
                             Icon(
                                 painter = painterResource(R.drawable.baseline_visibility_24),
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "hide_password",
                             )
                         }
@@ -220,6 +276,7 @@ fun SignUpScreen(
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.baseline_visibility_off_24),
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "hide_password",
                             )
                         }
@@ -236,22 +293,18 @@ fun SignUpScreen(
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 label = "비밀번호 확인",
-                placeholder = "비밀번호를 입력하세요.",
                 errorMessage = "비밀번호가 일치하지 않습니다.",
+                successMessage = "비밀번호가 일치합니다.",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (showPasswordConfirm) VisualTransformation.None else PasswordVisualTransformation(),
                 singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        contentDescription = "PW2Icon",
-                    )
-                },
+                showMessage = true,
                 trailingIcon = {
                     if (showPasswordConfirm) {
                         IconButton(onClick = { showPasswordConfirm = !showPasswordConfirm }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_visibility_24),
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "hide_password",
                             )
                         }
@@ -261,6 +314,7 @@ fun SignUpScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_visibility_off_24),
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "hide_password",
                             )
                         }
@@ -268,49 +322,17 @@ fun SignUpScreen(
                 },
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-            ) {
-                Text(
-                    text = "성별",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 8.dp, end = 32.dp),
-                )
-                Gender.entries.forEach { genderOption ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(end = 8.dp),
-                    ) {
-                        RadioButton(
-                            selected = signUpInfo.gender == genderOption,
-                            onClick = { updateGender(genderOption) },
-                        )
-                        Text(text = genderOption.label)
-                    }
-                }
-            }
+            Spacer(modifier = Modifier.height(10.dp))
 
             Button(
-                onClick = onSignUpButtonClick,
+                onClick = onNextButtonClick,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, bottom = 8.dp),
-                enabled = signUpButtonEnabled,
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                enabled = true,//signUpButtonEnabled,
             ) {
-                Text(text = "회원 가입")
-            }
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(text = "계정이 있으신가요?")
-                Text(
-                    text = "로그인",
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .clickable { onLoginTextClick() },
-                    color = Color.Blue,
-                )
+                Text(modifier = Modifier.padding(vertical = 10.dp), text = "다음", fontWeight = FontWeight.SemiBold, fontSize = 18.sp, color = Color.White)
             }
         }
     }
@@ -319,23 +341,27 @@ fun SignUpScreen(
 @Preview(showBackground = true)
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen(
-        onLoginTextClick = {},
-        onSignUpButtonClick = {},
-        updateNickname = {},
-        updateEmail = {},
-        updatePassword = {},
-        updatePasswordConfirm = {},
-        updateGender = {},
-        signUpInfo = SignUpInfo("안드로이드", Gender.MALE, "", ""),
-        validateUsernameButtonEnabled = true,
-        validateEmailButtonEnabled = true,
-        signUpButtonEnabled = true,
-        validateEmail = { true },
-        validatePassword = { true },
-        validatePasswordConfirm = { _, _ -> true },
-        checkUsername = {},
-        checkEmail = {},
-        passwordConfirm = "",
-    )
+    CowGroupTheme {
+        SignUpScreen(
+            onNavigationButtonClick = {},
+            onNextButtonClick = {},
+            updateNickname = {},
+            updateEmail = {},
+            updatePassword = {},
+            updatePasswordConfirm = {},
+            updateGender = {},
+            signUpInfo = SignUpInfo("안드로이드", Gender.MALE, "", ""),
+            validateUsernameButtonEnabled = true,
+            validateEmailButtonEnabled = true,
+            signUpButtonEnabled = true,
+            validateEmail = { true },
+            validatePassword = { true },
+            validatePasswordConfirm = { _, _ -> true },
+            checkUsername = {},
+            checkEmail = {},
+            isValidUsername = true,
+            isValidEmail = false,
+            passwordConfirm = "",
+        )
+    }
 }
