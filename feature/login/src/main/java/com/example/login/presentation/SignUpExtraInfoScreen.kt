@@ -20,6 +20,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,18 +28,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.login.component.GenderSelectionGrid
 import com.example.login.component.MbtiSelectionGrid
+import com.example.login.viewmodel.SignUpExtraInfoViewModel
+import com.example.login.viewmodel.SignUpUIState
 
 @Composable
 fun SignUpExtraInfoScreen(
+    viewModel: SignUpExtraInfoViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
     onSignUpButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
-
+    val uiState: SignUpUIState by viewModel.signUpUIState.collectAsStateWithLifecycle()
 
     SignUpExtraInfoScreen(
         onNavigationButtonClick = onNavigationButtonClick,

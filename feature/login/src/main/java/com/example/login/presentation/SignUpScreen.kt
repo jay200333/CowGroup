@@ -44,18 +44,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.login.R
 import com.example.login.component.ValidatingTextField
-import com.example.login.viewmodel.SignUpUIState
+import com.example.login.viewmodel.SignUpStep1UIState
 import com.example.login.viewmodel.SignUpViewModel
 import com.example.model.SignUpStep1Info
 
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    onNextButtonClick: () -> Unit,
+    onNextButtonClick: (SignUpStep1Info) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onSignUpSuccess: () -> Unit,
 ) {
-    val uiState: SignUpUIState by viewModel.signUpUIState.collectAsStateWithLifecycle()
+    val uiState: SignUpStep1UIState by viewModel.signUpUIState.collectAsStateWithLifecycle()
+    //val signUpInfo = uiState.signUpInfo
 
     LaunchedEffect(uiState) {
         if (uiState.isSignUpSuccess) {
@@ -65,7 +66,7 @@ fun SignUpScreen(
 
     SignUpScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        onNextButtonClick = onNextButtonClick,
+        onNextButtonClick = { signUpInfo -> onNextButtonClick(signUpInfo) },
         updateNickname = { nickname -> viewModel.updateNickname(nickname) },
         updateEmail = { email -> viewModel.updateEmail(email) },
         updateAuthNumber = { authNumber -> viewModel.updateAuthNumber(authNumber) },
@@ -94,7 +95,7 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreen(
     onNavigationButtonClick: () -> Unit,
-    onNextButtonClick: () -> Unit,
+    onNextButtonClick: (SignUpStep1Info) -> Unit,
     updateNickname: (String) -> Unit,
     updateEmail: (String) -> Unit,
     updateAuthNumber: (String) -> Unit,
@@ -295,7 +296,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             Button(
-                onClick = onNextButtonClick,
+                onClick = { onNextButtonClick(signUpInfo) },
                 modifier = Modifier
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),

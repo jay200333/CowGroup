@@ -96,11 +96,9 @@ fun ForgotPasswordScreen(
                 value = "example@gmail.com",
                 onValueChange = {},
                 validateCondition = false,
-                showMessage = false,
                 label = "이메일 주소",
                 singleLine = true,
                 errorMessage = "", /* api로 부터 받은 에러 메시지 전달하기 */
-                successMessage = "",
                 trailingIcon = {
                     Row(
                         modifier = Modifier.padding(end = 8.dp),

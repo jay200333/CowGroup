@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
-data class SignUpUIState(
+data class SignUpStep1UIState(
     val isLoading: Boolean = false,
     val signUpInfo: SignUpStep1Info = SignUpStep1Info("", "", ""),
     val authNumber: String = "",
@@ -38,8 +38,8 @@ data class SignUpUIState(
 @HiltViewModel
 class SignUpViewModel @Inject constructor(private val userRepository: UserRepository) :
     ViewModel() {
-    private val _signUpUIState: MutableStateFlow<SignUpUIState> = MutableStateFlow(SignUpUIState())
-    val signUpUIState: StateFlow<SignUpUIState> = _signUpUIState.asStateFlow()
+    private val _signUpUIState: MutableStateFlow<SignUpStep1UIState> = MutableStateFlow(SignUpStep1UIState())
+    val signUpUIState: StateFlow<SignUpStep1UIState> = _signUpUIState.asStateFlow()
     private val passwordPattern =
         Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
 
@@ -316,12 +316,12 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
     }
 
     private fun nextButtonCondition(
-        state: SignUpUIState,
+        state: SignUpStep1UIState,
     ): Boolean {
-        return state.isValidUsername &&
+        return (state.isValidUsername &&
                 state.isValidEmail &&
                 state.isValidAuthNumber &&
                 state.passwordCondition &&
-                state.passwordConfirmCondition
+                state.passwordConfirmCondition).not()
     }
 }

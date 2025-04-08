@@ -1,5 +1,7 @@
 package com.example.model
 
+import kotlinx.serialization.Serializable
+
 data class SignUpInfo(
     val username: String,
     val email: String,
@@ -8,6 +10,7 @@ data class SignUpInfo(
     val mbti: MBTI
 )
 
+@Serializable
 data class SignUpStep1Info(
     val username: String,
     val email: String,
