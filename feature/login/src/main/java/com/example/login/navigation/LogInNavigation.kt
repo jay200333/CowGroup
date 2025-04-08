@@ -57,8 +57,6 @@ fun NavGraphBuilder.loginNavGraph(
             onNextButtonClick = onNextButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
             onSignUpSuccess = onNavigationButtonClick,
-            snackBarHostState = snackBarHostState,
-            onShowSnackBar = onShowSnackBar,
         )
     }
 

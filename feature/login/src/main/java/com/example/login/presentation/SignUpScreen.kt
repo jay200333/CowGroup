@@ -20,8 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -48,8 +46,7 @@ import com.example.login.R
 import com.example.login.component.ValidatingTextField
 import com.example.login.viewmodel.SignUpUIState
 import com.example.login.viewmodel.SignUpViewModel
-import com.example.model.Gender
-import com.example.model.SignUpInfo
+import com.example.model.SignUpStep1Info
 
 @Composable
 fun SignUpScreen(
@@ -57,16 +54,10 @@ fun SignUpScreen(
     onNextButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onSignUpSuccess: () -> Unit,
-    snackBarHostState: SnackbarHostState,
-    onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: SignUpUIState by viewModel.signUpUIState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
-        if (uiState.message.isNotEmpty()) {
-            onShowSnackBar(uiState.message)
-            viewModel.setMessageClear()
-        }
         if (uiState.isSignUpSuccess) {
             onSignUpSuccess()
         }
@@ -77,22 +68,26 @@ fun SignUpScreen(
         onNextButtonClick = onNextButtonClick,
         updateNickname = { nickname -> viewModel.updateNickname(nickname) },
         updateEmail = { email -> viewModel.updateEmail(email) },
+        updateAuthNumber = { authNumber -> viewModel.updateAuthNumber(authNumber) },
         updatePassword = { password -> viewModel.updatePassword(password) },
         updatePasswordConfirm = { passwordConfirm -> viewModel.updatePasswordConfirm(passwordConfirm) },
-        updateGender = { gender -> viewModel.updateGender(gender) },
-        validateEmail = { email -> viewModel.validateEmail(email) },
-        validatePassword = viewModel::validatePassword,
-        validatePasswordConfirm = viewModel::validatePasswordConfirm,
         checkUsername = viewModel::checkUsername,
         checkEmail = viewModel::checkEmail,
+        checkAuthNumber = viewModel::checkAuthNumber,
         passwordConfirm = uiState.passwordConfirm,
         signUpInfo = uiState.signUpInfo,
-        signUpButtonEnabled = uiState.signUpButtonEnabled,
-        validateUsernameButtonEnabled = uiState.validateUsernameButtonEnabled,
-        validateEmailButtonEnabled = uiState.validateEmailButtonEnabled,
+        authNumber = uiState.authNumber,
+        nextButtonEnabled = uiState.nextButtonEnabled,
         isValidUsername = uiState.isValidUsername,
         isValidEmail = uiState.isValidEmail,
-        snackBarHostState = snackBarHostState,
+        isValidAuthNumber = uiState.isValidAuthNumber,
+        passwordCondition = uiState.passwordCondition,
+        passwordConfirmCondition = uiState.passwordConfirmCondition,
+        usernameMessage = uiState.usernameMessage,
+        emailMessage = uiState.emailMessage,
+        authNumberMessage = uiState.authNumberMessage,
+        passwordMessage = uiState.passwordMessage,
+        passwordConfirmMessage = uiState.passwordConfirmMessage,
     )
 }
 
@@ -102,26 +97,27 @@ fun SignUpScreen(
     onNextButtonClick: () -> Unit,
     updateNickname: (String) -> Unit,
     updateEmail: (String) -> Unit,
+    updateAuthNumber: (String) -> Unit,
     updatePassword: (String) -> Unit,
     updatePasswordConfirm: (String) -> Unit,
-    updateGender: (Gender) -> Unit,
-    validateEmail: (String) -> Boolean,
-    validatePassword: (String) -> Boolean,
-    validatePasswordConfirm: (String, String) -> Boolean,
-    validateUsernameButtonEnabled: Boolean,
-    validateEmailButtonEnabled: Boolean,
     isValidUsername: Boolean,
     isValidEmail: Boolean,
+    isValidAuthNumber: Boolean,
+    passwordCondition: Boolean,
+    passwordConfirmCondition: Boolean,
     checkUsername: () -> Unit,
     checkEmail: () -> Unit,
+    checkAuthNumber: () -> Unit,
+    signUpInfo: SignUpStep1Info,
+    authNumber: String,
     passwordConfirm: String,
-    signUpInfo: SignUpInfo,
-    signUpButtonEnabled: Boolean,
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    nextButtonEnabled: Boolean,
+    usernameMessage: String,
+    emailMessage: String,
+    authNumberMessage: String,
+    passwordMessage: String,
+    passwordConfirmMessage: String,
 ) {
-    var showUsernameMessage by remember { mutableStateOf(false) }
-    var showEmailMessage by remember { mutableStateOf(false) }
-    var showAuthNumberMessage by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
     var showPasswordConfirm by remember { mutableStateOf(false) }
 
@@ -144,7 +140,6 @@ fun SignUpScreen(
                 },
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -155,29 +150,21 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             ValidatingTextField(
-                modifier = Modifier.fillMaxWidth(),
                 value = signUpInfo.username,
-                onValueChange = {
-                    updateNickname(it)
-                    showUsernameMessage = false
-                },
+                onValueChange = { updateNickname(it) },
                 validateCondition = isValidUsername,
-                showMessage = showUsernameMessage,
                 label = "닉네임",
                 singleLine = true,
-                errorMessage = "이미 사용하고 있는 닉네임입니다.", /* api로 부터 받은 에러 메시지 전달하기 */
-                successMessage = "사용할 수 있는 닉네임입니다.",
+                readOnly = isValidUsername,
+                errorMessage = usernameMessage,
                 trailingIcon = {
                     Row(
                         modifier = Modifier.padding(end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (signUpInfo.username.isNotEmpty()) {
+                        if (signUpInfo.username.isNotEmpty() && isValidUsername.not()) {
                             Icon(
-                                modifier = Modifier.clickable {
-                                    updateNickname("")
-                                    showUsernameMessage = false
-                                },
+                                modifier = Modifier.clickable { updateNickname("") },
                                 painter = painterResource(R.drawable.baseline_cancel_24),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "username_clear",
@@ -187,10 +174,7 @@ fun SignUpScreen(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Button(
-                            onClick = {
-                                checkUsername()
-                                showUsernameMessage = true
-                            },
+                            onClick = { checkUsername() },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                             enabled = isValidUsername.not()
@@ -202,16 +186,14 @@ fun SignUpScreen(
             )
 
             ValidatingTextField(
-                modifier = Modifier.fillMaxWidth(),
                 value = signUpInfo.email,
                 onValueChange = updateEmail,
                 validateCondition = isValidEmail,
                 label = "이메일 주소",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
-                errorMessage = "이메일 형식에 맞게 입력해 주세요.", /* api로 부터 받은 에러 메시지 전달하기 */
-                successMessage = "인증 요청 이메일이 전송되었습니다.",
-                showMessage = false,
+                errorMessage = emailMessage,
+                readOnly = isValidEmail,
                 trailingIcon = {
                     Button(
                         onClick = { checkEmail() },
@@ -226,23 +208,20 @@ fun SignUpScreen(
             )
 
             ValidatingTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = signUpInfo.email,
-                onValueChange = updateEmail,
-                validateCondition = isValidEmail.not(),
+                value = authNumber,
+                onValueChange = updateAuthNumber,
+                validateCondition = isValidAuthNumber,
                 label = "인증번호 입력",
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                errorMessage = "인증번호가 올바르지 않습니다.", /* api로 부터 받은 에러 메시지 전달하기 */
-                successMessage = "이메일 인증이 완료되었습니다.",
-                showMessage = false,
+                errorMessage = authNumberMessage,
                 trailingIcon = {
                     Button(
-                        onClick = { checkEmail() },
+                        onClick = { checkAuthNumber() },
                         modifier = Modifier.padding(end = 8.dp),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                        enabled = isValidEmail
+                        enabled = isValidAuthNumber.not()
                     ) {
                         Text(text = "인증 확인", color = Color.White)
                     }
@@ -252,15 +231,12 @@ fun SignUpScreen(
             ValidatingTextField(
                 value = signUpInfo.password,
                 onValueChange = updatePassword,
-                validateCondition = validatePassword(signUpInfo.password),
-                modifier = Modifier.fillMaxWidth(),
+                validateCondition = passwordCondition,
                 label = "비밀번호 (숫자, 특수문자 포함 8~20자)",
-                errorMessage = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~16자리여야 합니다.",
-                successMessage = "",
+                errorMessage = passwordMessage,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                showMessage = true,
                 trailingIcon = {
                     if (showPassword) {
                         IconButton(onClick = { showPassword = showPassword.not() }) {
@@ -277,7 +253,7 @@ fun SignUpScreen(
                             Icon(
                                 painter = painterResource(R.drawable.baseline_visibility_off_24),
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = "hide_password",
+                                contentDescription = "show_password",
                             )
                         }
                     }
@@ -287,18 +263,12 @@ fun SignUpScreen(
             ValidatingTextField(
                 value = passwordConfirm,
                 onValueChange = updatePasswordConfirm,
-                validateCondition = validatePasswordConfirm(
-                    signUpInfo.password,
-                    passwordConfirm,
-                ),
-                modifier = Modifier.fillMaxWidth(),
+                validateCondition = passwordConfirmCondition,
                 label = "비밀번호 확인",
-                errorMessage = "비밀번호가 일치하지 않습니다.",
-                successMessage = "비밀번호가 일치합니다.",
+                errorMessage = passwordConfirmMessage,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (showPasswordConfirm) VisualTransformation.None else PasswordVisualTransformation(),
                 singleLine = true,
-                showMessage = true,
                 trailingIcon = {
                     if (showPasswordConfirm) {
                         IconButton(onClick = { showPasswordConfirm = !showPasswordConfirm }) {
@@ -310,12 +280,12 @@ fun SignUpScreen(
                         }
                     } else {
                         IconButton(
-                            onClick = { showPasswordConfirm = showPasswordConfirm.not() },
+                            onClick = { showPasswordConfirm = !showPasswordConfirm },
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_visibility_off_24),
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = "hide_password",
+                                contentDescription = "show_password",
                             )
                         }
                     }
@@ -330,9 +300,15 @@ fun SignUpScreen(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                enabled = true,//signUpButtonEnabled,
+                enabled = nextButtonEnabled,
             ) {
-                Text(modifier = Modifier.padding(vertical = 10.dp), text = "다음", fontWeight = FontWeight.SemiBold, fontSize = 18.sp, color = Color.White)
+                Text(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    text = "다음",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
             }
         }
     }
@@ -347,21 +323,26 @@ fun SignUpScreenPreview() {
             onNextButtonClick = {},
             updateNickname = {},
             updateEmail = {},
+            updateAuthNumber = {},
             updatePassword = {},
             updatePasswordConfirm = {},
-            updateGender = {},
-            signUpInfo = SignUpInfo("안드로이드", Gender.MALE, "", ""),
-            validateUsernameButtonEnabled = true,
-            validateEmailButtonEnabled = true,
-            signUpButtonEnabled = true,
-            validateEmail = { true },
-            validatePassword = { true },
-            validatePasswordConfirm = { _, _ -> true },
+            signUpInfo = SignUpStep1Info("안드로이드", "", ""),
+            authNumber = "",
+            nextButtonEnabled = true,
             checkUsername = {},
             checkEmail = {},
-            isValidUsername = true,
+            checkAuthNumber = {},
+            isValidUsername = false,
             isValidEmail = false,
+            isValidAuthNumber = false,
+            passwordCondition = false,
+            passwordConfirmCondition = false,
             passwordConfirm = "",
+            usernameMessage = "",
+            emailMessage = "",
+            authNumberMessage = "",
+            passwordMessage = "",
+            passwordConfirmMessage = "",
         )
     }
 }
