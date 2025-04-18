@@ -2,10 +2,12 @@ package com.example.model
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class SignUpInfo(
     val username: String,
     val email: String,
     val password: String,
+    val code: String,
     val gender: Gender,
     val mbti: MBTI
 )

@@ -56,7 +56,6 @@ fun SignUpScreen(
     onSignUpSuccess: () -> Unit,
 ) {
     val uiState: SignUpStep1UIState by viewModel.signUpUIState.collectAsStateWithLifecycle()
-    //val signUpInfo = uiState.signUpInfo
 
     LaunchedEffect(uiState) {
         if (uiState.isSignUpSuccess) {

@@ -69,7 +69,7 @@ fun NavGraphBuilder.loginNavGraph(
     composable<SignUpExtraInfoRoute>(
         typeMap = mapOf(typeOf<SignUpStep1Info>() to SignUpStep1InfoType)) {
         SignUpExtraInfoScreen(
-            onSignUpButtonClick = onToLoginButtonClick,
+            onSignUpSuccess = onToLoginButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,

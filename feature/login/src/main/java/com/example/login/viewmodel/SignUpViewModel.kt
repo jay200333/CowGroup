@@ -44,50 +44,6 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
     private val passwordPattern =
         Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
 
-//    fun signUp() {
-//        viewModelScope.launch {
-//            _signUpUIState.update { state ->
-//                state.copy(
-//                    isLoading = true,
-//                    //message = "",
-//                )
-//            }
-//            try {
-//                userRepository.signUp(signUpUIState.value.signUpInfo)
-//                _signUpUIState.update { state ->
-//                    state.copy(
-//                        isSignUpSuccess = true,
-//                        isLoading = false,
-//                        //message = "회원가입이 완료되었습니다.",
-//                    )
-//                }
-//            } catch (e: HttpException) {
-//                val response = e.response()?.errorBody()?.string()
-//                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
-//                _signUpUIState.update { state ->
-//                    state.copy(
-//                        isLoading = false,
-//                        //message = errorResponse.errors.message,
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                _signUpUIState.update { state ->
-//                    state.copy(
-//                        isLoading = false,
-//                        //message = "알 수 없는 오류가 발생했습니다.",
-//                    )
-//                }
-//            }
-//        }
-//    }
-
-//    fun updateGender(gender: Gender) {
-//        _signUpUIState.update { state ->
-//            val updatedSignUpInfo = state.signUpInfo.copy(gender = gender)
-//            state.copy(signUpInfo = updatedSignUpInfo)
-//        }
-//    }
-
     fun updateNickname(username: String) {
         _signUpUIState.update { state ->
             val updatedSignUpInfo = state.signUpInfo.copy(username = username)
@@ -324,10 +280,10 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
     private fun nextButtonCondition(
         state: SignUpStep1UIState,
     ): Boolean {
-        return state.isValidUsername &&
+        return (state.isValidUsername &&
                 state.isValidEmail &&
                 state.isValidAuthNumber &&
                 state.passwordCondition &&
-                state.passwordConfirmCondition
+                state.passwordConfirmCondition)
     }
 }

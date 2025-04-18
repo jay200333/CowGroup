@@ -1,5 +1,6 @@
 package com.example.login.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,12 +37,15 @@ import com.example.login.component.GenderSelectionGrid
 import com.example.login.component.MbtiSelectionGrid
 import com.example.login.viewmodel.SignUpExtraInfoViewModel
 import com.example.login.viewmodel.SignUpUIState
+import com.example.model.Gender
+import com.example.model.MBTI
+import com.example.model.SignUpInfo
 
 @Composable
 fun SignUpExtraInfoScreen(
     viewModel: SignUpExtraInfoViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
-    onSignUpButtonClick: () -> Unit,
+    onSignUpSuccess: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -48,15 +53,34 @@ fun SignUpExtraInfoScreen(
 
     SignUpExtraInfoScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        onSignUpButtonClick = onSignUpButtonClick,
+        onSignUpButtonClick = viewModel::signUp,
+        signUpInfo = uiState.signUpInfo,
+        updateGender = { gender -> viewModel.updateGender(gender) },
+        updateMBTI = { mbti -> viewModel.updateMBTI(mbti) },
         snackBarHostState = snackBarHostState,
     )
+
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+
+    LaunchedEffect(uiState.isSignUpSuccess) {
+        if (uiState.isSignUpSuccess) {
+            onSignUpSuccess()
+        }
+    }
 }
 
 @Composable
 fun SignUpExtraInfoScreen(
     onNavigationButtonClick: () -> Unit,
     onSignUpButtonClick: () -> Unit,
+    signUpInfo: SignUpInfo,
+    updateGender: (Gender) -> Unit,
+    updateMBTI: (MBTI) -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -104,8 +128,11 @@ fun SignUpExtraInfoScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             GenderSelectionGrid(
-                selectedGender = "남자",
-                onGenderSelected = {}
+                selectedGender = signUpInfo.gender.name,
+                onGenderSelected = { selectedName ->
+                    val selectedGender = Gender.valueOf(selectedName)
+                    updateGender(selectedGender)
+                }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -119,9 +146,13 @@ fun SignUpExtraInfoScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             MbtiSelectionGrid(
-                selectedMbti = "INFP",
-                onMbtiSelected = {}
+                selectedMBTI = signUpInfo.mbti.name,
+                onMBTISelected = { selectedMBTI ->
+                    val selectedMBTI = MBTI.valueOf(selectedMBTI)
+                    updateMBTI(selectedMBTI)
+                }
             )
+            Log.d("MBTI", "${signUpInfo.mbti}")
 
             Spacer(modifier = Modifier.height(50.dp))
 
@@ -133,12 +164,17 @@ fun SignUpExtraInfoScreen(
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                 enabled = true,
             ) {
-                Text(modifier = Modifier.padding(vertical = 10.dp), text = "회원가입", fontWeight = FontWeight.SemiBold, fontSize = 18.sp, color = Color.White)
+                Text(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    text = "회원가입",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
             }
         }
     }
 }
-
 
 
 @Preview(showBackground = true)
@@ -148,6 +184,9 @@ fun SignUpExtraInfoScreenPreview() {
         SignUpExtraInfoScreen(
             onNavigationButtonClick = {},
             onSignUpButtonClick = {},
+            updateGender = {},
+            updateMBTI = {},
+            signUpInfo = SignUpInfo("안드로이드", "", "", "", Gender.MALE, MBTI.ISTJ)
         )
     }
 }
