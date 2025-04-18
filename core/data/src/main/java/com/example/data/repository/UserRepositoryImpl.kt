@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import android.util.Log
+import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.MemberInfo
 import com.example.model.MyPageInfo
@@ -54,6 +55,17 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun sendAuthCode(email: String): Boolean {
         try {
             val response = api.sendAuthCode(email = email)
+            return response.data.verificationPassed
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun checkAuthCode(emailCodeInfo: EmailCodeInfo): Boolean {
+        try {
+            val response = api.checkAuthCode(emailCodeInfo = emailCodeInfo)
             return response.data.verificationPassed
         } catch (e: HttpException) {
             throw e

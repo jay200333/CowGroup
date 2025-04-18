@@ -1,6 +1,7 @@
 package com.example.network.retrofit
 
 import com.example.model.CreateEvent
+import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
@@ -42,6 +43,9 @@ interface CowGroupApi {
 
     @POST("/users/verification/email/{email}")
     suspend fun sendAuthCode(@Path("email") email: String): ApiResponse<CheckVerificationResponse>
+
+    @POST("/users/verification/email/code")
+    suspend fun checkAuthCode(@Body emailCodeInfo: EmailCodeInfo): ApiResponse<CheckVerificationResponse>
 
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>

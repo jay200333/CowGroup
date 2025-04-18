@@ -210,10 +210,12 @@ fun SignUpScreen(
 
             ValidatingTextField(
                 value = authNumber,
+                enabled = isValidEmail,
                 onValueChange = updateAuthNumber,
                 validateCondition = isValidAuthNumber,
                 label = "인증번호 입력",
                 singleLine = true,
+                readOnly = isValidAuthNumber,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 errorMessage = authNumberMessage,
                 trailingIcon = {
@@ -222,7 +224,7 @@ fun SignUpScreen(
                         modifier = Modifier.padding(end = 8.dp),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                        enabled = isValidAuthNumber.not()
+                        enabled = isValidAuthNumber.not() && isValidEmail
                     ) {
                         Text(text = "인증 확인", color = Color.White)
                     }

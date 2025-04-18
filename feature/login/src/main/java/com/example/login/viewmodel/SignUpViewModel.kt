@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.UserRepository
+import com.example.model.EmailCodeInfo
 import com.example.model.SignUpStep1Info
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
@@ -259,21 +260,26 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                 )
             }
             try {
-                val result = false // 인증번호 api
+                val result = userRepository.checkAuthCode(
+                    emailCodeInfo = EmailCodeInfo(
+                        email = signUpUIState.value.signUpInfo.email,
+                        code = signUpUIState.value.authNumber
+                    )
+                )
                 if (result) {
                     _signUpUIState.update { state ->
                         state.copy(
                             isLoading = false,
-                            authNumberMessage = "인증번호가 올바르지 않습니다.",
-                            nextButtonEnabled = nextButtonCondition(state.copy(isValidAuthNumber = false))
+                            isValidAuthNumber = true,
+                            authNumberMessage = "이메일 인증이 완료되었습니다.",
+                            nextButtonEnabled = nextButtonCondition(state.copy(isValidAuthNumber = true))
                         )
                     }
                 } else {
                     _signUpUIState.update { state ->
                         state.copy(
                             isLoading = false,
-                            isValidAuthNumber = true,
-                            authNumberMessage = "이메일 인증이 완료되었습니다.",
+                            authNumberMessage = "인증번호가 올바르지 않습니다.",
                             nextButtonEnabled = nextButtonCondition(state.copy(isValidAuthNumber = true))
                         )
                     }
