@@ -20,13 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.CowGroupTheme
+import com.example.model.Gender
 
 @Composable
 fun GenderSelectionGrid(
     selectedGender: String,
     onGenderSelected: (String) -> Unit
 ) {
-    val genderOptions = listOf("남자", "여자")
+    val genderOptions = Gender.entries.toTypedArray()
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -36,17 +37,17 @@ fun GenderSelectionGrid(
     ) {
         items(genderOptions.size) { index ->
             val gender = genderOptions[index]
-            val isSelected = gender == selectedGender
+            val isSelected = gender.name == selectedGender
             Box(
                 modifier = Modifier
                     .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White)
                     .border(width = 0.5f.dp, color = MaterialTheme.colorScheme.onPrimary)
-                    .clickable { onGenderSelected(gender) },
+                    .clickable { onGenderSelected(gender.name) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp),
-                    text = gender,
+                    text = gender.label,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isSelected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Medium
