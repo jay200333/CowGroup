@@ -174,13 +174,18 @@ fun LoginScreen(
             Button(
                 onClick = onLoginButtonClick,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = loginButtonEnabled,
             ) {
-                Text(text = "로그인", color = Color.White, fontSize = 18.sp)
+                Text(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    text = "로그인",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
