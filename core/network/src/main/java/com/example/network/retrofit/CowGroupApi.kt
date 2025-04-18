@@ -5,7 +5,7 @@ import com.example.model.LoginInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
-import com.example.network.model.CheckDuplicateResponse
+import com.example.network.model.CheckVerificationResponse
 import com.example.network.model.DetailEventResponse
 import com.example.network.model.MemberResponse
 import com.example.network.model.MyPageResponse
@@ -38,10 +38,10 @@ interface CowGroupApi {
     suspend fun editProfile(@Body profile: Profile): ApiResponse<Unit>
 
     @GET("/users/verification/username/{username}")
-    suspend fun checkUsername(@Path("username") username: String): ApiResponse<CheckDuplicateResponse>
+    suspend fun checkUsername(@Path("username") username: String): ApiResponse<CheckVerificationResponse>
 
-    @GET("/users/email/{email}")
-    suspend fun checkEmail(@Path("email") email: String): ApiResponse<CheckDuplicateResponse>
+    @POST("/users/verification/email/{email}")
+    suspend fun sendAuthCode(@Path("email") email: String): ApiResponse<CheckVerificationResponse>
 
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>

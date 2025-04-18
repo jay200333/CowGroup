@@ -2,7 +2,7 @@ package com.example.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CheckDuplicateResponse(
+data class CheckVerificationResponse(
     @SerializedName("verificationPassed")
     val verificationPassed: Boolean,
 )

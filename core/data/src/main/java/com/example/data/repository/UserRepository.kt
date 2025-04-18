@@ -13,7 +13,7 @@ interface UserRepository {
 
     suspend fun checkUsername(username: String): Boolean
 
-    suspend fun checkEmail(email: String): Boolean
+    suspend fun sendAuthCode(email: String): Boolean
 
     suspend fun getProfile(): Profile
 

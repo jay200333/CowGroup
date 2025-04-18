@@ -51,9 +51,9 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkEmail(email: String): Boolean {
+    override suspend fun sendAuthCode(email: String): Boolean {
         try {
-            val response = api.checkEmail(email = email)
+            val response = api.sendAuthCode(email = email)
             return response.data.verificationPassed
         } catch (e: HttpException) {
             throw e

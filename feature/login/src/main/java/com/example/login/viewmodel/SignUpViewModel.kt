@@ -38,7 +38,8 @@ data class SignUpStep1UIState(
 @HiltViewModel
 class SignUpViewModel @Inject constructor(private val userRepository: UserRepository) :
     ViewModel() {
-    private val _signUpUIState: MutableStateFlow<SignUpStep1UIState> = MutableStateFlow(SignUpStep1UIState())
+    private val _signUpUIState: MutableStateFlow<SignUpStep1UIState> =
+        MutableStateFlow(SignUpStep1UIState())
     val signUpUIState: StateFlow<SignUpStep1UIState> = _signUpUIState.asStateFlow()
     private val passwordPattern =
         Regex("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+\\-=]).{8,16}$")
@@ -199,7 +200,7 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
         }
     }
 
-    fun checkEmail() {
+    fun sendAuthCode() {
         viewModelScope.launch {
             _signUpUIState.update { state ->
                 state.copy(
@@ -208,23 +209,22 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                 )
             }
             try {
-                val result = userRepository.checkEmail(signUpUIState.value.signUpInfo.email)
+                val result = userRepository.sendAuthCode(signUpUIState.value.signUpInfo.email)
                 if (result) {
-                    _signUpUIState.update { state ->
-                        state.copy(
-                            isLoading = false,
-                            isValidEmail = false,
-                            emailMessage = "중복된 이메일 입니다.",
-                            nextButtonEnabled = nextButtonCondition(state.copy(isValidEmail = false))
-                        )
-                    }
-                } else {
                     _signUpUIState.update { state ->
                         state.copy(
                             isLoading = false,
                             isValidEmail = true,
                             emailMessage = "인증 요청 이메일이 전송되었습니다.",
                             nextButtonEnabled = nextButtonCondition(state.copy(isValidEmail = true))
+                        )
+                    }
+                } else {
+                    _signUpUIState.update { state ->
+                        state.copy(
+                            isLoading = false,
+                            emailMessage = "중복된 이메일 입니다.",
+                            nextButtonEnabled = nextButtonCondition(state.copy(isValidEmail = false))
                         )
                     }
                 }
