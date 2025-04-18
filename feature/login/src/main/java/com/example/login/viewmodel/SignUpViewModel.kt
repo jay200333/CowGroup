@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 data class SignUpStep1UIState(
     val isLoading: Boolean = false,
-    val signUpInfo: SignUpStep1Info = SignUpStep1Info("", "", ""),
-    val authNumber: String = "",
+    val signUpInfo: SignUpStep1Info = SignUpStep1Info("", "", "", ""),
     val passwordConfirm: String = "",
     val nextButtonEnabled: Boolean = false,
     val isValidUsername: Boolean = false,
@@ -108,9 +107,10 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
         }
     }
 
-    fun updateAuthNumber(authNumber: String) {
+    fun updateAuthCode(authCode: String) {
         _signUpUIState.update { state ->
-            state.copy(authNumber = authNumber)
+            val updatedSignUpInfo = state.signUpInfo.copy(authCode = authCode)
+            state.copy(signUpInfo = updatedSignUpInfo)
         }
     }
 
@@ -251,7 +251,7 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
         }
     }
 
-    fun checkAuthNumber() {
+    fun checkAuthCode() {
         viewModelScope.launch {
             _signUpUIState.update { state ->
                 state.copy(
@@ -263,7 +263,7 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                 val result = userRepository.checkAuthCode(
                     emailCodeInfo = EmailCodeInfo(
                         email = signUpUIState.value.signUpInfo.email,
-                        code = signUpUIState.value.authNumber
+                        code = signUpUIState.value.signUpInfo.authCode
                     )
                 )
                 if (result) {
@@ -324,10 +324,10 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
     private fun nextButtonCondition(
         state: SignUpStep1UIState,
     ): Boolean {
-        return (state.isValidUsername &&
+        return state.isValidUsername &&
                 state.isValidEmail &&
                 state.isValidAuthNumber &&
                 state.passwordCondition &&
-                state.passwordConfirmCondition).not()
+                state.passwordConfirmCondition
     }
 }

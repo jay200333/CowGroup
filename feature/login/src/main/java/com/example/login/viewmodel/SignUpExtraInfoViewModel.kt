@@ -26,6 +26,6 @@ class SignUpExtraInfoViewModel @Inject constructor(
             ?.let { string -> Json.decodeFromString<SignUpStep1Info>(string) }) { "event is required." }
 
     init {
-        Log.d("SignUpExtraInfoViewModel", "signUpStep1Info: ${signUpStep1Info.email}")
+        Log.d("SignUpExtraInfoViewModel", "signUpStep1Info: $signUpStep1Info")
     }
 }

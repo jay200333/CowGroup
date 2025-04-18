@@ -14,6 +14,7 @@ data class SignUpInfo(
 data class SignUpStep1Info(
     val username: String,
     val email: String,
+    val authCode: String,
     val password: String
 )
 
