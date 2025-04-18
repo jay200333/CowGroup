@@ -1,4 +1,4 @@
-package com.example.mycowgroup
+package com.example.mycowgroup.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

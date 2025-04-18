@@ -1,4 +1,4 @@
-package com.example.mycowgroup
+package com.example.mycowgroup.ui
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
