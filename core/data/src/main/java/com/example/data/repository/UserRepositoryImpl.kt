@@ -43,7 +43,7 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun checkUsername(username: String): Boolean {
         try {
             val response = api.checkUsername(username = username)
-            return response.data.exists
+            return response.data.verificationPassed
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {
@@ -54,7 +54,7 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun checkEmail(email: String): Boolean {
         try {
             val response = api.checkEmail(email = email)
-            return response.data.exists
+            return response.data.verificationPassed
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

@@ -37,7 +37,7 @@ interface CowGroupApi {
     @PATCH("/users")
     suspend fun editProfile(@Body profile: Profile): ApiResponse<Unit>
 
-    @GET("/users/username/{username}")
+    @GET("/users/verification/username/{username}")
     suspend fun checkUsername(@Path("username") username: String): ApiResponse<CheckDuplicateResponse>
 
     @GET("/users/email/{email}")

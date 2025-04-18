@@ -163,17 +163,17 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                     _signUpUIState.update { state ->
                         state.copy(
                             isLoading = false,
-                            usernameMessage = "중복된 닉네임 입니다.",
-                            nextButtonEnabled = nextButtonCondition(state.copy(isValidUsername = false))
+                            isValidUsername = true,
+                            usernameMessage = "사용 가능한 닉네임 입니다.",
+                            nextButtonEnabled = nextButtonCondition(state.copy(isValidUsername = true))
                         )
                     }
                 } else {
                     _signUpUIState.update { state ->
                         state.copy(
                             isLoading = false,
-                            isValidUsername = true,
-                            usernameMessage = "사용 가능한 닉네임 입니다.",
-                            nextButtonEnabled = nextButtonCondition(state.copy(isValidUsername = true))
+                            usernameMessage = "중복된 닉네임 입니다.",
+                            nextButtonEnabled = nextButtonCondition(state.copy(isValidUsername = false))
                         )
                     }
                 }
