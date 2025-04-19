@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -22,37 +23,69 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.login.R
 import com.example.login.component.ValidatingTextField
+import com.example.login.viewmodel.ForgotPasswordUIState
+import com.example.login.viewmodel.ForgotPasswordViewModel
 
 @Composable
 fun ForgotPasswordScreen(
+    viewModel: ForgotPasswordViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
-    onIssueTempPasswordButtonClick: () -> Unit,
+    onToIssueTempPassword: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
+
+    val uiState: ForgotPasswordUIState by viewModel.forgotPasswordUIState.collectAsStateWithLifecycle()
+
     ForgotPasswordScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        onIssueTempPasswordButtonClick = onIssueTempPasswordButtonClick,
+        onIssueTempPasswordButtonClick = viewModel::sendTempPassword,
+        updateEmail = { email -> viewModel.updateEmail(email) },
+        email = uiState.email,
+        isValidEmail = uiState.isValidEmail,
+        emailMessage = uiState.emailMessage,
         snackBarHostState = snackBarHostState,
     )
+
+    LaunchedEffect(uiState) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+
+    LaunchedEffect(uiState.sendTempPasswordSuccess) {
+        if (uiState.sendTempPasswordSuccess) {
+            onToIssueTempPassword()
+        }
+    }
 }
 
 @Composable
 fun ForgotPasswordScreen(
     onNavigationButtonClick: () -> Unit,
     onIssueTempPasswordButtonClick: () -> Unit,
+    updateEmail: (String) -> Unit,
+    email: String,
+    isValidEmail: Boolean,
+    emailMessage: String,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -93,26 +126,24 @@ fun ForgotPasswordScreen(
 
             ValidatingTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = "example@gmail.com",
-                onValueChange = {},
-                validateCondition = false,
+                value = email,
+                onValueChange = updateEmail,
+                validateCondition = isValidEmail,
                 label = "이메일 주소",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
-                errorMessage = "", /* api로 부터 받은 에러 메시지 전달하기 */
+                errorMessage = emailMessage,
                 trailingIcon = {
                     Row(
                         modifier = Modifier.padding(end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if ("".isNotEmpty()) {
+                        if (email.isNotEmpty()) {
                             Icon(
-                                modifier = Modifier.clickable {
-                                    //updateNickname("")
-                                    //showUsernameMessage = false
-                                },
+                                modifier = Modifier.clickable { updateEmail("") },
                                 painter = painterResource(R.drawable.baseline_cancel_24),
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = "username_clear",
+                                contentDescription = "email_clear",
                             )
                         }
                     }
@@ -127,7 +158,7 @@ fun ForgotPasswordScreen(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                enabled = true,
+                enabled = isValidEmail,
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp),
@@ -147,6 +178,10 @@ fun ForgotPasswordScreenPreview() {
     CowGroupTheme {
         ForgotPasswordScreen(
             onNavigationButtonClick = {},
+            updateEmail = {},
+            email = "",
+            isValidEmail = true,
+            emailMessage = "",
             onIssueTempPasswordButtonClick = {},
         )
     }

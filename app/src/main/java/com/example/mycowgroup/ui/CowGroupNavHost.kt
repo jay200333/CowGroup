@@ -44,7 +44,7 @@ fun CowGroupNavHost(
                 onNextButtonClick = navController::navigateSignUpExtraInfo,
                 onSignUpButtonClick = navController::navigateSignUp,
                 onForgotPasswordButtonClick = navController::navigateForgotPassword,
-                onTempPasswordSentButtonClick = navController::navigateTempPasswordSent,
+                onToIssueTempPassword = navController::navigateTempPasswordSent,
                 onNavigationButtonClick = navController::navigateUp,
                 snackBarHostState = snackBarHostState,
                 onShowSnackBar = onShowSnackBar

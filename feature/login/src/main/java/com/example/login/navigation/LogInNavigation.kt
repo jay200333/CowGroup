@@ -41,7 +41,7 @@ fun NavGraphBuilder.loginNavGraph(
     onSignUpButtonClick: () -> Unit,
     onNextButtonClick: (SignUpStep1Info) -> Unit,
     onForgotPasswordButtonClick: () -> Unit,
-    onTempPasswordSentButtonClick: () -> Unit,
+    onToIssueTempPassword: () -> Unit,
     onToLoginButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
@@ -79,7 +79,7 @@ fun NavGraphBuilder.loginNavGraph(
     composable<ForgotPasswordRoute> {
         ForgotPasswordScreen(
             onNavigationButtonClick = onNavigationButtonClick,
-            onIssueTempPasswordButtonClick = onTempPasswordSentButtonClick,
+            onToIssueTempPassword = onToIssueTempPassword,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
         )
