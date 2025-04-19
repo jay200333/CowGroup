@@ -74,6 +74,16 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun sendTempPassword(email: String) {
+        try {
+            api.sendTempPassword(email = email)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     override suspend fun getProfile(): Profile {
         try {
             val response = api.getProfile()

@@ -47,6 +47,9 @@ interface CowGroupApi {
     @POST("/users/verification/email/code")
     suspend fun checkAuthCode(@Body emailCodeInfo: EmailCodeInfo): ApiResponse<CheckVerificationResponse>
 
+    @POST("/users/password-reset")
+    suspend fun sendTempPassword(@Query ("email") email: String): ApiResponse<Unit>
+
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>
 

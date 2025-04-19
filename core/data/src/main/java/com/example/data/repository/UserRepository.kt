@@ -18,6 +18,8 @@ interface UserRepository {
 
     suspend fun checkAuthCode(emailCodeInfo: EmailCodeInfo): Boolean
 
+    suspend fun sendTempPassword(email: String)
+
     suspend fun getProfile(): Profile
 
     suspend fun editProfile(profile: Profile)
