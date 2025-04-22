@@ -60,6 +60,7 @@ fun ForgotPasswordScreen(
         updateEmail = { email -> viewModel.updateEmail(email) },
         email = uiState.email,
         isValidEmail = uiState.isValidEmail,
+        isLoading = uiState.isLoading,
         emailMessage = uiState.emailMessage,
         snackBarHostState = snackBarHostState,
     )
@@ -85,6 +86,7 @@ fun ForgotPasswordScreen(
     updateEmail: (String) -> Unit,
     email: String,
     isValidEmail: Boolean,
+    isLoading: Boolean,
     emailMessage: String,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -158,7 +160,7 @@ fun ForgotPasswordScreen(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-                enabled = isValidEmail,
+                enabled = isValidEmail && !isLoading,
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp),
@@ -181,6 +183,7 @@ fun ForgotPasswordScreenPreview() {
             updateEmail = {},
             email = "",
             isValidEmail = true,
+            isLoading = false,
             emailMessage = "",
             onIssueTempPasswordButtonClick = {},
         )
