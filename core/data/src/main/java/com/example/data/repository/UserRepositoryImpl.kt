@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import android.util.Log
+import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.MemberInfo
 import com.example.model.MyPageInfo
@@ -43,7 +44,7 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun checkUsername(username: String): Boolean {
         try {
             val response = api.checkUsername(username = username)
-            return response.data.exists
+            return response.data.verificationPassed
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {
@@ -51,10 +52,31 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkEmail(email: String): Boolean {
+    override suspend fun sendAuthCode(email: String): Boolean {
         try {
-            val response = api.checkEmail(email = email)
-            return response.data.exists
+            val response = api.sendAuthCode(email = email)
+            return response.data.verificationPassed
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun checkAuthCode(emailCodeInfo: EmailCodeInfo): Boolean {
+        try {
+            val response = api.checkAuthCode(emailCodeInfo = emailCodeInfo)
+            return response.data.verificationPassed
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun sendTempPassword(email: String) {
+        try {
+            api.sendTempPassword(email = email)
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

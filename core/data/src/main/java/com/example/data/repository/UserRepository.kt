@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.MemberInfo
 import com.example.model.MyPageInfo
@@ -13,7 +14,11 @@ interface UserRepository {
 
     suspend fun checkUsername(username: String): Boolean
 
-    suspend fun checkEmail(email: String): Boolean
+    suspend fun sendAuthCode(email: String): Boolean
+
+    suspend fun checkAuthCode(emailCodeInfo: EmailCodeInfo): Boolean
+
+    suspend fun sendTempPassword(email: String)
 
     suspend fun getProfile(): Profile
 

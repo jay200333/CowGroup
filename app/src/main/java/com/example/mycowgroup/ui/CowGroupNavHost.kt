@@ -1,4 +1,4 @@
-package com.example.mycowgroup
+package com.example.mycowgroup.ui
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -44,7 +44,7 @@ fun CowGroupNavHost(
                 onNextButtonClick = navController::navigateSignUpExtraInfo,
                 onSignUpButtonClick = navController::navigateSignUp,
                 onForgotPasswordButtonClick = navController::navigateForgotPassword,
-                onTempPasswordSentButtonClick = navController::navigateTempPasswordSent,
+                onToIssueTempPassword = navController::navigateTempPasswordSent,
                 onNavigationButtonClick = navController::navigateUp,
                 snackBarHostState = snackBarHostState,
                 onShowSnackBar = onShowSnackBar

@@ -1,4 +1,4 @@
-package com.example.mycowgroup
+package com.example.mycowgroup.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

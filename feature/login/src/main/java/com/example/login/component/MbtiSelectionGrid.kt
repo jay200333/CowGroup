@@ -20,18 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.CowGroupTheme
+import com.example.model.MBTI
 
 @Composable
 fun MbtiSelectionGrid(
-    selectedMbti: String,
-    onMbtiSelected: (String) -> Unit
+    selectedMBTI: String,
+    onMBTISelected: (String) -> Unit
 ) {
-    val mbtiList = listOf(
-        "ISTJ", "ISFJ", "INFJ", "INTJ",
-        "ISTP", "ISFP", "INFP", "INTP",
-        "ESTP", "ESFP", "ENFP", "ENTP",
-        "ESTJ", "ESFJ", "ENFJ", "ENTJ"
-    )
+    val mbtiList = MBTI.entries.toTypedArray()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
@@ -42,17 +38,17 @@ fun MbtiSelectionGrid(
     ) {
         items(mbtiList.size) { index ->
             val mbti = mbtiList[index]
-            val isSelected = mbti == selectedMbti
+            val isSelected = mbti.name == selectedMBTI
             Box(
                 modifier = Modifier
                     .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White)
                     .border(width = 0.5f.dp, color = MaterialTheme.colorScheme.onPrimary)
-                    .clickable { onMbtiSelected(mbti) },
+                    .clickable { onMBTISelected(mbti.name) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 15.dp),
-                    text = mbti,
+                    text = mbti.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isSelected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Medium
@@ -67,8 +63,8 @@ fun MbtiSelectionGrid(
 fun MbtiGridPreview() {
     CowGroupTheme {
         MbtiSelectionGrid(
-            selectedMbti = "ISTJ",
-            onMbtiSelected = {}
+            selectedMBTI = "ISTJ",
+            onMBTISelected = {}
         )
     }
 }

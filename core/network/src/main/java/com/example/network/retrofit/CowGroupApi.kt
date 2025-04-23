@@ -1,11 +1,12 @@
 package com.example.network.retrofit
 
 import com.example.model.CreateEvent
+import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
-import com.example.network.model.CheckDuplicateResponse
+import com.example.network.model.CheckVerificationResponse
 import com.example.network.model.DetailEventResponse
 import com.example.network.model.MemberResponse
 import com.example.network.model.MyPageResponse
@@ -37,11 +38,17 @@ interface CowGroupApi {
     @PATCH("/users")
     suspend fun editProfile(@Body profile: Profile): ApiResponse<Unit>
 
-    @GET("/users/username/{username}")
-    suspend fun checkUsername(@Path("username") username: String): ApiResponse<CheckDuplicateResponse>
+    @GET("/users/verification/username/{username}")
+    suspend fun checkUsername(@Path("username") username: String): ApiResponse<CheckVerificationResponse>
 
-    @GET("/users/email/{email}")
-    suspend fun checkEmail(@Path("email") email: String): ApiResponse<CheckDuplicateResponse>
+    @POST("/users/verification/email/{email}")
+    suspend fun sendAuthCode(@Path("email") email: String): ApiResponse<CheckVerificationResponse>
+
+    @POST("/users/verification/email/code")
+    suspend fun checkAuthCode(@Body emailCodeInfo: EmailCodeInfo): ApiResponse<CheckVerificationResponse>
+
+    @POST("/users/password-reset")
+    suspend fun sendTempPassword(@Query ("email") email: String): ApiResponse<Unit>
 
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>
