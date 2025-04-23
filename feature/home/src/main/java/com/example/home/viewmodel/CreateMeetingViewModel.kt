@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.EventRepository
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,13 +23,12 @@ data class CreateMeetingUIState(
     val createButtonEnabled: Boolean = false,
     val isCreateMeetingSuccess: Boolean = false,
     val isEditMeetingSuccess: Boolean = false,
-    val createEvent: CreateEvent = CreateEvent(
+    val createMeeting: CreateMeeting = CreateMeeting(
         name = "",
         category = "",
-        location = "",
-        eventDate = "",
         capacity = 0,
         content = "",
+        file = ""
     ),
     val message: String = "",
 )
@@ -46,9 +45,9 @@ class CreateMeetingViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
     private val isEditMode: Boolean =
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
-    private val event: CreateEvent = requireNotNull(
+    private val event: CreateMeeting = requireNotNull(
         savedStateHandle.get<String>("event")
-            ?.let { string -> Json.decodeFromString<CreateEvent>(string) }) { "event is required." }
+            ?.let { string -> Json.decodeFromString<CreateMeeting>(string) }) { "event is required." }
 
     init {
         checkEditMode()
@@ -60,7 +59,7 @@ class CreateMeetingViewModel @Inject constructor(
         }
         if (isEditMode) {
             _createMeetingUIState.update { state ->
-                state.copy(createEvent = event)
+                state.copy(createMeeting = event)
             }
         }
     }
@@ -69,7 +68,7 @@ class CreateMeetingViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                eventRepository.createMeeting(createMeetingUIState.value.createEvent)
+                eventRepository.createMeeting(createMeetingUIState.value.createMeeting)
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isCreateMeetingSuccess = true,
@@ -83,7 +82,7 @@ class CreateMeetingViewModel @Inject constructor(
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "모임 생성이 실패하였습니다."//errorResponse.errors.message,
+                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
                     )
                 }
             } catch (e: Exception) {
@@ -101,7 +100,7 @@ class CreateMeetingViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                eventRepository.editEvent(eventId, createMeetingUIState.value.createEvent)
+                eventRepository.editEvent(eventId, createMeetingUIState.value.createMeeting)
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isCreateMeetingSuccess = true,
@@ -115,7 +114,7 @@ class CreateMeetingViewModel @Inject constructor(
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "모임 수정이 실패하였습니다."//errorResponse.errors.message,
+                        message = errorResponse.errors.message //"모임 수정이 실패하였습니다."
                     )
                 }
             } catch (e: Exception) {
@@ -131,60 +130,60 @@ class CreateMeetingViewModel @Inject constructor(
 
     fun updateName(name: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(name = name)
+            val updatedDetailEvent = state.createMeeting.copy(name = name)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedDetailEvent,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
             )
         }
     }
 
     fun updateCategory(category: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(category = category)
+            val updatedDetailEvent = state.createMeeting.copy(category = category)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedDetailEvent,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
             )
         }
     }
 
-    fun updateLocation(location: String) {
-        _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(location = location)
-            state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
-            )
-        }
-    }
+//    fun updateLocation(location: String) {
+//        _createMeetingUIState.update { state ->
+//            val updatedDetailEvent = state.createEvent.copy(location = location)
+//            state.copy(
+//                createEvent = updatedDetailEvent,
+//                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+//            )
+//        }
+//    }
 
-    fun updateEventDate(eventDate: String) {
-        _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(eventDate = eventDate)
-            state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
-            )
-        }
-    }
+//    fun updateEventDate(eventDate: String) {
+//        _createMeetingUIState.update { state ->
+//            val updatedDetailEvent = state.createEvent.copy(eventDate = eventDate)
+//            state.copy(
+//                createEvent = updatedDetailEvent,
+//                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+//            )
+//        }
+//    }
 
-    fun updateCapacity(capacity: Float) {
+    fun updateCapacity(capacity: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(capacity = capacity.toInt())
+            val updatedDetailEvent = state.createMeeting.copy(capacity = capacity.toInt())
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedDetailEvent,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
             )
         }
     }
 
     fun updateContent(content: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(content = content)
+            val updatedDetailEvent = state.createMeeting.copy(content = content)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedDetailEvent,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
             )
         }
     }
@@ -197,10 +196,8 @@ class CreateMeetingViewModel @Inject constructor(
 
     private fun createMeetingCondition(
         state: CreateMeetingUIState,
-    ): Boolean = state.createEvent.name.isNotEmpty() &&
-            state.createEvent.category.isNotEmpty() &&
-            state.createEvent.location.isNotEmpty() &&
-            state.createEvent.eventDate.isNotEmpty() &&
-            (state.createEvent.capacity > 0) &&
-            state.createEvent.content.isNotEmpty()
+    ): Boolean = state.createMeeting.name.isNotEmpty() &&
+            state.createMeeting.category.isNotEmpty() &&
+            (state.createMeeting.capacity > 0) &&
+            state.createMeeting.content.isNotEmpty()
 }

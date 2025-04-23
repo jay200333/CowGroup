@@ -10,7 +10,7 @@ import com.example.home.presentation.CreateMeetingScreen
 import com.example.home.presentation.EventDetailScreen
 import com.example.home.presentation.HomeScreen
 import com.example.home.presentation.MemberScreen
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.navigation.CreateMeetingRoute
 import com.example.navigation.EventDetailRoute
 import com.example.navigation.HomeScreenRoute
@@ -23,7 +23,7 @@ fun NavController.navigateHome() {
     }
 }
 
-fun NavController.navigateCreateMeeting(eventId: Int, isEditMode: Boolean, event: CreateEvent) {
+fun NavController.navigateCreateMeeting(eventId: Int, isEditMode: Boolean, event: CreateMeeting) {
     navigate(CreateMeetingRoute(eventId, isEditMode, event))
 }
 
@@ -40,7 +40,7 @@ fun NavGraphBuilder.homeNavGraph(
     onShowSnackBar: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
-    onCreateMeetingClick: (Int, Boolean, CreateEvent) -> Unit,
+    onCreateMeetingClick: (Int, Boolean, CreateMeeting) -> Unit,
     onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: () -> Unit,
@@ -57,7 +57,7 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
     composable<CreateMeetingRoute>(
-        typeMap = mapOf(typeOf<CreateEvent>() to CreateEventType)
+        typeMap = mapOf(typeOf<CreateMeeting>() to CreateMeetingType)
     ) {
         CreateMeetingScreen(
             snackBarHostState = snackBarHostState,
@@ -86,20 +86,20 @@ fun NavGraphBuilder.homeNavGraph(
     }
 }
 
-val CreateEventType = object : NavType<CreateEvent>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): CreateEvent? {
+val CreateMeetingType = object : NavType<CreateMeeting>(isNullableAllowed = false) {
+    override fun get(bundle: Bundle, key: String): CreateMeeting? {
         return bundle.getString(key)?.let { Json.decodeFromString(it) }
     }
 
-    override fun parseValue(value: String): CreateEvent {
+    override fun parseValue(value: String): CreateMeeting {
         return Json.decodeFromString(value)
     }
 
-    override fun put(bundle: Bundle, key: String, value: CreateEvent) {
-        bundle.putString(key, Json.encodeToString(CreateEvent.serializer(), value))
+    override fun put(bundle: Bundle, key: String, value: CreateMeeting) {
+        bundle.putString(key, Json.encodeToString(CreateMeeting.serializer(), value))
     }
 
-    override fun serializeAsValue(value: CreateEvent): String {
-        return Json.encodeToString(CreateEvent.serializer(), value)
+    override fun serializeAsValue(value: CreateMeeting): String {
+        return Json.encodeToString(CreateMeeting.serializer(), value)
     }
 }

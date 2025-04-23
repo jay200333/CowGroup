@@ -1,17 +1,18 @@
 package com.example.home.presentation
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,26 +21,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.common.DateUtil.todayStartOfDayMillis
-import com.example.designsystem.component.DatePickerTextField
 import com.example.home.component.Category
 import com.example.home.component.CategoryDropdown
-import com.example.home.component.CowGroupSlider
 import com.example.home.viewmodel.CreateMeetingUIState
 import com.example.home.viewmodel.CreateMeetingViewModel
-import com.example.model.CreateEvent
-
-const val MAX_LENGTH_OF_CONTENT = 300
+import com.example.model.CreateMeeting
 
 @Composable
 fun CreateMeetingScreen(
@@ -58,11 +56,9 @@ fun CreateMeetingScreen(
         onEditButtonClick = viewModel::editMeeting,
         updateName = { name -> viewModel.updateName(name) },
         updateCategory = { category -> viewModel.updateCategory(category) },
-        updateLocation = { location -> viewModel.updateLocation(location) },
-        updateEventDate = { eventDate -> viewModel.updateEventDate(eventDate) },
         updateCapacity = { capacity -> viewModel.updateCapacity(capacity) },
         updateContent = { content -> viewModel.updateContent(content) },
-        createEvent = uiState.createEvent,
+        createMeeting = uiState.createMeeting,
         isEditMode = uiState.isEditMode,
         createButtonEnabled = uiState.createButtonEnabled,
         snackBarHostState = snackBarHostState,
@@ -91,11 +87,9 @@ fun CreateMeetingScreen(
     onEditButtonClick: () -> Unit,
     updateName: (String) -> Unit,
     updateCategory: (String) -> Unit,
-    updateLocation: (String) -> Unit,
-    updateEventDate: (String) -> Unit,
-    updateCapacity: (Float) -> Unit,
+    updateCapacity: (String) -> Unit,
     updateContent: (String) -> Unit,
-    createEvent: CreateEvent,
+    createMeeting: CreateMeeting,
     isEditMode: Boolean,
     createButtonEnabled: Boolean,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -105,12 +99,18 @@ fun CreateMeetingScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = {
                     if (isEditMode) {
-                        Text(text = "모임 편집")
+                        Text(
+                            text = "모임 편집",
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     } else {
-                        Text(text = "모임 만들기")
+                        Text(
+                            text = "모임 등록",
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
                 },
                 navigationIcon = {
@@ -129,86 +129,61 @@ fun CreateMeetingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+                .verticalScroll(scrollState)
         ) {
             Text(
-                text = "모임 이름",
+                text = "모임명",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            OutlinedTextField(
+                value = createMeeting.name,
+                onValueChange = updateName,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(text = "모임을 대표하는 이름을 적어주세요.") },
+                singleLine = true,
+            )
+            Text(
+                text = "모임 소개",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
             OutlinedTextField(
-                value = createEvent.name,
-                onValueChange = updateName,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "모임 이름을 입력하세요.") },
-                placeholder = { Text(text = "모임 이름") },
-                singleLine = true,
+                value = createMeeting.content,
+                onValueChange = updateContent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 200.dp),
+                label = { Text(text = "모임을 소개해주세요.") }
             )
+
             Text(
-                text = "카테고리 선택",
+                text = "카테고리",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
             CategoryDropdown(
-                selectedCategory = Category.toLabel(createEvent.category),
+                selectedCategory = Category.toLabel(createMeeting.category),
                 onCategorySelected = updateCategory
             )
             Text(
-                text = "모임 장소",
+                text = "모집 인원",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
-            )
-            OutlinedTextField(
-                value = createEvent.location,
-                onValueChange = updateLocation,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "모임 장소를 입력하세요.") },
-                placeholder = { Text(text = "모임 장소") },
-                singleLine = true,
-            )
-            Text(
-                text = "모임 날짜",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            DatePickerTextField(
-                date = createEvent.eventDate,
-                labelString = "모임 날짜",
-                onDateSelected = updateEventDate,
-                selectableDateCondition = { utcTimeMillis -> utcTimeMillis >= todayStartOfDayMillis }
-            )
-            Text(
-                text = "정원",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            CowGroupSlider(
-                value = createEvent.capacity.toFloat(),
-                steps = 20,
-                valueRange = 5f..100f,
-                onValueChange = updateCapacity,
             )
 
-            Text(
-                text = "상세 내용",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
             OutlinedTextField(
-                value = createEvent.content,
-                onValueChange = { content ->
-                    if (content.length <= MAX_LENGTH_OF_CONTENT)
-                        updateContent(content)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .verticalScroll(scrollState),
-                label = { Text(text = "상세 내용을 입력하세요. (300자 제한)") },
-                placeholder = { Text(text = "상세 내용") },
-                maxLines = 10
+                value = createMeeting.capacity.toString(),
+                onValueChange = updateCapacity,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(text = "1~100") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             )
+
             if (isEditMode) {
                 Button(
                     onClick = onEditButtonClick,
@@ -227,7 +202,7 @@ fun CreateMeetingScreen(
                         .padding(top = 8.dp),
                     enabled = createButtonEnabled
                 ) {
-                    Text(text = "모임 생성")
+                    Text(text = "모임 등록하기")
                 }
             }
         }
@@ -243,19 +218,16 @@ fun CreateMeetingScreenPreview() {
         onEditButtonClick = {},
         updateName = {},
         updateCategory = {},
-        updateLocation = {},
-        updateEventDate = {},
         updateCapacity = {},
         updateContent = {},
         isEditMode = false,
         createButtonEnabled = false,
-        createEvent = CreateEvent(
+        createMeeting = CreateMeeting(
             name = "롤",
             category = "게임",
-            location = "소환사의 협곡",
-            eventDate = "2025-01-19",
             capacity = 80,
             content = "text content",
+            file = ""
         ),
     )
 }

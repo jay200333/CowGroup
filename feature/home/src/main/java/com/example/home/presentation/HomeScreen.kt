@@ -30,7 +30,7 @@ import com.example.designsystem.component.PagingMeetingItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.model.Event
 import kotlinx.coroutines.flow.map
 
@@ -39,20 +39,19 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
-    onCreateMeetingClick: (Int, Boolean, CreateEvent) -> Unit,
+    onCreateMeetingClick: (Int, Boolean, CreateMeeting) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
     val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
     val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
-    val createEvent = CreateEvent(
+    val createMeeting = CreateMeeting(
         name = "",
         category = "",
-        location = "",
-        eventDate = "",
         capacity = 0,
         content = "",
+        file = ""
     )
 
     HomeScreen(
@@ -60,7 +59,7 @@ fun HomeScreen(
         onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         onLogoutButtonClick = viewModel::logout,
         onEventClick = { eventId -> onEventClick(eventId) },
-        onCreateMeetingClick = { onCreateMeetingClick(0, false, createEvent) },
+        onCreateMeetingClick = { onCreateMeetingClick(0, false, createMeeting) },
         onBookMarkClick = { eventId, isBookmarked ->
             viewModel.updateBookmark(
                 eventId,

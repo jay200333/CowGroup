@@ -1,6 +1,6 @@
 package com.example.network.retrofit
 
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
@@ -60,7 +60,7 @@ interface CowGroupApi {
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
 
     @POST("/events")
-    suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
+    suspend fun createMeeting(@Body createMeeting: CreateMeeting): ApiResponse<Unit>
 
     @POST("/events/{event-id}/join")
     suspend fun joinEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
@@ -75,7 +75,7 @@ interface CowGroupApi {
     suspend fun deleteEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
     @PATCH("/events/{event-id}")
-    suspend fun editEvent(@Path("event-id") eventId: Int, @Body createEvent: CreateEvent): ApiResponse<Unit>
+    suspend fun editEvent(@Path("event-id") eventId: Int, @Body createMeeting: CreateMeeting): ApiResponse<Unit>
 
     @POST("/bookmarks/{event-id}")
     suspend fun addBookmark(@Path("event-id") eventId: Int): ApiResponse<Unit>

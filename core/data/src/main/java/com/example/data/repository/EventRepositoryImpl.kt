@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.example.data.paging.BookmarkEventPagingSource
 import com.example.data.paging.HomeEventPagingSource
 import com.example.data.paging.ParticipateEventPagingSource
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.model.DetailEvent
 import com.example.model.Event
 import com.example.network.model.toDetailEvent
@@ -110,7 +110,7 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun editEvent(eventId: Int, event: CreateEvent) {
+    override suspend fun editEvent(eventId: Int, event: CreateMeeting) {
         try {
             api.editEvent(eventId, event)
         } catch (e: HttpException) {
@@ -144,9 +144,9 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createMeeting(createEvent: CreateEvent) {
+    override suspend fun createMeeting(createMeeting: CreateMeeting) {
         try {
-            api.createMeeting(createEvent = createEvent)
+            api.createMeeting(createMeeting = createMeeting)
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

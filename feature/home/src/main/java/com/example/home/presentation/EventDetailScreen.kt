@@ -47,7 +47,7 @@ import com.example.designsystem.component.MarkButton
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.model.DetailEvent
 
 @Composable
@@ -56,20 +56,19 @@ fun EventDetailScreen(
     onDeleteMeetingSuccess: () -> Unit,
     onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
-    onEditButtonClick: (Int, Boolean, CreateEvent) -> Unit,
+    onEditButtonClick: (Int, Boolean, CreateMeeting) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     val event = with(uiState.detailEvent) {
-        CreateEvent(
+        CreateMeeting(
             name = name,
             category = category,
-            location = location,
-            eventDate = eventDate,
             capacity = capacity,
-            content = content
+            content = content,
+            file = ""
         )
     }
 
