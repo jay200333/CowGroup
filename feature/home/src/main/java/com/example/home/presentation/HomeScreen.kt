@@ -30,6 +30,7 @@ import com.example.designsystem.component.PagingMeetingItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
+import com.example.model.Category
 import com.example.model.CreateMeeting
 import com.example.model.Event
 import kotlinx.coroutines.flow.map
@@ -48,7 +49,7 @@ fun HomeScreen(
     val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
     val createMeeting = CreateMeeting(
         name = "",
-        category = "",
+        category = Category.SPORTS,
         capacity = 0,
         content = "",
         file = ""

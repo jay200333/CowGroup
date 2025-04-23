@@ -24,7 +24,13 @@ enum class Gender(
     val label: String,
 ) {
     MALE("남성"),
-    FEMALE("여성"),
+    FEMALE("여성");
+
+    companion object {
+        fun fromLabel(label: String): Gender? {
+            return Gender.entries.find { it.label == label }
+        }
+    }
 }
 
 enum class MBTI {

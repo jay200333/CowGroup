@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.EventRepository
+import com.example.model.Category
 import com.example.model.CreateMeeting
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
@@ -25,7 +26,7 @@ data class CreateMeetingUIState(
     val isEditMeetingSuccess: Boolean = false,
     val createMeeting: CreateMeeting = CreateMeeting(
         name = "",
-        category = "",
+        category = Category.SPORTS,
         capacity = 0,
         content = "",
         file = ""
@@ -138,9 +139,10 @@ class CreateMeetingViewModel @Inject constructor(
         }
     }
 
-    fun updateCategory(category: String) {
+    fun updateCategory(label: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createMeeting.copy(category = category)
+            val updatedDetailEvent =
+                state.createMeeting.copy(category = Category.fromLabel(label) ?: Category.SPORTS)
             state.copy(
                 createMeeting = updatedDetailEvent,
                 createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
@@ -170,7 +172,9 @@ class CreateMeetingViewModel @Inject constructor(
 
     fun updateCapacity(capacity: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createMeeting.copy(capacity = capacity.toInt())
+            val updatedDetailEvent = if (capacity.isEmpty()) {
+                state.createMeeting.copy(capacity = 0)
+            } else state.createMeeting.copy(capacity = capacity.toInt())
             state.copy(
                 createMeeting = updatedDetailEvent,
                 createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
@@ -197,7 +201,6 @@ class CreateMeetingViewModel @Inject constructor(
     private fun createMeetingCondition(
         state: CreateMeetingUIState,
     ): Boolean = state.createMeeting.name.isNotEmpty() &&
-            state.createMeeting.category.isNotEmpty() &&
             (state.createMeeting.capacity > 0) &&
             state.createMeeting.content.isNotEmpty()
 }

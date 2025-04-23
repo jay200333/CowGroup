@@ -284,6 +284,6 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
                 state.isValidEmail &&
                 state.isValidAuthNumber &&
                 state.passwordCondition &&
-                state.passwordConfirmCondition)
+                state.passwordConfirmCondition).not()
     }
 }

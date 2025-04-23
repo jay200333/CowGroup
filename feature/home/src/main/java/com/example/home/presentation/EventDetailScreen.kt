@@ -47,6 +47,7 @@ import com.example.designsystem.component.MarkButton
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
+import com.example.model.Category
 import com.example.model.CreateMeeting
 import com.example.model.DetailEvent
 
@@ -65,7 +66,7 @@ fun EventDetailScreen(
     val event = with(uiState.detailEvent) {
         CreateMeeting(
             name = name,
-            category = category,
+            category = Category.SPORTS,
             capacity = capacity,
             content = content,
             file = ""

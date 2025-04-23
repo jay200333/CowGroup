@@ -1,17 +1,21 @@
 package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,17 +30,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.home.component.Category
-import com.example.home.component.CategoryDropdown
+import com.example.designsystem.component.CowGroupSelectionGrid
+import com.example.designsystem.theme.CowGroupTheme
+import com.example.home.R
 import com.example.home.viewmodel.CreateMeetingUIState
 import com.example.home.viewmodel.CreateMeetingViewModel
+import com.example.model.Category
 import com.example.model.CreateMeeting
 
 @Composable
@@ -144,6 +153,7 @@ fun CreateMeetingScreen(
                 value = createMeeting.name,
                 onValueChange = updateName,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
                 label = { Text(text = "모임을 대표하는 이름을 적어주세요.") },
                 singleLine = true,
             )
@@ -158,31 +168,68 @@ fun CreateMeetingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 200.dp),
+                shape = RoundedCornerShape(10.dp),
                 label = { Text(text = "모임을 소개해주세요.") }
             )
 
-            Text(
-                text = "카테고리",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            CategoryDropdown(
-                selectedCategory = Category.toLabel(createMeeting.category),
-                onCategorySelected = updateCategory
-            )
-            Text(
-                text = "모집 인원",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.graphicsLayer { scaleX = -1f },
+                    painter = painterResource(R.drawable.baseline_local_offer_24),
+                    contentDescription = "icon_create_meeting_category"
+
+                )
+                Text(
+                    modifier = Modifier.padding(start = 4.dp),
+                    text = "카테고리",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+
+            CowGroupSelectionGrid(
+                selectedContent = createMeeting.category.label,
+                onContentSelected = updateCategory,
+                selectionList = Category.entries.map { it.label }
             )
 
-            OutlinedTextField(
-                value = createMeeting.capacity.toString(),
-                onValueChange = updateCapacity,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(text = "1~100") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "icon_create_meeting_capacity"
+                )
+                Text(
+                    modifier = Modifier.padding(start = 4.dp),
+                    text = "모집 인원",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Spacer(modifier = Modifier.width(60.dp))
+
+                OutlinedTextField(
+                    value = if (createMeeting.capacity == 0) "" else createMeeting.capacity.toString(),
+                    onValueChange = updateCapacity,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    label = { Text(text = "1~100") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "명",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
 
             if (isEditMode) {
                 Button(
@@ -212,22 +259,24 @@ fun CreateMeetingScreen(
 @Preview(showBackground = true)
 @Composable
 fun CreateMeetingScreenPreview() {
-    CreateMeetingScreen(
-        onNavigationButtonClick = {},
-        onCreateButtonClick = {},
-        onEditButtonClick = {},
-        updateName = {},
-        updateCategory = {},
-        updateCapacity = {},
-        updateContent = {},
-        isEditMode = false,
-        createButtonEnabled = false,
-        createMeeting = CreateMeeting(
-            name = "롤",
-            category = "게임",
-            capacity = 80,
-            content = "text content",
-            file = ""
-        ),
-    )
+    CowGroupTheme {
+        CreateMeetingScreen(
+            onNavigationButtonClick = {},
+            onCreateButtonClick = {},
+            onEditButtonClick = {},
+            updateName = {},
+            updateCategory = {},
+            updateCapacity = {},
+            updateContent = {},
+            isEditMode = false,
+            createButtonEnabled = false,
+            createMeeting = CreateMeeting(
+                name = "롤",
+                category = Category.GAME,
+                capacity = 80,
+                content = "text content",
+                file = ""
+            ),
+        )
+    }
 }
