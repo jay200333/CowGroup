@@ -1,30 +1,25 @@
 package com.example.home.navigation
 
-import android.os.Bundle
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import com.example.home.presentation.CreateMeetingScreen
 import com.example.home.presentation.EventDetailScreen
 import com.example.home.presentation.HomeScreen
 import com.example.home.presentation.MemberScreen
-import com.example.model.CreateMeeting
 import com.example.navigation.CreateMeetingRoute
 import com.example.navigation.EventDetailRoute
 import com.example.navigation.HomeScreenRoute
 import com.example.navigation.MemberRoute
-import kotlinx.serialization.json.Json
-import kotlin.reflect.typeOf
 
 fun NavController.navigateHome() {
     navigate(HomeScreenRoute) {
     }
 }
 
-fun NavController.navigateCreateMeeting(eventId: Int, isEditMode: Boolean, event: CreateMeeting) {
-    navigate(CreateMeetingRoute(eventId, isEditMode, event))
+fun NavController.navigateCreateMeeting(eventId: Int, isEditMode: Boolean) {
+    navigate(CreateMeetingRoute(eventId, isEditMode))
 }
 
 fun NavController.navigateEventDetail(eventId: Int) {
@@ -40,7 +35,7 @@ fun NavGraphBuilder.homeNavGraph(
     onShowSnackBar: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
-    onCreateMeetingClick: (Int, Boolean, CreateMeeting) -> Unit,
+    onCreateMeetingClick: (Int, Boolean) -> Unit,
     onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: () -> Unit,
@@ -53,12 +48,16 @@ fun NavGraphBuilder.homeNavGraph(
             onShowSnackBar = onShowSnackBar,
             onLogoutButtonClick = onLogoutButtonClick,
             onEventClick = { eventId -> onEventClick(eventId) },
-            onCreateMeetingClick = { eventId, isEditMode, event -> onCreateMeetingClick(eventId, isEditMode, event) },
+            onCreateMeetingClick = { eventId, isEditMode ->
+                onCreateMeetingClick(
+                    eventId,
+                    isEditMode
+                )
+            },
         )
     }
-    composable<CreateMeetingRoute>(
-        typeMap = mapOf(typeOf<CreateMeeting>() to CreateMeetingType)
-    ) {
+    composable<CreateMeetingRoute>
+    {
         CreateMeetingScreen(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
@@ -73,7 +72,12 @@ fun NavGraphBuilder.homeNavGraph(
             onShowSnackBar = onShowSnackBar,
             onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
             onNavigationButtonClick = onNavigationButtonClick,
-            onEditButtonClick = { eventId, isEditMode, event -> onCreateMeetingClick(eventId, isEditMode, event) },
+            onEditButtonClick = { eventId, isEditMode ->
+                onCreateMeetingClick(
+                    eventId,
+                    isEditMode
+                )
+            },
             onDeleteMeetingSuccess = onDeleteMeetingSuccess
         )
     }
@@ -83,23 +87,5 @@ fun NavGraphBuilder.homeNavGraph(
             onShowSnackBar = onShowSnackBar,
             onNavigationButtonClick = onNavigationButtonClick,
         )
-    }
-}
-
-val CreateMeetingType = object : NavType<CreateMeeting>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): CreateMeeting? {
-        return bundle.getString(key)?.let { Json.decodeFromString(it) }
-    }
-
-    override fun parseValue(value: String): CreateMeeting {
-        return Json.decodeFromString(value)
-    }
-
-    override fun put(bundle: Bundle, key: String, value: CreateMeeting) {
-        bundle.putString(key, Json.encodeToString(CreateMeeting.serializer(), value))
-    }
-
-    override fun serializeAsValue(value: CreateMeeting): String {
-        return Json.encodeToString(CreateMeeting.serializer(), value)
     }
 }

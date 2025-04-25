@@ -1,10 +1,9 @@
 package com.example.navigation
 
-import com.example.model.CreateMeeting
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateMeetingRoute(val eventId: Int, val isEditMode: Boolean, val event: CreateMeeting)
+data class CreateMeetingRoute(val eventId: Int, val isEditMode: Boolean)
 
 @Serializable
 data class EventDetailRoute(val eventId: Int)
