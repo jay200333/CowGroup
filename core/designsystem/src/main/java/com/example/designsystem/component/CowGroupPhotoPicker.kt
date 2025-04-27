@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,27 +32,37 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.common.ImageProcessor
 import com.example.cowgroup.core.designsystem.R
+import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun CowGroupPhotoPicker(
     modifier: Modifier = Modifier,
+    imageProcessor: ImageProcessor,
     imageUri: Uri? = null,
-    updatePicture: (String) -> Unit
+    updatePicture: (File) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     LaunchedEffect(imageUri) {
         if (imageUri != null && imageUri != selectedImageUri) {
             selectedImageUri = imageUri
-            Log.d("ss", "$selectedImageUri")
+            val result = imageProcessor.compressUriToFile(imageUri)
+            result.onSuccess { file -> updatePicture(file) }
+                .onFailure { Log.e("photoPicker", "파일 생성 실패") }
         }
     }
     val photoPicker =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 selectedImageUri = uri
-                updatePicture(uri.toString())
-                Log.d("uri","$selectedImageUri")
+                coroutineScope.launch {
+                    val result = imageProcessor.compressUriToFile(uri)
+                    result.onSuccess { file -> updatePicture(file) }
+                        .onFailure { Log.e("photoPicker", "파일 생성 실패") }
+                }
             }
         }
     Box(
