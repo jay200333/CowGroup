@@ -3,6 +3,7 @@ package com.example.home.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.ImageProcessor
 import com.example.data.repository.EventRepository
 import com.example.model.Category
 import com.example.model.CreateMeeting
@@ -14,8 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import retrofit2.HttpException
+import java.io.File
 import javax.inject.Inject
 
 data class CreateMeetingUIState(
@@ -29,14 +30,17 @@ data class CreateMeetingUIState(
         category = Category.SPORTS,
         capacity = 0,
         content = "",
-        file = ""
+        file = null
     ),
+    val isValidCapacity: Boolean = false,
+    val capacityMessage: String = "",
     val message: String = "",
 )
 
 @HiltViewModel
 class CreateMeetingViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    val imageProcessor: ImageProcessor,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _createMeetingUIState: MutableStateFlow<CreateMeetingUIState> =
@@ -46,9 +50,6 @@ class CreateMeetingViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
     private val isEditMode: Boolean =
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
-    private val event: CreateMeeting = requireNotNull(
-        savedStateHandle.get<String>("event")
-            ?.let { string -> Json.decodeFromString<CreateMeeting>(string) }) { "event is required." }
 
     init {
         checkEditMode()
@@ -57,11 +58,6 @@ class CreateMeetingViewModel @Inject constructor(
     private fun checkEditMode() {
         _createMeetingUIState.update { state ->
             state.copy(isEditMode = isEditMode)
-        }
-        if (isEditMode) {
-            _createMeetingUIState.update { state ->
-                state.copy(createMeeting = event)
-            }
         }
     }
 
@@ -129,23 +125,30 @@ class CreateMeetingViewModel @Inject constructor(
         }
     }
 
+    fun updateFile(file: File) {
+        _createMeetingUIState.update { state ->
+            val createMeeting = state.createMeeting.copy(file = file)
+            state.copy(createMeeting = createMeeting)
+        }
+    }
+
     fun updateName(name: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createMeeting.copy(name = name)
+            val updatedCreateMeeting = state.createMeeting.copy(name = name)
             state.copy(
-                createMeeting = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedCreateMeeting)),
             )
         }
     }
 
     fun updateCategory(label: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent =
+            val updatedCreateMeeting =
                 state.createMeeting.copy(category = Category.fromLabel(label) ?: Category.SPORTS)
             state.copy(
-                createMeeting = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedCreateMeeting)),
             )
         }
     }
@@ -172,22 +175,33 @@ class CreateMeetingViewModel @Inject constructor(
 
     fun updateCapacity(capacity: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = if (capacity.isEmpty()) {
+            val updatedCreateMeeting = if (capacity.isEmpty()) {
                 state.createMeeting.copy(capacity = 0)
             } else state.createMeeting.copy(capacity = capacity.toInt())
+            val isCapacityValid = (capacity.toIntOrNull() ?: 0) in 1..100
+            val capacityMessage = if (isCapacityValid) "" else "모임원 수는 최대 100명입니다."
+
             state.copy(
-                createMeeting = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(
+                    state.copy(
+                        createMeeting = updatedCreateMeeting,
+                        capacityMessage = capacityMessage,
+                        isValidCapacity = isCapacityValid
+                    )
+                ),
+                capacityMessage = capacityMessage,
+                isValidCapacity = isCapacityValid
             )
         }
     }
 
     fun updateContent(content: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createMeeting.copy(content = content)
+            val updatedCreateMeeting = state.createMeeting.copy(content = content)
             state.copy(
-                createMeeting = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedCreateMeeting)),
             )
         }
     }
@@ -202,5 +216,6 @@ class CreateMeetingViewModel @Inject constructor(
         state: CreateMeetingUIState,
     ): Boolean = state.createMeeting.name.isNotEmpty() &&
             (state.createMeeting.capacity > 0) &&
-            state.createMeeting.content.isNotEmpty()
+            state.createMeeting.content.isNotEmpty() &&
+            state.isValidCapacity
 }
