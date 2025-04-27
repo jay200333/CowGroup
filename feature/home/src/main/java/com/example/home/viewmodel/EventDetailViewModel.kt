@@ -1,5 +1,6 @@
 package com.example.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -51,6 +52,7 @@ class EventDetailViewModel @Inject constructor(
     val eventDetailUIState: StateFlow<EventDetailUIState> = _eventDetailUIState.asStateFlow()
 
     init {
+        Log.d("EventDetailViewModel", "eventId: $eventId")
         getEventDetail()
     }
 

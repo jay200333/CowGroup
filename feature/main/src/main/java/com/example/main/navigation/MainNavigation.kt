@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import com.example.home.navigation.homeNavGraph
 import com.example.home.navigation.navigateCreateMeeting
 import com.example.home.navigation.navigateEventDetail
+import com.example.home.navigation.navigateHome
 import com.example.home.navigation.navigateMember
 import com.example.map.navigation.mapNavGraph
 import com.example.mypage.navigation.myPageNavGraph
@@ -28,12 +29,13 @@ fun NavGraphBuilder.mainNavGraph(
                 popUpTo(MainGraphRoute) { inclusive = true }
             }
         },
+        onHomeScreen = navController::navigateHome,
         onEventClick = navController::navigateEventDetail,
         onCreateMeetingClick = navController::navigateCreateMeeting,
         onMemberButtonClick = navController::navigateMember,
         onNavigationButtonClick = navController::navigateUp,
-        onCreateMeetingSuccess = navController::navigateUp,
-        onEditMeetingSuccess = navController::navigateUp,
+        onCreateMeetingSuccess = navController::navigateEventDetail,
+        onEditMeetingSuccess = navController::navigateEventDetail,
         onDeleteMeetingSuccess = navController::navigateUp
     )
     mapNavGraph(

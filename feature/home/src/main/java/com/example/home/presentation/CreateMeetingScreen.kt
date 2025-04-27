@@ -64,8 +64,8 @@ import java.io.File
 fun CreateMeetingScreen(
     viewModel: CreateMeetingViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
-    onCreateMeetingSuccess: () -> Unit,
-    onEditMeetingSuccess: () -> Unit,
+    onCreateMeetingSuccess: (Int) -> Unit,
+    onEditMeetingSuccess: (Int) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -97,11 +97,11 @@ fun CreateMeetingScreen(
     }
 
     if (uiState.isCreateMeetingSuccess) {
-        onCreateMeetingSuccess()
+        onCreateMeetingSuccess(uiState.eventId)
     }
 
     if (uiState.isEditMeetingSuccess) {
-        onEditMeetingSuccess()
+        onEditMeetingSuccess(uiState.eventId)
     }
 }
 
@@ -164,7 +164,7 @@ fun CreateMeetingScreen(
             CowGroupPhotoPicker(
                 imageProcessor = imageProcessor,
                 updatePicture = choosePhoto
-            ) /*imageUri = Uri.parse("https://picsum.photos/200/300"),*/
+            )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "모임명",

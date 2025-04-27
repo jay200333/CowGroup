@@ -34,12 +34,13 @@ fun NavGraphBuilder.homeNavGraph(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
+    onHomeScreen: () -> Unit,
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
     onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
-    onCreateMeetingSuccess: () -> Unit,
-    onEditMeetingSuccess: () -> Unit,
+    onCreateMeetingSuccess: (Int) -> Unit,
+    onEditMeetingSuccess: (Int) -> Unit,
     onDeleteMeetingSuccess: () -> Unit,
 ) {
     composable<HomeScreenRoute> {
@@ -62,8 +63,8 @@ fun NavGraphBuilder.homeNavGraph(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
             onNavigationButtonClick = onNavigationButtonClick,
-            onCreateMeetingSuccess = onCreateMeetingSuccess,
-            onEditMeetingSuccess = onEditMeetingSuccess,
+            onCreateMeetingSuccess = { eventId -> onCreateMeetingSuccess(eventId) },
+            onEditMeetingSuccess = { eventId -> onEditMeetingSuccess(eventId) },
         )
     }
     composable<EventDetailRoute> {
@@ -71,7 +72,7 @@ fun NavGraphBuilder.homeNavGraph(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
             onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
-            onNavigationButtonClick = onNavigationButtonClick,
+            onNavigationButtonClick = onHomeScreen,
             onEditButtonClick = { eventId, isEditMode ->
                 onCreateMeetingClick(
                     eventId,
