@@ -1,14 +1,13 @@
 package com.example.model
 
-import kotlinx.serialization.Serializable
+import java.io.File
 
-@Serializable
 data class CreateMeeting(
     val name: String,
     val category: Category,
     val capacity: Int,
     val content: String,
-    val file: String
+    val file: File? = null,
 )
 
 enum class Category(
