@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.component.ValidatingTextField
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.login.R
-import com.example.login.component.ValidatingTextField
 import com.example.login.viewmodel.SignUpStep1UIState
 import com.example.login.viewmodel.SignUpViewModel
 import com.example.model.SignUpStep1Info
@@ -151,7 +151,7 @@ fun SignUpScreen(
                 value = signUpInfo.username,
                 onValueChange = { updateNickname(it) },
                 validateCondition = isValidUsername,
-                label = "닉네임",
+                label = { Text(text = "닉네임") },
                 singleLine = true,
                 readOnly = isValidUsername,
                 errorMessage = usernameMessage,
@@ -187,7 +187,7 @@ fun SignUpScreen(
                 value = signUpInfo.email,
                 onValueChange = updateEmail,
                 validateCondition = isValidEmail,
-                label = "이메일 주소",
+                label = { Text(text = "이메일 주소") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
                 errorMessage = emailMessage,
@@ -210,7 +210,7 @@ fun SignUpScreen(
                 enabled = isValidEmail,
                 onValueChange = updateAuthCode,
                 validateCondition = isValidAuthNumber,
-                label = "인증번호 입력",
+                label = { Text(text = "인증번호 입력") },
                 singleLine = true,
                 readOnly = isValidAuthNumber,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -232,7 +232,7 @@ fun SignUpScreen(
                 value = signUpInfo.password,
                 onValueChange = updatePassword,
                 validateCondition = passwordCondition,
-                label = "비밀번호 (숫자, 특수문자 포함 8~20자)",
+                label = { Text(text = "비밀번호 (숫자, 특수문자 포함 8~20자)") },
                 errorMessage = passwordMessage,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -264,7 +264,7 @@ fun SignUpScreen(
                 value = passwordConfirm,
                 onValueChange = updatePasswordConfirm,
                 validateCondition = passwordConfirmCondition,
-                label = "비밀번호 확인",
+                label = { Text(text = "비밀번호 확인") },
                 errorMessage = passwordConfirmMessage,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (showPasswordConfirm) VisualTransformation.None else PasswordVisualTransformation(),
@@ -326,7 +326,7 @@ fun SignUpScreenPreview() {
             updateAuthCode = {},
             updatePassword = {},
             updatePasswordConfirm = {},
-            signUpInfo = SignUpStep1Info("안드로이드", "", "",""),
+            signUpInfo = SignUpStep1Info("안드로이드", "", "", ""),
             nextButtonEnabled = true,
             checkUsername = {},
             sendAuthCode = {},

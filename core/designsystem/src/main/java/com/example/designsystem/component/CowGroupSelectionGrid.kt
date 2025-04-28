@@ -1,10 +1,11 @@
-package com.example.login.component
+package com.example.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,54 +18,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.designsystem.theme.CowGroupTheme
-import com.example.model.MBTI
 
 @Composable
-fun MbtiSelectionGrid(
-    selectedMBTI: String,
-    onMBTISelected: (String) -> Unit
+fun CowGroupSelectionGrid(
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(max = 200.dp)
+        .clip(RoundedCornerShape(10.dp))
+        .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimary, shape = RoundedCornerShape(10.dp)),
+    gridCellCount: Int = 4,
+    selectedContent: String,
+    onContentSelected: (String) -> Unit,
+    selectionList: List<String>,
 ) {
-    val mbtiList = MBTI.entries.toTypedArray()
-
     LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimary, shape = RoundedCornerShape(10.dp)),
+        columns = GridCells.Fixed(gridCellCount),
+        modifier = modifier,
     ) {
-        items(mbtiList.size) { index ->
-            val mbti = mbtiList[index]
-            val isSelected = mbti.name == selectedMBTI
+        items(selectionList.size) { index ->
+            val item = selectionList[index]
+            val isSelected = item == selectedContent
             Box(
                 modifier = Modifier
                     .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White)
                     .border(width = 0.5f.dp, color = MaterialTheme.colorScheme.onPrimary)
-                    .clickable { onMBTISelected(mbti.name) },
+                    .clickable { onContentSelected(item) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 15.dp),
-                    text = mbti.name,
+                    text = item,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isSelected) Color.White else MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Medium
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MbtiGridPreview() {
-    CowGroupTheme {
-        MbtiSelectionGrid(
-            selectedMBTI = "ISTJ",
-            onMBTISelected = {}
-        )
     }
 }

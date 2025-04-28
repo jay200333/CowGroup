@@ -1,6 +1,6 @@
 package com.example.network.retrofit
 
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
@@ -14,13 +14,17 @@ import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.ProfileResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -59,8 +63,14 @@ interface CowGroupApi {
     @GET("/events")
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
 
+    @Multipart
     @POST("/events")
-    suspend fun createMeeting(@Body createEvent: CreateEvent): ApiResponse<Unit>
+    suspend fun createMeeting(
+        @Part file: MultipartBody.Part?,
+        @Part("name") name: RequestBody,
+        @Part("category") category: RequestBody,
+        @Part("capacity") capacity: RequestBody,
+        @Part("content") content: RequestBody): ApiResponse<Unit>
 
     @POST("/events/{event-id}/join")
     suspend fun joinEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
@@ -75,7 +85,7 @@ interface CowGroupApi {
     suspend fun deleteEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
     @PATCH("/events/{event-id}")
-    suspend fun editEvent(@Path("event-id") eventId: Int, @Body createEvent: CreateEvent): ApiResponse<Unit>
+    suspend fun editEvent(@Path("event-id") eventId: Int, @Body createMeeting: CreateMeeting): ApiResponse<Unit>
 
     @POST("/bookmarks/{event-id}")
     suspend fun addBookmark(@Path("event-id") eventId: Int): ApiResponse<Unit>

@@ -47,7 +47,6 @@ import com.example.designsystem.component.MarkButton
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
-import com.example.model.CreateEvent
 import com.example.model.DetailEvent
 
 @Composable
@@ -56,22 +55,12 @@ fun EventDetailScreen(
     onDeleteMeetingSuccess: () -> Unit,
     onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
-    onEditButtonClick: (Int, Boolean, CreateEvent) -> Unit,
+    onEditButtonClick: (Int, Boolean) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
-    val event = with(uiState.detailEvent) {
-        CreateEvent(
-            name = name,
-            category = category,
-            location = location,
-            eventDate = eventDate,
-            capacity = capacity,
-            content = content
-        )
-    }
 
     EventDetailScreen(
         onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
@@ -79,7 +68,7 @@ fun EventDetailScreen(
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::updateJoinEvent,
         onDeleteButtonClick = { showDialog = true },
-        onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true, event) },
+        onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true) },
         detailEvent = uiState.detailEvent,
         showDialog = showDialog,
         onDismissDialog = { showDialog = false },

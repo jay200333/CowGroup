@@ -12,6 +12,7 @@ import com.example.mypage.navigation.myPageNavGraph
 import com.example.mypage.navigation.navigateEditProfile
 import com.example.mypage.navigation.navigateFullMeeting
 import com.example.mypage.navigation.navigateSetting
+import com.example.navigation.HomeScreenRoute
 import com.example.navigation.LoginRoute
 import com.example.navigation.MainGraphRoute
 
@@ -28,12 +29,17 @@ fun NavGraphBuilder.mainNavGraph(
                 popUpTo(MainGraphRoute) { inclusive = true }
             }
         },
+        onHomeScreen = {
+            navController.navigate(HomeScreenRoute) {
+                popUpTo(HomeScreenRoute.route) { inclusive = false }
+            }
+        },
         onEventClick = navController::navigateEventDetail,
         onCreateMeetingClick = navController::navigateCreateMeeting,
         onMemberButtonClick = navController::navigateMember,
         onNavigationButtonClick = navController::navigateUp,
-        onCreateMeetingSuccess = navController::navigateUp,
-        onEditMeetingSuccess = navController::navigateUp,
+        onCreateMeetingSuccess = navController::navigateEventDetail,
+        onEditMeetingSuccess = navController::navigateEventDetail,
         onDeleteMeetingSuccess = navController::navigateUp
     )
     mapNavGraph(

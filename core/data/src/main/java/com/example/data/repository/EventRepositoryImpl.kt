@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.example.data.paging.BookmarkEventPagingSource
 import com.example.data.paging.HomeEventPagingSource
 import com.example.data.paging.ParticipateEventPagingSource
-import com.example.model.CreateEvent
+import com.example.model.CreateMeeting
 import com.example.model.DetailEvent
 import com.example.model.Event
 import com.example.network.model.toDetailEvent
@@ -14,6 +14,10 @@ import com.example.network.model.toEvent
 import com.example.network.retrofit.CowGroupApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -110,7 +114,7 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun editEvent(eventId: Int, event: CreateEvent) {
+    override suspend fun editEvent(eventId: Int, event: CreateMeeting) {
         try {
             api.editEvent(eventId, event)
         } catch (e: HttpException) {
@@ -144,9 +148,24 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createMeeting(createEvent: CreateEvent) {
+    override suspend fun createMeeting(createMeeting: CreateMeeting) {
         try {
-            api.createMeeting(createEvent = createEvent)
+            val filePart = createMeeting.file?.let { file ->
+                val fileRequestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("file", file.name, fileRequestBody)
+            }
+            val namePart = createMeeting.name.toRequestBody("text/plain".toMediaTypeOrNull())
+            val categoryPart = createMeeting.category.name.toRequestBody("text/plain".toMediaTypeOrNull())
+            val capacityPart = createMeeting.capacity.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            val contentPart = createMeeting.content.toRequestBody("text/plain".toMediaTypeOrNull())
+
+            api.createMeeting(
+                file = filePart,
+                name = namePart,
+                category = categoryPart,
+                capacity = capacityPart,
+                content = contentPart
+            )
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

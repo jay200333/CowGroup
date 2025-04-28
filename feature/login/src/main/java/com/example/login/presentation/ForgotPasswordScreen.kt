@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.component.ValidatingTextField
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.login.R
-import com.example.login.component.ValidatingTextField
 import com.example.login.viewmodel.ForgotPasswordUIState
 import com.example.login.viewmodel.ForgotPasswordViewModel
 
@@ -131,7 +131,7 @@ fun ForgotPasswordScreen(
                 value = email,
                 onValueChange = updateEmail,
                 validateCondition = isValidEmail,
-                label = "이메일 주소",
+                label = { Text(text = "이메일 주소") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
                 errorMessage = emailMessage,

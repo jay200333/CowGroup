@@ -90,9 +90,10 @@ class SignUpExtraInfoViewModel @Inject constructor(
         }
     }
 
-    fun updateGender(gender: Gender) {
+    fun updateGender(label: String) {
         _signUpUIState.update { state ->
-            val updatedSignUpInfo = state.signUpInfo.copy(gender = gender)
+            val updatedSignUpInfo =
+                state.signUpInfo.copy(gender = Gender.fromLabel(label) ?: Gender.MALE)
             state.copy(signUpInfo = updatedSignUpInfo)
         }
     }

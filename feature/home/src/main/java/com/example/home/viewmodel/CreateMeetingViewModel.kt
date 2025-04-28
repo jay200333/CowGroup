@@ -3,8 +3,10 @@ package com.example.home.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.ImageProcessor
 import com.example.data.repository.EventRepository
-import com.example.model.CreateEvent
+import com.example.model.Category
+import com.example.model.CreateMeeting
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,8 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import retrofit2.HttpException
+import java.io.File
 import javax.inject.Inject
 
 data class CreateMeetingUIState(
@@ -23,20 +25,23 @@ data class CreateMeetingUIState(
     val createButtonEnabled: Boolean = false,
     val isCreateMeetingSuccess: Boolean = false,
     val isEditMeetingSuccess: Boolean = false,
-    val createEvent: CreateEvent = CreateEvent(
+    val createMeeting: CreateMeeting = CreateMeeting(
         name = "",
-        category = "",
-        location = "",
-        eventDate = "",
+        category = Category.SPORTS,
         capacity = 0,
         content = "",
+        file = null
     ),
+    val eventId: Int = 0,
+    val isValidCapacity: Boolean = false,
+    val capacityMessage: String = "",
     val message: String = "",
 )
 
 @HiltViewModel
 class CreateMeetingViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    val imageProcessor: ImageProcessor,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _createMeetingUIState: MutableStateFlow<CreateMeetingUIState> =
@@ -46,9 +51,6 @@ class CreateMeetingViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
     private val isEditMode: Boolean =
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
-    private val event: CreateEvent = requireNotNull(
-        savedStateHandle.get<String>("event")
-            ?.let { string -> Json.decodeFromString<CreateEvent>(string) }) { "event is required." }
 
     init {
         checkEditMode()
@@ -58,22 +60,18 @@ class CreateMeetingViewModel @Inject constructor(
         _createMeetingUIState.update { state ->
             state.copy(isEditMode = isEditMode)
         }
-        if (isEditMode) {
-            _createMeetingUIState.update { state ->
-                state.copy(createEvent = event)
-            }
-        }
     }
 
     fun createMeeting() {
         viewModelScope.launch {
             _createMeetingUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                eventRepository.createMeeting(createMeetingUIState.value.createEvent)
+                eventRepository.createMeeting(createMeetingUIState.value.createMeeting) // 서버에서 eventId 받아서 state 수정해야함
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isCreateMeetingSuccess = true,
                         isLoading = false,
+                        eventId = 12, // 서버에서 eventId 전달시 수정
                         message = "모임 생성이 완료되었습니다.",
                     )
                 }
@@ -83,7 +81,7 @@ class CreateMeetingViewModel @Inject constructor(
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "모임 생성이 실패하였습니다."//errorResponse.errors.message,
+                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
                     )
                 }
             } catch (e: Exception) {
@@ -101,7 +99,7 @@ class CreateMeetingViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                eventRepository.editEvent(eventId, createMeetingUIState.value.createEvent)
+                eventRepository.editEvent(eventId, createMeetingUIState.value.createMeeting)
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isCreateMeetingSuccess = true,
@@ -115,7 +113,7 @@ class CreateMeetingViewModel @Inject constructor(
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "모임 수정이 실패하였습니다."//errorResponse.errors.message,
+                        message = errorResponse.errors.message //"모임 수정이 실패하였습니다."
                     )
                 }
             } catch (e: Exception) {
@@ -129,62 +127,63 @@ class CreateMeetingViewModel @Inject constructor(
         }
     }
 
+    fun updateFile(file: File) {
+        _createMeetingUIState.update { state ->
+            val createMeeting = state.createMeeting.copy(file = file)
+            state.copy(createMeeting = createMeeting)
+        }
+    }
+
     fun updateName(name: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(name = name)
+            val updatedCreateMeeting = state.createMeeting.copy(name = name)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedCreateMeeting)),
             )
         }
     }
 
-    fun updateCategory(category: String) {
+    fun updateCategory(label: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(category = category)
+            val updatedCreateMeeting =
+                state.createMeeting.copy(category = Category.fromLabel(label) ?: Category.SPORTS)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedCreateMeeting)),
             )
         }
     }
 
-    fun updateLocation(location: String) {
+    fun updateCapacity(capacity: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(location = location)
-            state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
-            )
-        }
-    }
+            val updatedCreateMeeting = if (capacity.isEmpty()) {
+                state.createMeeting.copy(capacity = 0)
+            } else state.createMeeting.copy(capacity = capacity.toInt())
+            val isCapacityValid = (capacity.toIntOrNull() ?: 0) in 1..100
+            val capacityMessage = if (isCapacityValid) "" else "모임원 수는 최대 100명입니다."
 
-    fun updateEventDate(eventDate: String) {
-        _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(eventDate = eventDate)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
-            )
-        }
-    }
-
-    fun updateCapacity(capacity: Float) {
-        _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(capacity = capacity.toInt())
-            state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(
+                    state.copy(
+                        createMeeting = updatedCreateMeeting,
+                        capacityMessage = capacityMessage,
+                        isValidCapacity = isCapacityValid
+                    )
+                ),
+                capacityMessage = capacityMessage,
+                isValidCapacity = isCapacityValid
             )
         }
     }
 
     fun updateContent(content: String) {
         _createMeetingUIState.update { state ->
-            val updatedDetailEvent = state.createEvent.copy(content = content)
+            val updatedCreateMeeting = state.createMeeting.copy(content = content)
             state.copy(
-                createEvent = updatedDetailEvent,
-                createButtonEnabled = createMeetingCondition(state.copy(createEvent = updatedDetailEvent)),
+                createMeeting = updatedCreateMeeting,
+                createButtonEnabled = createMeetingCondition(state.copy(createMeeting = updatedCreateMeeting)),
             )
         }
     }
@@ -197,10 +196,8 @@ class CreateMeetingViewModel @Inject constructor(
 
     private fun createMeetingCondition(
         state: CreateMeetingUIState,
-    ): Boolean = state.createEvent.name.isNotEmpty() &&
-            state.createEvent.category.isNotEmpty() &&
-            state.createEvent.location.isNotEmpty() &&
-            state.createEvent.eventDate.isNotEmpty() &&
-            (state.createEvent.capacity > 0) &&
-            state.createEvent.content.isNotEmpty()
+    ): Boolean = state.createMeeting.name.isNotEmpty() &&
+            (state.createMeeting.capacity > 0) &&
+            state.createMeeting.content.isNotEmpty() &&
+            state.isValidCapacity
 }

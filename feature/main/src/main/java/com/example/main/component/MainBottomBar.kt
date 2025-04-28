@@ -1,5 +1,6 @@
 package com.example.main.component
 
+import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,6 +16,7 @@ import com.example.navigation.bottomBarScreens
 fun MainBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
+    Log.d("currentRoute", "$currentRoute")
 
     NavigationBar {
         bottomBarScreens.forEach { navItem ->
@@ -28,7 +30,7 @@ fun MainBottomBar(navController: NavController) {
                 label = { Text(navItem.title) },
                 selected = currentRoute == navItem,
                 onClick = {
-                    navController.navigate(navItem) {
+                    navController.navigate(navItem.route) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }

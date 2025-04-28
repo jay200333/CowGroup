@@ -1,6 +1,5 @@
 package com.example.login.presentation
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,9 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.component.CowGroupSelectionGrid
 import com.example.designsystem.theme.CowGroupTheme
-import com.example.login.component.GenderSelectionGrid
-import com.example.login.component.MbtiSelectionGrid
 import com.example.login.viewmodel.SignUpExtraInfoViewModel
 import com.example.login.viewmodel.SignUpUIState
 import com.example.model.Gender
@@ -79,7 +77,7 @@ fun SignUpExtraInfoScreen(
     onNavigationButtonClick: () -> Unit,
     onSignUpButtonClick: () -> Unit,
     signUpInfo: SignUpInfo,
-    updateGender: (Gender) -> Unit,
+    updateGender: (String) -> Unit,
     updateMBTI: (MBTI) -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -127,12 +125,11 @@ fun SignUpExtraInfoScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            GenderSelectionGrid(
-                selectedGender = signUpInfo.gender.name,
-                onGenderSelected = { selectedName ->
-                    val selectedGender = Gender.valueOf(selectedName)
-                    updateGender(selectedGender)
-                }
+            CowGroupSelectionGrid(
+                gridCellCount = 2,
+                selectedContent =  signUpInfo.gender.label,
+                onContentSelected = updateGender,
+                selectionList = Gender.entries.map { it.label }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -145,14 +142,14 @@ fun SignUpExtraInfoScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            MbtiSelectionGrid(
-                selectedMBTI = signUpInfo.mbti.name,
-                onMBTISelected = { selectedMBTI ->
-                    val selectedMBTI = MBTI.valueOf(selectedMBTI)
+            CowGroupSelectionGrid(
+                selectedContent = signUpInfo.mbti.name,
+                onContentSelected = { mbti ->
+                    val selectedMBTI = MBTI.valueOf(mbti)
                     updateMBTI(selectedMBTI)
-                }
+                },
+                selectionList = MBTI.entries.map { it.name }
             )
-            Log.d("MBTI", "${signUpInfo.mbti}")
 
             Spacer(modifier = Modifier.height(50.dp))
 
