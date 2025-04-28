@@ -14,22 +14,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.component.CowGroupDialog
 import com.example.designsystem.component.MarkButton
+import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
@@ -116,14 +121,17 @@ fun EventDetailScreen(
     onConfirmDialog: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    var state by remember { mutableIntStateOf(0) }
+    val titles = listOf("홈", "게시판")
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = {
                     Text(
-                        text = "모임 상세",
-                        style = MaterialTheme.typography.titleMedium
+                        text = "모임 채널",
+                        style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
@@ -156,6 +164,12 @@ fun EventDetailScreen(
                             markedIconId = R.drawable.baseline_bookmarks_24,
                             unMarkedIconId = R.drawable.baseline_bookmarks_24,
                         )
+                        IconButton(onClick = {}) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "공유하기"
+                            )
+                        }
                     }
                 }
             )
@@ -184,9 +198,20 @@ fun EventDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(top = 8.dp, bottom = 8.dp)
         ) {
+            SecondaryTabRow(selectedTabIndex = state) {
+                titles.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(text = title) },
+                        selected = state == index,
+                        onClick = { state = index })
+                }
+            }
+            when (state) {
+                0 -> EventDetailHomeScreen { onMemberButtonClick(detailEvent.id) }
+                1 -> EventDetailBoardScreen()
+            }
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
@@ -319,30 +344,32 @@ fun EventDetailScreen(
 @Preview(showBackground = true)
 @Composable
 fun EventDetailPreview() {
-    EventDetailScreen(
-        onMemberButtonClick = {},
-        onJoinButtonClick = {},
-        onNavigationButtonClick = {},
-        onBookmarkButtonClick = {},
-        onDeleteButtonClick = {},
-        onEditButtonClick = {},
-        detailEvent = DetailEvent(
-            id = 0,
-            name = "test",
-            author = "android",
-            category = "Sports",
-            createdDate = "2025-10-25",
-            location = "장소",
-            content = "내용",
-            eventDate = "2025-10-28",
-            capacity = 100,
-            applicants = 20,
-            isBookmarked = false,
-            editRights = false,
-            isParticipated = false
-        ),
-        showDialog = false,
-        onDismissDialog = {},
-        onConfirmDialog = {}
-    )
+    CowGroupTheme {
+        EventDetailScreen(
+            onMemberButtonClick = {},
+            onJoinButtonClick = {},
+            onNavigationButtonClick = {},
+            onBookmarkButtonClick = {},
+            onDeleteButtonClick = {},
+            onEditButtonClick = {},
+            detailEvent = DetailEvent(
+                id = 0,
+                name = "test",
+                author = "android",
+                category = "Sports",
+                createdDate = "2025-10-25",
+                location = "장소",
+                content = "내용",
+                eventDate = "2025-10-28",
+                capacity = 100,
+                applicants = 20,
+                isBookmarked = false,
+                editRights = false,
+                isParticipated = false
+            ),
+            showDialog = false,
+            onDismissDialog = {},
+            onConfirmDialog = {}
+        )
+    }
 }
