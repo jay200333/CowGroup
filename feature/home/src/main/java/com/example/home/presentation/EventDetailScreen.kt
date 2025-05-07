@@ -50,6 +50,7 @@ import com.example.designsystem.component.CowGroupDialog
 import com.example.designsystem.component.MarkButton
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
+import com.example.home.component.EditDropDownMenu
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
 import com.example.model.DetailEvent
@@ -143,7 +144,7 @@ fun EventDetailScreen(
                     }
                 },
                 actions = {
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         if (detailEvent.editRights) {
                             IconButton(onClick = onEditButtonClick) {
                                 Icon(
@@ -170,6 +171,7 @@ fun EventDetailScreen(
                                 contentDescription = "공유하기"
                             )
                         }
+                        EditDropDownMenu()
                     }
                 }
             )
