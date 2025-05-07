@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
-import com.example.home.component.BottomSheetContent
+import com.example.home.component.CommentBottomSheetContent
 import com.example.home.component.EventDetailBoardItem
 
 @Composable
@@ -86,7 +86,7 @@ fun EventDetailBoardScreen() {
                 sheetState = sheetState,
                 containerColor = Color.White
             ) {
-                BottomSheetContent(onAttendButtonClick = {})
+                CommentBottomSheetContent()
                 //val selectedMeeting = meetings.find{ it.id == selectedItemId}
             }
         }
