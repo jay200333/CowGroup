@@ -1,6 +1,7 @@
 package com.example.home.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,7 @@ import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 
 @Composable
-fun RegularMeetingItem() {
+fun RegularMeetingItem(onItemClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,6 +44,7 @@ fun RegularMeetingItem() {
                 color = MaterialTheme.colorScheme.onPrimary,
                 shape = RoundedCornerShape(10.dp)
             )
+            .clickable { onItemClick() }
     ) {
         Row(
             modifier = Modifier
@@ -90,7 +92,7 @@ fun RegularMeetingItem() {
                 ) {
                     Icon(
                         modifier = Modifier.size(16.dp),
-                        painter = painterResource(R.drawable.baseline_local_offer_24),
+                        painter = painterResource(com.example.navigation.R.drawable.baseline_map_24),
                         contentDescription = "icon_meeting_location",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -118,7 +120,7 @@ fun RegularMeetingItem() {
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
-                        text = "일시",
+                        text = "참석",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
@@ -162,6 +164,6 @@ fun RegularMeetingItem() {
 @Composable
 fun RegularMeetingItemPreview() {
     CowGroupTheme {
-        RegularMeetingItem()
+        RegularMeetingItem(onItemClick = {})
     }
 }
