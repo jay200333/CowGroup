@@ -70,7 +70,7 @@ interface CowGroupApi {
         @Part("name") name: RequestBody,
         @Part("category") category: RequestBody,
         @Part("capacity") capacity: RequestBody,
-        @Part("content") content: RequestBody): ApiResponse<Unit>
+        @Part("content") content: RequestBody): ApiResponse<Int>
 
     @POST("/events/{event-id}/join")
     suspend fun joinEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
