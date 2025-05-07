@@ -24,9 +24,15 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -38,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
+import com.example.home.component.RegularMeetingBottomSheetContent
 import com.example.home.component.RegularMeetingItem
 
 @Composable
@@ -45,6 +52,8 @@ fun EventDetailHomeScreen(
     onMemberButtonClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -177,7 +186,9 @@ fun EventDetailHomeScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(5) {
-                    RegularMeetingItem()
+                    RegularMeetingItem(onItemClick = {
+                        showBottomSheet = true
+                    })
                 }
             }
 
@@ -199,6 +210,18 @@ fun EventDetailHomeScreen(
                     fontSize = 18.sp,
                     color = Color.White
                 )
+            }
+        }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                },
+                sheetState = sheetState,
+                containerColor = Color.White
+            ) {
+                RegularMeetingBottomSheetContent(onAttendButtonClick = {})
+                //val selectedMeeting = meetings.find{ it.id == selectedItemId}
             }
         }
     }
