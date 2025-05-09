@@ -127,7 +127,7 @@ class CreateMeetingViewModel @Inject constructor(
         }
     }
 
-    fun updateFile(file: File) {
+    fun updateFile(file: File?) {
         _createMeetingUIState.update { state ->
             val createMeeting = state.createMeeting.copy(file = file)
             state.copy(createMeeting = createMeeting)

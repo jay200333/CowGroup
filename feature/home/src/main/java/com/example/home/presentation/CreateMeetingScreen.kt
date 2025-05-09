@@ -114,7 +114,7 @@ fun CreateMeetingScreen(
     updateCategory: (String) -> Unit,
     updateCapacity: (String) -> Unit,
     updateContent: (String) -> Unit,
-    choosePhoto: (File) -> Unit,
+    choosePhoto: (File?) -> Unit,
     createMeeting: CreateMeeting,
     isValidCapacity: Boolean,
     capacityMessage: String,

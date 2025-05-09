@@ -49,7 +49,7 @@ fun CowGroupPhotoPicker(
     modifier: Modifier = Modifier,
     imageProcessor: ImageProcessor,
     imageUri: Uri? = null,
-    updatePicture: (File) -> Unit
+    updatePicture: (File?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -124,7 +124,10 @@ fun CowGroupPhotoPicker(
                         color = MaterialTheme.colorScheme.onPrimary,
                         shape = CircleShape
                     )
-                    .clickable { selectedImageUri = null },
+                    .clickable {
+                        updatePicture(null)
+                        selectedImageUri = null
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
