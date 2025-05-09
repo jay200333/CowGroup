@@ -66,12 +66,12 @@ class CreateMeetingViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                eventRepository.createMeeting(createMeetingUIState.value.createMeeting) // 서버에서 eventId 받아서 state 수정해야함
+                val result = eventRepository.createMeeting(createMeetingUIState.value.createMeeting)
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isCreateMeetingSuccess = true,
                         isLoading = false,
-                        eventId = 12, // 서버에서 eventId 전달시 수정
+                        eventId = result,
                         message = "모임 생성이 완료되었습니다.",
                     )
                 }
@@ -127,7 +127,7 @@ class CreateMeetingViewModel @Inject constructor(
         }
     }
 
-    fun updateFile(file: File) {
+    fun updateFile(file: File?) {
         _createMeetingUIState.update { state ->
             val createMeeting = state.createMeeting.copy(file = file)
             state.copy(createMeeting = createMeeting)

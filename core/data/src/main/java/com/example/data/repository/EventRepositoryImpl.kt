@@ -148,7 +148,7 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createMeeting(createMeeting: CreateMeeting) {
+    override suspend fun createMeeting(createMeeting: CreateMeeting): Int {
         try {
             val filePart = createMeeting.file?.let { file ->
                 val fileRequestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
@@ -159,13 +159,15 @@ internal class EventRepositoryImpl @Inject constructor(
             val capacityPart = createMeeting.capacity.toString().toRequestBody("text/plain".toMediaTypeOrNull())
             val contentPart = createMeeting.content.toRequestBody("text/plain".toMediaTypeOrNull())
 
-            api.createMeeting(
+            val response = api.createMeeting(
                 file = filePart,
                 name = namePart,
                 category = categoryPart,
                 capacity = capacityPart,
                 content = contentPart
             )
+            val eventId = response.data
+            return eventId
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

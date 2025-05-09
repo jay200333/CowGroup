@@ -17,7 +17,7 @@ interface EventRepository {
 
     suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean)
 
-    suspend fun createMeeting(createMeeting: CreateMeeting)
+    suspend fun createMeeting(createMeeting: CreateMeeting): Int
 
     suspend fun getEventDetail(eventId: Int): DetailEvent
 

@@ -11,7 +11,7 @@ val onPrimaryLight = Color(0xFFB3B3B3)
 val secondaryLight = Color(0xFF02851A)
 val onSecondaryLight = Color(0xFF3D3D3D)
 val tertiaryLight = Color(0xFF006B54)
-val onTertiaryLight = Color(0xFFFFFFFF)
+val onTertiaryLight = Color(0xFFEEEEEE)
 val errorLight = Color(0xFFB3130A)
 val onErrorLight = Color(0xFFFFFFFF)
 
