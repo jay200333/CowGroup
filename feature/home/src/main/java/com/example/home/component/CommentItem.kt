@@ -52,7 +52,11 @@ fun CommentItem() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            EditDropDownMenu()
+            EditDropDownMenu(
+                menuItems = listOf(
+                    DropDownMenuItem("삭제하기") { }
+                )
+            )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
