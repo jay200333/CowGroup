@@ -40,7 +40,11 @@ fun NavGraphBuilder.mainNavGraph(
         onNavigationButtonClick = navController::navigateUp,
         onCreateMeetingSuccess = navController::navigateEventDetail,
         onEditMeetingSuccess = navController::navigateEventDetail,
-        onDeleteMeetingSuccess = navController::navigateUp
+        onDeleteMeetingSuccess = {
+            navController.navigate(HomeScreenRoute) {
+                popUpTo(HomeScreenRoute.route) { inclusive = false }
+            }
+        }
     )
     mapNavGraph(
         onEventClick = navController::navigateEventDetail,
