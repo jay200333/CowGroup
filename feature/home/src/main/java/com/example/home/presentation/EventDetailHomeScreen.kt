@@ -1,6 +1,7 @@
 package com.example.home.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,10 +47,13 @@ import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.RegularMeetingBottomSheetContent
 import com.example.home.component.RegularMeetingItem
+import com.example.model.DetailEvent
 
 @Composable
 fun EventDetailHomeScreen(
+    detailEvent: DetailEvent,
     onMemberButtonClick: () -> Unit,
+    onJoinButtonClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
@@ -58,25 +62,27 @@ fun EventDetailHomeScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = {},
-                icon = {
-                    Icon(
-                        modifier = Modifier.size(18.dp),
-                        painter = painterResource(R.drawable.baseline_create_24),
-                        contentDescription = "Fab_Event_Detail_HomeScreen",
-                        tint = Color.White
-                    )
-                },
-                text = {
-                    Text(
-                        text = "정기모임 등록",
-                        fontSize = 18.sp,
-                        color = Color.White
-                    )
-                },
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+            if (detailEvent.isParticipated) {
+                ExtendedFloatingActionButton(
+                    onClick = {},
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(18.dp),
+                            painter = painterResource(R.drawable.baseline_create_24),
+                            contentDescription = "Fab_Event_Detail_HomeScreen",
+                            tint = Color.White
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = "정기모임 등록",
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     ) { innerPadding ->
         Column(
@@ -88,9 +94,10 @@ fun EventDetailHomeScreen(
             AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
-                model = "https://picsum.photos/200/300",
-                contentDescription = ""
+                    .height(200.dp)
+                    .background(MaterialTheme.colorScheme.onTertiary),
+                model = detailEvent.url,
+                contentDescription = "",
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -100,7 +107,12 @@ fun EventDetailHomeScreen(
             ) {
                 AssistChip(
                     onClick = {},
-                    label = { Text(text = "카테고리", style = MaterialTheme.typography.bodySmall) },
+                    label = {
+                        Text(
+                            text = detailEvent.category,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
                     shape = RoundedCornerShape(6.dp),
                     border = BorderStroke(0.dp, MaterialTheme.colorScheme.onTertiary),
                     colors = AssistChipDefaults.assistChipColors(
@@ -120,7 +132,12 @@ fun EventDetailHomeScreen(
 
                 AssistChip(
                     onClick = onMemberButtonClick,
-                    label = { Text(text = "88명", style = MaterialTheme.typography.bodySmall) },
+                    label = {
+                        Text(
+                            text = "${detailEvent.applicants}/${detailEvent.capacity}명",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
                     shape = RoundedCornerShape(6.dp),
                     border = BorderStroke(0.dp, MaterialTheme.colorScheme.onTertiary),
                     colors = AssistChipDefaults.assistChipColors(
@@ -140,7 +157,7 @@ fun EventDetailHomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                text = "여의도 한강공원 러닝크루",
+                text = detailEvent.name,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold
@@ -150,17 +167,7 @@ fun EventDetailHomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                text = "\uD83C\uDFC3\u200D♂\uFE0F 여의도 한강공원 러닝크루\n 주말마다 함께 달리는 러닝크루입니다. 초보자부터 경험자까지 모두 환영!\n" +
-                        "\n" +
-                        "\uD83C\uDF33 건강 & 운동\n 한강의 자연을 느끼며, 함께 달리며 건강을 챙겨요.\n" +
-                        "\n" +
-                        "\uD83D\uDC65 친목 & 소통\n 새로운 사람들과 친목을 나누고, 운동 후 대화의 시간도 가져요.\n" +
-                        "\n" +
-                        "\uD83C\uDFC5 초보자 환영\n 운동에 익숙하지 않더라도 천천히 따라올 수 있는 일정으로 구성됩니다.\n" +
-                        "\n" +
-                        "\uD83D\uDDD3 주말 모임\n 매주 주말, 여의도 한강공원에서 만나요!\n" +
-                        "\n" +
-                        "\uD83D\uDCAC 편안한 분위기\n 스트레칭과 간단한 대화로 서로를 더 잘 알 수 있는 시간을 마련합니다.",
+                text = detailEvent.content,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondary
             )
@@ -179,37 +186,48 @@ fun EventDetailHomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(
-                modifier = Modifier
-                    .height(400.dp)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(5) {
-                    RegularMeetingItem(onItemClick = {
-                        showBottomSheet = true
-                    })
+            if (detailEvent.regularEvents.isEmpty()) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "예정된 정기 모임이 없습니다.",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .height(400.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(5) {
+                        RegularMeetingItem(onItemClick = {
+                            showBottomSheet = true
+                        })
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 30.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                enabled = true,
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 10.dp),
-                    text = "가입하기",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
+            if (detailEvent.isParticipated.not()) {
+                Button(
+                    onClick = onJoinButtonClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 30.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    enabled = true,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        text = "가입하기",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
             }
         }
         if (showBottomSheet) {
@@ -232,7 +250,21 @@ fun EventDetailHomeScreen(
 fun EventDetailHomeScreenPreview() {
     CowGroupTheme {
         EventDetailHomeScreen(
-            onMemberButtonClick = {}
+            detailEvent = DetailEvent(
+                id = 0,
+                name = "test",
+                category = "Sports",
+                content = "내용",
+                capacity = 100,
+                applicants = 20,
+                isBookmarked = false,
+                url = "",
+                eventRegistrant = false,
+                isParticipated = false,
+                regularEvents = emptyList()
+            ),
+            onMemberButtonClick = {},
+            onJoinButtonClick = {}
         )
     }
 }

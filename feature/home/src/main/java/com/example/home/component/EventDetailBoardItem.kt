@@ -63,7 +63,12 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
             )
             Spacer(modifier = Modifier.weight(1f))
 
-            EditDropDownMenu()
+            EditDropDownMenu(
+                menuItems = listOf(
+                    DropDownMenuItem("수정하기") { },
+                    DropDownMenuItem("삭제하기") { }
+                )
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -90,7 +95,9 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 30.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {

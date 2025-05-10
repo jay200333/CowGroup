@@ -57,8 +57,8 @@ interface CowGroupApi {
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>
 
-    @GET("/users/events/{event-id}")
-    suspend fun getMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
+    @GET("/events/{event-id}/participants")
+    suspend fun getEventMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
 
     @GET("/events")
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
@@ -72,13 +72,13 @@ interface CowGroupApi {
         @Part("capacity") capacity: RequestBody,
         @Part("content") content: RequestBody): ApiResponse<Int>
 
-    @POST("/events/{event-id}/join")
+    @POST("/events/{event-id}/participation")
     suspend fun joinEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
-    @DELETE("/events/{event-id}/join")
+    @DELETE("/events/{event-id}/participation")
     suspend fun unJoinEvent(@Path("event-id") eventId: Int): ApiResponse<Unit>
 
-    @GET("/events/{event-id}")
+    @GET("/events/{event-id}/regular")
     suspend fun getEventDetail(@Path("event-id") eventId: Int): ApiResponse<DetailEventResponse>
 
     @DELETE("/events/{event-id}")

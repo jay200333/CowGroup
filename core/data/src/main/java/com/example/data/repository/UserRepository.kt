@@ -1,8 +1,8 @@
 package com.example.data.repository
 
 import com.example.model.EmailCodeInfo
+import com.example.model.EventMember
 import com.example.model.LoginInfo
-import com.example.model.MemberInfo
 import com.example.model.MyPageInfo
 import com.example.model.Profile
 import com.example.model.SignUpInfo
@@ -26,5 +26,5 @@ interface UserRepository {
 
     suspend fun getMyPage(): MyPageInfo
 
-    suspend fun getMemberList(eventId: Int): List<MemberInfo>
+    suspend fun getEventMemberList(eventId: Int): EventMember
 }
