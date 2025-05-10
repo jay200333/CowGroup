@@ -1,6 +1,7 @@
 package com.example.home.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -93,9 +94,10 @@ fun EventDetailHomeScreen(
             AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(200.dp)
+                    .background(MaterialTheme.colorScheme.onTertiary),
                 model = detailEvent.url,
-                contentDescription = ""
+                contentDescription = "",
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(

@@ -1,12 +1,11 @@
 package com.example.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.data.repository.UserRepository
-import com.example.model.MemberInfo
+import com.example.model.EventMember
 import com.example.navigation.MemberRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 data class MemberUIState(
     val isLoading: Boolean = false,
-    val memberList: List<MemberInfo> = emptyList(),
+    val eventMember: EventMember = EventMember(memberInfoList = emptyList(), memberCount = 0),
     val message: String = "",
 )
 
@@ -36,14 +35,13 @@ class MemberViewModel @Inject constructor(
         getMemberList()
     }
 
-    private fun getMemberList() {
+    fun getMemberList() {
         viewModelScope.launch {
             _memberUIState.value = MemberUIState(isLoading = true)
             try {
-                val memberList = userRepository.getMemberList(eventId)
-                Log.d("MemberViewModel", "$memberList")
+                val memberList = userRepository.getEventMemberList(eventId)
                 _memberUIState.update {
-                    it.copy(isLoading = false, memberList = memberList)
+                    it.copy(isLoading = false, eventMember = memberList)
                 }
             } catch (e: HttpException) {
                 _memberUIState.update {

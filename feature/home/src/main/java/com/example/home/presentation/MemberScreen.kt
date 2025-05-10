@@ -8,12 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,9 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.component.MemberItem
 import com.example.home.viewmodel.MemberUIState
 import com.example.home.viewmodel.MemberViewModel
+import com.example.model.EventMember
 import com.example.model.MemberInfo
 
 @Composable
@@ -40,7 +42,7 @@ fun MemberScreen(
 
     MemberScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        memberList = uiState.memberList,
+        eventMember = uiState.eventMember,
         snackBarHostState = snackBarHostState,
     )
 
@@ -50,19 +52,23 @@ fun MemberScreen(
             viewModel.setMessageClear()
         }
     }
+
+    LaunchedEffect(Unit){
+        viewModel.getMemberList()
+    }
 }
 
 @Composable
 fun MemberScreen(
     onNavigationButtonClick: () -> Unit,
-    memberList: List<MemberInfo>,
+    eventMember: EventMember,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "참여자 목록") },
+            TopAppBar(
+                title = { Text(text = "모임 인원(${eventMember.memberCount})") },
                 navigationIcon = {
                     IconButton(onClick = onNavigationButtonClick) {
                         Icon(
@@ -82,9 +88,9 @@ fun MemberScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(memberList.size) { index ->
-                    val memberInfo = memberList[index]
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(eventMember.memberInfoList.size) { index ->
+                    val memberInfo = eventMember.memberInfoList[index]
                     MemberItem(memberInfo)
                 }
             }
@@ -95,10 +101,12 @@ fun MemberScreen(
 @Preview(showBackground = true)
 @Composable
 fun MemberScreenPreview() {
-    MemberScreen(
-        onNavigationButtonClick = {},
-        memberList = listOf(
-            MemberInfo("안드로이드", "MALE")
+    CowGroupTheme {
+        MemberScreen(
+            onNavigationButtonClick = {},
+            eventMember = EventMember(
+                memberInfoList = listOf(MemberInfo("안드로이드", "ESTP")), memberCount = 1
+            )
         )
-    )
+    }
 }
