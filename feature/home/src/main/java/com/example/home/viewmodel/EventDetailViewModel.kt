@@ -1,6 +1,5 @@
 package com.example.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,17 +25,15 @@ data class EventDetailUIState(
     val detailEvent: DetailEvent = DetailEvent(
         id = 0,
         name = "",
-        author = "",
         category = "",
-        createdDate = "",
-        location = "",
         content = "",
-        eventDate = "",
         capacity = 0,
         applicants = 0,
         isBookmarked = false,
-        editRights = false,
-        isParticipated = false
+        url = "",
+        eventRegistrant = false,
+        isParticipated = false,
+        regularEvents = emptyList()
     ),
     val message: String = "",
 )
@@ -52,7 +49,6 @@ class EventDetailViewModel @Inject constructor(
     val eventDetailUIState: StateFlow<EventDetailUIState> = _eventDetailUIState.asStateFlow()
 
     init {
-        Log.d("EventDetailViewModel", "eventId: $eventId")
         getEventDetail()
     }
 
@@ -73,7 +69,7 @@ class EventDetailViewModel @Inject constructor(
                 _eventDetailUIState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "모임 상세 조회에 실패했습니다." //errorResponse.errors.message
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
@@ -91,7 +87,10 @@ class EventDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
             try {
-                eventRepository.updateJoinEvent(eventId, _eventDetailUIState.value.detailEvent.isParticipated)
+                eventRepository.updateJoinEvent(
+                    eventId,
+                    _eventDetailUIState.value.detailEvent.isParticipated
+                )
                 _eventDetailUIState.update {
                     it.copy(
                         isLoading = false,

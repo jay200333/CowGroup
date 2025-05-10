@@ -1,24 +1,13 @@
 package com.example.home.presentation
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,9 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +36,7 @@ import com.example.designsystem.component.CowGroupDialog
 import com.example.designsystem.component.MarkButton
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
+import com.example.home.component.DropDownMenuItem
 import com.example.home.component.EditDropDownMenu
 import com.example.home.viewmodel.EventDetailUIState
 import com.example.home.viewmodel.EventDetailViewModel
@@ -66,21 +53,33 @@ fun EventDetailScreen(
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog: DialogType? by remember { mutableStateOf(null) }
 
     EventDetailScreen(
         onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onJoinButtonClick = viewModel::updateJoinEvent,
-        onDeleteButtonClick = { showDialog = true },
+        onDeleteButtonClick = { showDialog = DialogType.DeleteEvent },
+        onExitButtonClick = { showDialog = DialogType.LeaveEvent },
         onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true) },
         detailEvent = uiState.detailEvent,
         showDialog = showDialog,
-        onDismissDialog = { showDialog = false },
+        onDismissDialog = { showDialog = null },
         onConfirmDialog = {
-            viewModel.deleteEvent()
-            showDialog = false
+            when (showDialog) {
+                is DialogType.DeleteEvent -> {
+                    viewModel.deleteEvent()
+                    showDialog = null
+                }
+
+                is DialogType.LeaveEvent -> {
+                    viewModel.updateJoinEvent()
+                    showDialog = null
+                }
+
+                null -> {}
+            }
         },
         snackBarHostState = snackBarHostState,
     )
@@ -115,9 +114,10 @@ fun EventDetailScreen(
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
     onDeleteButtonClick: () -> Unit,
+    onExitButtonClick: () -> Unit,
     onEditButtonClick: () -> Unit,
     detailEvent: DetailEvent,
-    showDialog: Boolean,
+    showDialog: DialogType?,
     onDismissDialog: () -> Unit,
     onConfirmDialog: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -145,20 +145,6 @@ fun EventDetailScreen(
                 },
                 actions = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (detailEvent.editRights) {
-                            IconButton(onClick = onEditButtonClick) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "수정하기"
-                                )
-                            }
-                            IconButton(onClick = onDeleteButtonClick) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "삭제하기"
-                                )
-                            }
-                        }
                         MarkButton(
                             isMarked = detailEvent.isBookmarked,
                             onMarkClick = { onBookmarkButtonClick(detailEvent.isBookmarked) },
@@ -171,31 +157,68 @@ fun EventDetailScreen(
                                 contentDescription = "공유하기"
                             )
                         }
-                        EditDropDownMenu()
+                        if (detailEvent.eventRegistrant) {
+                            EditDropDownMenu(
+                                menuItems = listOf(
+                                    DropDownMenuItem("수정하기", onEditButtonClick),
+                                    DropDownMenuItem("삭제하기", onDeleteButtonClick)
+                                )
+                            )
+                        } else if (detailEvent.isParticipated) {
+                            EditDropDownMenu(
+                                menuItems = listOf(
+                                    DropDownMenuItem("모임 나가기", onExitButtonClick)
+                                )
+                            )
+                        }
                     }
                 }
             )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        if (showDialog) {
-            CowGroupDialog(
-                title = "모임 삭제",
-                confirmButtonMessage = "확인",
-                dismissButtonMessage = "취소",
-                onDismissRequest = onDismissDialog,
-                onDismiss = onDismissDialog,
-                content = {
-                    Text(
-                        text = "정말 모임을 삭제하시겠습니까?",
-                        modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
+        if (showDialog != null) {
+            when (showDialog) {
+                is DialogType.DeleteEvent -> {
+                    CowGroupDialog(
+                        title = "모임 삭제",
+                        confirmButtonMessage = "확인",
+                        dismissButtonMessage = "취소",
+                        onDismissRequest = onDismissDialog,
+                        onDismiss = onDismissDialog,
+                        content = {
+                            Text(
+                                text = "정말 모임을 삭제하시겠습니까?",
+                                modifier = Modifier.fillMaxWidth(),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        onConfirm = onConfirmDialog
                     )
-                },
-                onConfirm = onConfirmDialog
-            )
+                }
+
+                is DialogType.LeaveEvent -> {
+                    CowGroupDialog(
+                        title = "모임 나가기",
+                        confirmButtonMessage = "확인",
+                        dismissButtonMessage = "취소",
+                        onDismissRequest = onDismissDialog,
+                        onDismiss = onDismissDialog,
+                        content = {
+                            Text(
+                                text = "정말 모임을 나가시겠습니까?",
+                                modifier = Modifier.fillMaxWidth(),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        onConfirm = onConfirmDialog
+                    )
+                }
+            }
         }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -211,136 +234,19 @@ fun EventDetailScreen(
                 }
             }
             when (state) {
-                0 -> EventDetailHomeScreen { onMemberButtonClick(detailEvent.id) }
+                0 -> EventDetailHomeScreen(detailEvent = detailEvent,
+                    onMemberButtonClick = { onMemberButtonClick(detailEvent.id) },
+                    onJoinButtonClick = { onJoinButtonClick() })
+
                 1 -> EventDetailBoardScreen()
-            }
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = detailEvent.name,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = detailEvent.category,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Color.Gray
-                        )
-                    }
-                    Text(
-                        text = detailEvent.author,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                    Text(
-                        text = "모임 날짜",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = detailEvent.eventDate,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "모임 장소",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(text = detailEvent.location, style = MaterialTheme.typography.bodyMedium)
-                    Button(
-                        onClick = {},
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.large
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_gps_fixed_24),
-                            contentDescription = "btn_event_detail_map"
-                        )
-                        Text(text = "지도로 보기", modifier = Modifier.padding(start = 8.dp))
-                    }
-                }
-            }
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp),
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(
-                        "모임 내용",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = detailEvent.content, style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = "정원 : ${detailEvent.capacity}명",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = "참여 인원 : ${detailEvent.applicants}명",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-
-            Button(
-                onClick = { onMemberButtonClick(detailEvent.id) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                colors = ButtonDefaults.filledTonalButtonColors()
-            ) {
-                Text(text = "전체 참여자 목록 보기")
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = onJoinButtonClick,
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (detailEvent.isParticipated) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    }
-                )
-            ) {
-                Text(text = if (detailEvent.isParticipated) "나가기" else "참석하기", color = Color.White)
             }
         }
     }
+}
+
+sealed class DialogType {
+    object DeleteEvent : DialogType()
+    object LeaveEvent : DialogType()
 }
 
 @Preview(showBackground = true)
@@ -353,23 +259,22 @@ fun EventDetailPreview() {
             onNavigationButtonClick = {},
             onBookmarkButtonClick = {},
             onDeleteButtonClick = {},
+            onExitButtonClick = {},
             onEditButtonClick = {},
             detailEvent = DetailEvent(
                 id = 0,
                 name = "test",
-                author = "android",
                 category = "Sports",
-                createdDate = "2025-10-25",
-                location = "장소",
                 content = "내용",
-                eventDate = "2025-10-28",
                 capacity = 100,
                 applicants = 20,
                 isBookmarked = false,
-                editRights = false,
-                isParticipated = false
+                url = "",
+                eventRegistrant = false,
+                isParticipated = false,
+                regularEvents = emptyList()
             ),
-            showDialog = false,
+            showDialog = null,
             onDismissDialog = {},
             onConfirmDialog = {}
         )
