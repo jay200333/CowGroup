@@ -57,8 +57,8 @@ interface CowGroupApi {
     @GET("/users/my-page")
     suspend fun getMyPage(): ApiResponse<MyPageResponse>
 
-    @GET("/users/events/{event-id}")
-    suspend fun getMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
+    @GET("/events/{event-id}/participants")
+    suspend fun getEventMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
 
     @GET("/events")
     suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
