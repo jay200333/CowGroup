@@ -49,6 +49,7 @@ fun EventDetailScreen(
     onMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onEditButtonClick: (Int, Boolean) -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -59,6 +60,7 @@ fun EventDetailScreen(
         onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
+        onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
         onJoinButtonClick = viewModel::updateJoinEvent,
         onDeleteButtonClick = { showDialog = DialogType.DeleteEvent },
         onExitButtonClick = { showDialog = DialogType.LeaveEvent },
@@ -113,6 +115,7 @@ fun EventDetailScreen(
     onJoinButtonClick: () -> Unit,
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean) -> Unit,
     onDeleteButtonClick: () -> Unit,
     onExitButtonClick: () -> Unit,
     onEditButtonClick: () -> Unit,
@@ -236,7 +239,8 @@ fun EventDetailScreen(
             when (state) {
                 0 -> EventDetailHomeScreen(detailEvent = detailEvent,
                     onMemberButtonClick = { onMemberButtonClick(detailEvent.id) },
-                    onJoinButtonClick = { onJoinButtonClick() })
+                    onJoinButtonClick = { onJoinButtonClick() },
+                    onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(0, false) })
 
                 1 -> EventDetailBoardScreen()
             }
@@ -258,6 +262,7 @@ fun EventDetailPreview() {
             onJoinButtonClick = {},
             onNavigationButtonClick = {},
             onBookmarkButtonClick = {},
+            onCreateRegularMeetingButtonClick = { _, _ -> },
             onDeleteButtonClick = {},
             onExitButtonClick = {},
             onEditButtonClick = {},

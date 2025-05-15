@@ -1,0 +1,328 @@
+package com.example.home.presentation
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.component.ValidatingTextField
+import com.example.designsystem.theme.CowGroupTheme
+import com.example.home.R
+import com.example.home.viewmodel.CreateRegularMeetingUIState
+import com.example.home.viewmodel.CreateRegularMeetingViewModel
+
+@Composable
+fun CreateRegularMeetingScreen(
+    viewModel: CreateRegularMeetingViewModel = hiltViewModel(),
+    onNavigationButtonClick: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
+) {
+
+    val uiState: CreateRegularMeetingUIState by viewModel.createRegularMeetingUIState.collectAsStateWithLifecycle()
+
+    CreateRegularMeetingScreen(
+        onNavigationButtonClick = onNavigationButtonClick,
+        isEditMode = uiState.isEditMode,
+        snackBarHostState = snackBarHostState
+    )
+
+    LaunchedEffect(uiState){
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+}
+
+@Composable
+fun CreateRegularMeetingScreen(
+    onNavigationButtonClick: () -> Unit,
+    isEditMode: Boolean,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    if (isEditMode) {
+                        Text(
+                            text = "정기모임 편집",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    } else {
+                        Text(
+                            text = "정기모임 등록",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigationButtonClick) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "top_bar_nav_icon_create_meeting",
+                        )
+                    }
+                },
+            )
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(start = 16.dp, end = 16.dp, top = 30.dp, bottom = 8.dp)
+        ) {
+            Text(
+                text = "모임명",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSecondary
+            )
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                label = { Text(text = "정기모임의 이름을 적어주세요.") },
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row {
+                Row(modifier = Modifier.padding(top = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        modifier = Modifier.size(18.dp),
+                        painter = painterResource(R.drawable.baseline_calendar_month_24),
+                        contentDescription = "icon_regular_create_meeting_date"
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(start = 6.dp),
+                        text = "일시",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(95.dp))
+
+                Column {
+                    OutlinedTextField(
+                        modifier = Modifier.padding(bottom = 10.dp),
+                        value = "",
+                        onValueChange = {},
+                        shape = RoundedCornerShape(10.dp),
+                        label = {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                                text = "2025년 4월 25일 (금)",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        },
+                        singleLine = true,
+                    )
+
+                    OutlinedTextField(
+                        value = "",
+                        onValueChange = {},
+                        shape = RoundedCornerShape(10.dp),
+                        label = {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                                text = "오후 7:30",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        },
+                        singleLine = true,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    painter = painterResource(R.drawable.baseline_map_24),
+                    contentDescription = "icon_regular_create_meeting_location"
+                )
+
+                Text(
+                    modifier = Modifier.padding(start = 6.dp),
+                    text = "위치",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+
+                Spacer(modifier = Modifier.width(95.dp))
+
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    label = {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End,
+                            text = "여의도 한강공원",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
+                    },
+                    singleLine = true,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "icon_create_meeting_capacity"
+                )
+                Text(
+                    modifier = Modifier.padding(start = 6.dp),
+                    text = "모집 인원",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Spacer(modifier = Modifier.width(60.dp))
+
+                ValidatingTextField(
+                    modifier = Modifier.weight(1f),
+                    value = 0.toString(),
+                    onValueChange = {},
+                    validateCondition = false,
+                    label = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "1~100",
+                            )
+                        }
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    errorMessage = "",
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "명",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(130.dp))
+
+            if (isEditMode) {
+                Button(
+                    onClick = {},
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    enabled = true
+                ) {
+                    Text(
+                        text = "편집 완료",
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+            } else {
+                Button(
+                    onClick = {},
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    enabled = true
+                ) {
+                    Text(
+                        text = "정기모임 등록하기",
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CreateRegularMeetingScreenPreview() {
+    CowGroupTheme {
+        CreateRegularMeetingScreen(
+            onNavigationButtonClick = {},
+            isEditMode = false,
+        )
+    }
+}
