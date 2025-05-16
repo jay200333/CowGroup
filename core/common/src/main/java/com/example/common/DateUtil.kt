@@ -2,7 +2,10 @@ package com.example.common
 
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -42,8 +45,23 @@ object DateUtil {
         return if (dateString.isBlank()) {
             System.currentTimeMillis()
         } else {
-            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (E)", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (E)", Locale.KOREA)
             return dateFormat.parse(dateString)?.time ?: System.currentTimeMillis()
         }
+    }
+
+    fun formatDateTimeToIso8601(date: String, time: String): String {
+        val combinedStr = "$date $time"
+
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E) a h:mm", Locale.KOREAN)
+        val localDateTime = LocalDateTime.parse(combinedStr, inputFormat)
+
+        val seoulZone = ZoneId.of("Asia/Seoul")
+        val utcZone = ZoneId.of("UTC")
+        val zonedDateTime = localDateTime.atZone(seoulZone).withZoneSameInstant(utcZone)
+
+        val isoFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val isoString = zonedDateTime.format(isoFormat)
+        return isoString
     }
 }
