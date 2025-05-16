@@ -33,9 +33,17 @@ object DateUtil {
         }
     }
 
-    fun timeStampFormat(timestamp: Long): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val formattedDate = dateFormat.format(Date(timestamp))
-        return formattedDate
+    fun convertMillisToDate(millis: Long): String {
+        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (E)", Locale.getDefault())
+        return dateFormat.format(Date(millis))
+    }
+
+    fun parseDateStringToMillis(dateString: String): Long {
+        return if (dateString.isBlank()) {
+            System.currentTimeMillis()
+        } else {
+            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (E)", Locale.getDefault())
+            return dateFormat.parse(dateString)?.time ?: System.currentTimeMillis()
+        }
     }
 }

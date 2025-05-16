@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.common.DateUtil.todayStartOfDayMillis
-import com.example.designsystem.component.DatePickerTextField
+import com.example.designsystem.component.CowGroupDatePickerTextField
 import com.example.model.Profile
 import com.example.mypage.R
 import com.example.mypage.component.MBTIGridButtons
@@ -164,7 +164,7 @@ fun EditProfileScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
-            DatePickerTextField(
+            CowGroupDatePickerTextField(
                 date = profile.birth,
                 labelString = "생년월일",
                 onDateSelected = updateBirth,

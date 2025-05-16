@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.common.DateUtil.todayStartOfDayMillis
+import com.example.designsystem.component.CowGroupDatePickerTextField
 import com.example.designsystem.component.ValidatingTextField
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
@@ -62,10 +64,12 @@ fun CreateRegularMeetingScreen(
     CreateRegularMeetingScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         isEditMode = uiState.isEditMode,
+        regularMeetingDate = uiState.regularMeetingDate,
+        onDateChange = viewModel::setRegularMeetingDate,
         snackBarHostState = snackBarHostState
     )
 
-    LaunchedEffect(uiState){
+    LaunchedEffect(uiState) {
         if (uiState.message.isNotEmpty()) {
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
@@ -77,6 +81,8 @@ fun CreateRegularMeetingScreen(
 fun CreateRegularMeetingScreen(
     onNavigationButtonClick: () -> Unit,
     isEditMode: Boolean,
+    regularMeetingDate: String,
+    onDateChange: (String) -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -133,7 +139,10 @@ fun CreateRegularMeetingScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Row {
-                Row(modifier = Modifier.padding(top = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.padding(top = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         modifier = Modifier.size(18.dp),
                         painter = painterResource(R.drawable.baseline_calendar_month_24),
@@ -152,22 +161,11 @@ fun CreateRegularMeetingScreen(
                 Spacer(modifier = Modifier.width(95.dp))
 
                 Column {
-                    OutlinedTextField(
-                        modifier = Modifier.padding(bottom = 10.dp),
-                        value = "",
-                        onValueChange = {},
-                        shape = RoundedCornerShape(10.dp),
-                        label = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.End,
-                                text = "2025년 4월 25일 (금)",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSecondary
-                            )
-                        },
-                        singleLine = true,
-                    )
+                    CowGroupDatePickerTextField(
+                        date = regularMeetingDate,
+                        labelString = "일정을 선택하세요.",
+                        onDateSelected = { onDateChange(it) },
+                        selectableDateCondition = { utcTimeMillis -> utcTimeMillis >= todayStartOfDayMillis })
 
                     OutlinedTextField(
                         value = "",
@@ -323,6 +321,8 @@ fun CreateRegularMeetingScreenPreview() {
         CreateRegularMeetingScreen(
             onNavigationButtonClick = {},
             isEditMode = false,
+            regularMeetingDate = "2023-10-01",
+            onDateChange = {}
         )
     }
 }

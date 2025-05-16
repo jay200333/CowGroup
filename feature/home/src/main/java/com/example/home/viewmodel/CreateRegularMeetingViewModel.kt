@@ -15,6 +15,7 @@ data class CreateRegularMeetingUIState(
     val isLoading: Boolean = false,
     val createButtonEnabled: Boolean = false,
     val isCreateMeetingSuccess: Boolean = false,
+    val regularMeetingDate: String = "",
     val eventId: Int = 0,
     val message: String = ""
 )
@@ -34,6 +35,12 @@ class CreateRegularMeetingViewModel @Inject constructor(
 
     init {
         Log.d("CreateRegularViewModel", "${eventId}, $isEditMode")
+    }
+
+    fun setRegularMeetingDate(date: String) {
+        _createRegularMeetingUIState.update { state ->
+            state.copy(regularMeetingDate = date)
+        }
     }
 
     fun setMessageClear() {
