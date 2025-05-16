@@ -3,6 +3,7 @@ package com.example.home.viewmodel
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.example.common.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,8 @@ data class CreateRegularMeetingUIState(
     val createButtonEnabled: Boolean = false,
     val isCreateMeetingSuccess: Boolean = false,
     val regularMeetingDate: String = "",
+    val regularMeetingTime: String = "",
+    val dateTime: String = "",
     val eventId: Int = 0,
     val message: String = ""
 )
@@ -40,6 +43,23 @@ class CreateRegularMeetingViewModel @Inject constructor(
     fun setRegularMeetingDate(date: String) {
         _createRegularMeetingUIState.update { state ->
             state.copy(regularMeetingDate = date)
+        }
+    }
+
+    fun setRegularMeetingTime(time: String) {
+        _createRegularMeetingUIState.update { state ->
+            state.copy(regularMeetingTime = time)
+        }
+    }
+
+    fun setDateTime() {
+        _createRegularMeetingUIState.update { state ->
+            state.copy(
+                dateTime = DateUtil.formatDateTimeToIso8601(
+                    _createRegularMeetingUIState.value.regularMeetingDate,
+                    _createRegularMeetingUIState.value.regularMeetingTime
+                )
+            )
         }
     }
 

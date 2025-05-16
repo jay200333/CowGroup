@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.common.DateUtil.todayStartOfDayMillis
 import com.example.designsystem.component.CowGroupDatePickerTextField
+import com.example.designsystem.component.CowGroupTimePickerTextField
 import com.example.designsystem.component.ValidatingTextField
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
@@ -65,7 +66,10 @@ fun CreateRegularMeetingScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         isEditMode = uiState.isEditMode,
         regularMeetingDate = uiState.regularMeetingDate,
+        regularMeetingTime = uiState.regularMeetingTime,
         onDateChange = viewModel::setRegularMeetingDate,
+        onTimeChange = viewModel::setRegularMeetingTime,
+        test = viewModel::setDateTime,
         snackBarHostState = snackBarHostState
     )
 
@@ -82,7 +86,10 @@ fun CreateRegularMeetingScreen(
     onNavigationButtonClick: () -> Unit,
     isEditMode: Boolean,
     regularMeetingDate: String,
+    regularMeetingTime: String,
     onDateChange: (String) -> Unit,
+    onTimeChange: (String) -> Unit,
+    test: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -167,20 +174,12 @@ fun CreateRegularMeetingScreen(
                         onDateSelected = { onDateChange(it) },
                         selectableDateCondition = { utcTimeMillis -> utcTimeMillis >= todayStartOfDayMillis })
 
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        shape = RoundedCornerShape(10.dp),
-                        label = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.End,
-                                text = "오후 7:30",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSecondary
-                            )
-                        },
-                        singleLine = true,
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    CowGroupTimePickerTextField(
+                        time = regularMeetingTime,
+                        labelString = "시간을 선택하세요.",
+                        onTimeSelected = { onTimeChange(it) }
                     )
                 }
             }
@@ -294,7 +293,7 @@ fun CreateRegularMeetingScreen(
                 }
             } else {
                 Button(
-                    onClick = {},
+                    onClick = test,
                     modifier = Modifier
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
@@ -314,6 +313,7 @@ fun CreateRegularMeetingScreen(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun CreateRegularMeetingScreenPreview() {
@@ -322,7 +322,10 @@ fun CreateRegularMeetingScreenPreview() {
             onNavigationButtonClick = {},
             isEditMode = false,
             regularMeetingDate = "2023-10-01",
-            onDateChange = {}
+            regularMeetingTime = "12:00",
+            onDateChange = {},
+            onTimeChange = {},
+            test = {}
         )
     }
 }
