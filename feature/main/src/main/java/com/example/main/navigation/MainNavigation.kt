@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.example.home.navigation.homeNavGraph
 import com.example.home.navigation.navigateCreateMeeting
+import com.example.home.navigation.navigateCreateRegularMeeting
 import com.example.home.navigation.navigateEventDetail
 import com.example.home.navigation.navigateMember
 import com.example.map.navigation.mapNavGraph
@@ -39,6 +40,7 @@ fun NavGraphBuilder.mainNavGraph(
         onMemberButtonClick = navController::navigateMember,
         onNavigationButtonClick = navController::navigateUp,
         onCreateMeetingSuccess = navController::navigateEventDetail,
+        onCreateRegularMeetingClick = navController::navigateCreateRegularMeeting,
         onEditMeetingSuccess = navController::navigateEventDetail,
         onDeleteMeetingSuccess = {
             navController.navigate(HomeScreenRoute) {

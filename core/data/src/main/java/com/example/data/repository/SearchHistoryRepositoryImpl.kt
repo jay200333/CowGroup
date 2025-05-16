@@ -1,6 +1,5 @@
 package com.example.data.repository
 
-import android.util.Log
 import com.example.common.DateUtil
 import com.example.data.model.SearchHistory
 import com.example.database.dao.SearchHistoryDao
@@ -13,7 +12,6 @@ internal class SearchHistoryRepositoryImpl @Inject constructor(
     private val searchHistoryDao: SearchHistoryDao
 ) : SearchHistoryRepository {
     override suspend fun insertSearchHistory(query: String) {
-        Log.d("SearchHistoryRepositoryImpl", "insertSearchHistory: $query")
         searchHistoryDao.insertSearchHistory(
             SearchHistoryEntity(
                 query = query,
@@ -28,7 +26,7 @@ internal class SearchHistoryRepositoryImpl @Inject constructor(
                 list.map {
                     SearchHistory(
                         it.query,
-                        DateUtil.timeStampFormat(it.timestamp)
+                        DateUtil.convertMillisToDate(it.timestamp)
                     )
                 }
             }

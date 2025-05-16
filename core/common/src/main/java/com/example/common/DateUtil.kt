@@ -2,7 +2,10 @@ package com.example.common
 
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -33,9 +36,32 @@ object DateUtil {
         }
     }
 
-    fun timeStampFormat(timestamp: Long): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val formattedDate = dateFormat.format(Date(timestamp))
-        return formattedDate
+    fun convertMillisToDate(millis: Long): String {
+        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (E)", Locale.getDefault())
+        return dateFormat.format(Date(millis))
+    }
+
+    fun parseDateStringToMillis(dateString: String): Long {
+        return if (dateString.isBlank()) {
+            System.currentTimeMillis()
+        } else {
+            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (E)", Locale.KOREA)
+            return dateFormat.parse(dateString)?.time ?: System.currentTimeMillis()
+        }
+    }
+
+    fun formatDateTimeToIso8601(date: String, time: String): String {
+        val combinedStr = "$date $time"
+
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E) a h:mm", Locale.KOREAN)
+        val localDateTime = LocalDateTime.parse(combinedStr, inputFormat)
+
+        val seoulZone = ZoneId.of("Asia/Seoul")
+        val utcZone = ZoneId.of("UTC")
+        val zonedDateTime = localDateTime.atZone(seoulZone).withZoneSameInstant(utcZone)
+
+        val isoFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val isoString = zonedDateTime.format(isoFormat)
+        return isoString
     }
 }

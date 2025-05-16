@@ -5,10 +5,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.home.presentation.CreateMeetingScreen
+import com.example.home.presentation.CreateRegularMeetingScreen
 import com.example.home.presentation.EventDetailScreen
 import com.example.home.presentation.HomeScreen
 import com.example.home.presentation.MemberScreen
 import com.example.navigation.CreateMeetingRoute
+import com.example.navigation.CreateRegularMeetingRoute
 import com.example.navigation.EventDetailRoute
 import com.example.navigation.HomeScreenRoute
 import com.example.navigation.MemberRoute
@@ -30,6 +32,10 @@ fun NavController.navigateMember(eventId: Int) {
     navigate(MemberRoute(eventId))
 }
 
+fun NavController.navigateCreateRegularMeeting(eventId: Int, isEditMode: Boolean) {
+    navigate(CreateRegularMeetingRoute(eventId, isEditMode))
+}
+
 fun NavGraphBuilder.homeNavGraph(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
@@ -38,6 +44,7 @@ fun NavGraphBuilder.homeNavGraph(
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
     onMemberButtonClick: (Int) -> Unit,
+    onCreateRegularMeetingClick: (Int, Boolean) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: (Int) -> Unit,
     onEditMeetingSuccess: (Int) -> Unit,
@@ -79,6 +86,12 @@ fun NavGraphBuilder.homeNavGraph(
                     isEditMode
                 )
             },
+            onCreateRegularMeetingButtonClick = { eventId, isEditMode ->
+                onCreateRegularMeetingClick(
+                    eventId,
+                    isEditMode
+                )
+            },
             onDeleteMeetingSuccess = onDeleteMeetingSuccess
         )
     }
@@ -87,6 +100,14 @@ fun NavGraphBuilder.homeNavGraph(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
             onNavigationButtonClick = onNavigationButtonClick,
+        )
+    }
+
+    composable<CreateRegularMeetingRoute> {
+        CreateRegularMeetingScreen(
+            onNavigationButtonClick = onNavigationButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 }

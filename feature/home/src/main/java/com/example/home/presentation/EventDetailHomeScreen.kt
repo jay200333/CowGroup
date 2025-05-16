@@ -54,6 +54,7 @@ fun EventDetailHomeScreen(
     detailEvent: DetailEvent,
     onMemberButtonClick: () -> Unit,
     onJoinButtonClick: () -> Unit,
+    onCreateRegularMeetingButtonClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
@@ -64,7 +65,7 @@ fun EventDetailHomeScreen(
         floatingActionButton = {
             if (detailEvent.isParticipated) {
                 ExtendedFloatingActionButton(
-                    onClick = {},
+                    onClick = onCreateRegularMeetingButtonClick,
                     icon = {
                         Icon(
                             modifier = Modifier.size(18.dp),
@@ -264,7 +265,8 @@ fun EventDetailHomeScreenPreview() {
                 regularEvents = emptyList()
             ),
             onMemberButtonClick = {},
-            onJoinButtonClick = {}
+            onJoinButtonClick = {},
+            onCreateRegularMeetingButtonClick = {}
         )
     }
 }
