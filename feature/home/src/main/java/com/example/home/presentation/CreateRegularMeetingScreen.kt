@@ -59,6 +59,7 @@ import com.example.model.CreateRegularMeeting
 fun CreateRegularMeetingScreen(
     viewModel: CreateRegularMeetingViewModel = hiltViewModel(),
     onNavigationButtonClick: () -> Unit,
+    onCreateRegularMeetingSuccess: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -79,6 +80,7 @@ fun CreateRegularMeetingScreen(
         isValidCapacity = uiState.isValidCapacity,
         capacityMessage = uiState.capacityMessage,
         createButtonEnabled = uiState.createButtonEnabled,
+        createRegularMeeting = viewModel::createRegularMeeting,
         snackBarHostState = snackBarHostState
     )
 
@@ -87,6 +89,10 @@ fun CreateRegularMeetingScreen(
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
         }
+    }
+
+    if (uiState.isCreateRegularMeetingSuccess) {
+        onCreateRegularMeetingSuccess()
     }
 }
 
@@ -105,6 +111,7 @@ fun CreateRegularMeetingScreen(
     isValidCapacity: Boolean,
     capacityMessage: String,
     createButtonEnabled: Boolean,
+    createRegularMeeting: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -351,7 +358,7 @@ fun CreateRegularMeetingScreen(
                 }
             } else {
                 Button(
-                    onClick = { },
+                    onClick = createRegularMeeting,
                     modifier = Modifier
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
@@ -394,7 +401,8 @@ fun CreateRegularMeetingScreenPreview() {
             updateCapacity = {},
             isValidCapacity = false,
             capacityMessage = "",
-            createButtonEnabled = false
+            createButtonEnabled = false,
+            createRegularMeeting = {}
         )
     }
 }
