@@ -1,5 +1,6 @@
 package com.example.home.presentation
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +22,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +53,7 @@ import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.viewmodel.CreateRegularMeetingUIState
 import com.example.home.viewmodel.CreateRegularMeetingViewModel
+import com.example.model.CreateRegularMeeting
 
 @Composable
 fun CreateRegularMeetingScreen(
@@ -65,11 +68,17 @@ fun CreateRegularMeetingScreen(
     CreateRegularMeetingScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         isEditMode = uiState.isEditMode,
+        regularMeeting = uiState.regularMeeting,
         regularMeetingDate = uiState.regularMeetingDate,
         regularMeetingTime = uiState.regularMeetingTime,
         onDateChange = viewModel::setRegularMeetingDate,
         onTimeChange = viewModel::setRegularMeetingTime,
-        test = viewModel::setDateTime,
+        updateName = viewModel::updateName,
+        updateLocation = viewModel::updateLocation,
+        updateCapacity = viewModel::updateCapacity,
+        isValidCapacity = uiState.isValidCapacity,
+        capacityMessage = uiState.capacityMessage,
+        createButtonEnabled = uiState.createButtonEnabled,
         snackBarHostState = snackBarHostState
     )
 
@@ -85,11 +94,17 @@ fun CreateRegularMeetingScreen(
 fun CreateRegularMeetingScreen(
     onNavigationButtonClick: () -> Unit,
     isEditMode: Boolean,
+    regularMeeting: CreateRegularMeeting,
     regularMeetingDate: String,
     regularMeetingTime: String,
     onDateChange: (String) -> Unit,
     onTimeChange: (String) -> Unit,
-    test: () -> Unit,
+    updateName: (String) -> Unit,
+    updateLocation: (String) -> Unit,
+    updateCapacity: (String) -> Unit,
+    isValidCapacity: Boolean,
+    capacityMessage: String,
+    createButtonEnabled: Boolean,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
@@ -134,13 +149,39 @@ fun CreateRegularMeetingScreen(
                 color = MaterialTheme.colorScheme.onSecondary
             )
 
-            OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                value = regularMeeting.name,
+                onValueChange = updateName,
                 shape = RoundedCornerShape(10.dp),
-                label = { Text(text = "정기모임의 이름을 적어주세요.") },
+                label = {
+                    Text(
+                        text = "정기모임의 이름을 적어주세요.",
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                    )
+                },
                 singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.White,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    unfocusedContainerColor = Color.White
+                ),
+                textStyle = MaterialTheme.typography.titleMedium.copy(
+                    textAlign = TextAlign.End,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -203,21 +244,38 @@ fun CreateRegularMeetingScreen(
 
                 Spacer(modifier = Modifier.width(95.dp))
 
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    modifier = Modifier.weight(1f),
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    value = regularMeeting.location,
+                    onValueChange = updateLocation,
                     shape = RoundedCornerShape(10.dp),
                     label = {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End,
-                            text = "여의도 한강공원",
-                            style = MaterialTheme.typography.titleMedium,
+                            text = "장소를 입력하세요.",
                             color = MaterialTheme.colorScheme.onSecondary
                         )
                     },
                     singleLine = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.White,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.White
+                    ),
+                    textStyle = MaterialTheme.typography.titleMedium.copy(
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
                 )
             }
 
@@ -243,9 +301,9 @@ fun CreateRegularMeetingScreen(
 
                 ValidatingTextField(
                     modifier = Modifier.weight(1f),
-                    value = 0.toString(),
-                    onValueChange = {},
-                    validateCondition = false,
+                    value = if (regularMeeting.capacity == 0) "" else regularMeeting.capacity.toString(),
+                    onValueChange = updateCapacity,
+                    validateCondition = isValidCapacity,
                     label = {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -259,7 +317,7 @@ fun CreateRegularMeetingScreen(
                     shape = RoundedCornerShape(10.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
-                    errorMessage = "",
+                    errorMessage = capacityMessage,
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
                 )
 
@@ -281,7 +339,7 @@ fun CreateRegularMeetingScreen(
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    enabled = true
+                    enabled = createButtonEnabled
                 ) {
                     Text(
                         text = "편집 완료",
@@ -293,12 +351,12 @@ fun CreateRegularMeetingScreen(
                 }
             } else {
                 Button(
-                    onClick = test,
+                    onClick = { },
                     modifier = Modifier
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    enabled = true
+                    enabled = createButtonEnabled
                 ) {
                     Text(
                         text = "정기모임 등록하기",
@@ -321,11 +379,22 @@ fun CreateRegularMeetingScreenPreview() {
         CreateRegularMeetingScreen(
             onNavigationButtonClick = {},
             isEditMode = false,
+            regularMeeting = CreateRegularMeeting(
+                name = "",
+                location = "",
+                capacity = 80,
+                dateTime = ""
+            ),
             regularMeetingDate = "2023-10-01",
             regularMeetingTime = "12:00",
             onDateChange = {},
             onTimeChange = {},
-            test = {}
+            updateName = {},
+            updateLocation = {},
+            updateCapacity = {},
+            isValidCapacity = false,
+            capacityMessage = "",
+            createButtonEnabled = false
         )
     }
 }
