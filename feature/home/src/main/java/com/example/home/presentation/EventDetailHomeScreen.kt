@@ -2,6 +2,7 @@ package com.example.home.presentation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -175,15 +177,27 @@ fun EventDetailHomeScreen(
             Spacer(modifier = Modifier.height(30.dp))
             HorizontalDivider(thickness = 4.dp, color = MaterialTheme.colorScheme.onTertiary)
             Spacer(modifier = Modifier.height(20.dp))
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                text = "정기모임",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "정기모임",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Text(
+                    modifier = Modifier.clickable {},
+                    text = "전체보기",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -201,8 +215,9 @@ fun EventDetailHomeScreen(
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(5) {
-                        RegularMeetingItem(onItemClick = {
+                    items(detailEvent.regularEvents.size) { index ->
+                        val regularEvent = detailEvent.regularEvents[index]
+                        RegularMeetingItem(regularEvent, onItemClick = {
                             showBottomSheet = true
                         })
                     }
