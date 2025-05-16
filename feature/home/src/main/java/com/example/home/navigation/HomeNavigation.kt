@@ -105,6 +105,7 @@ fun NavGraphBuilder.homeNavGraph(
 
     composable<CreateRegularMeetingRoute> {
         CreateRegularMeetingScreen(
+            onCreateRegularMeetingSuccess = onNavigationButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
