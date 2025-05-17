@@ -62,6 +62,7 @@ fun EventDetailScreen(
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
         onJoinButtonClick = viewModel::updateJoinEvent,
+        onJoinRegularMeetingClick = { regularEventId -> viewModel.updateJoinRegularMeeting(regularEventId) },
         onDeleteButtonClick = { showDialog = DialogType.DeleteEvent },
         onExitButtonClick = { showDialog = DialogType.LeaveEvent },
         onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true) },
@@ -113,6 +114,7 @@ fun EventDetailScreen(
 fun EventDetailScreen(
     onMemberButtonClick: (Int) -> Unit,
     onJoinButtonClick: () -> Unit,
+    onJoinRegularMeetingClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
     onCreateRegularMeetingButtonClick: (Int, Boolean) -> Unit,
@@ -240,7 +242,9 @@ fun EventDetailScreen(
                 0 -> EventDetailHomeScreen(detailEvent = detailEvent,
                     onMemberButtonClick = { onMemberButtonClick(detailEvent.id) },
                     onJoinButtonClick = { onJoinButtonClick() },
-                    onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(0, false) })
+                    onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(0, false) },
+                    onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) }
+                )
 
                 1 -> EventDetailBoardScreen()
             }
@@ -281,7 +285,8 @@ fun EventDetailPreview() {
             ),
             showDialog = null,
             onDismissDialog = {},
-            onConfirmDialog = {}
+            onConfirmDialog = {},
+            onJoinRegularMeetingClick = {}
         )
     }
 }

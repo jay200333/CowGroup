@@ -36,7 +36,11 @@ import com.example.home.R
 import com.example.model.RegularEvent
 
 @Composable
-fun RegularMeetingItem(regularEvent: RegularEvent, onItemClick: () -> Unit) {
+fun RegularMeetingItem(
+    regularEvent: RegularEvent,
+    onItemClick: () -> Unit,
+    onJoinRegularEvent: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -148,7 +152,7 @@ fun RegularMeetingItem(regularEvent: RegularEvent, onItemClick: () -> Unit) {
 
             Button(
                 modifier = Modifier.wrapContentWidth(),
-                onClick = {},
+                onClick = onJoinRegularEvent,
                 shape = RoundedCornerShape(6.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (regularEvent.isParticipated) {
@@ -176,15 +180,19 @@ fun RegularMeetingItem(regularEvent: RegularEvent, onItemClick: () -> Unit) {
 @Composable
 fun RegularMeetingItemPreview() {
     CowGroupTheme {
-        RegularMeetingItem(regularEvent = RegularEvent(
-            id = 0,
-            name = "test",
-            location = "서울",
-            dateTime = "",
-            capacity = 100,
-            applicants = 20,
-            isRegularRegistrant = false,
-            isParticipated = false
-        ), onItemClick = {})
+        RegularMeetingItem(
+            regularEvent = RegularEvent(
+                id = 0,
+                name = "test",
+                location = "서울",
+                dateTime = "",
+                capacity = 100,
+                applicants = 20,
+                isRegularRegistrant = false,
+                isParticipated = false
+            ),
+            onItemClick = {},
+            onJoinRegularEvent = {}
+        )
     }
 }

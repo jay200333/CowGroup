@@ -56,6 +56,7 @@ fun EventDetailHomeScreen(
     detailEvent: DetailEvent,
     onMemberButtonClick: () -> Unit,
     onJoinButtonClick: () -> Unit,
+    onJoinRegularMeetingClick: (Int) -> Unit,
     onCreateRegularMeetingButtonClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -219,7 +220,7 @@ fun EventDetailHomeScreen(
                         val regularEvent = detailEvent.regularEvents[index]
                         RegularMeetingItem(regularEvent, onItemClick = {
                             showBottomSheet = true
-                        })
+                        }, onJoinRegularEvent = { onJoinRegularMeetingClick(regularEvent.id) })
                     }
                 }
             }
@@ -281,7 +282,8 @@ fun EventDetailHomeScreenPreview() {
             ),
             onMemberButtonClick = {},
             onJoinButtonClick = {},
-            onCreateRegularMeetingButtonClick = {}
+            onCreateRegularMeetingButtonClick = {},
+            onJoinRegularMeetingClick = {}
         )
     }
 }
