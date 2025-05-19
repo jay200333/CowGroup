@@ -29,10 +29,12 @@ data class CreateRegularMeetingUIState(
     ),
     val createButtonEnabled: Boolean = false,
     val isCreateRegularMeetingSuccess: Boolean = false,
+    val isEditRegularMeetingSuccess: Boolean = false,
     val regularMeetingDate: String = "",
     val regularMeetingTime: String = "",
     val dateTime: String = "",
     val eventId: Int = 0,
+    val regularId: Int = 0,
     val isValidCapacity: Boolean = false,
     val capacityMessage: String = "",
     val message: String = ""
@@ -51,9 +53,61 @@ class CreateRegularMeetingViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
     private val isEditMode: Boolean =
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
+    private val regularId: Int =
+        requireNotNull(savedStateHandle.get<Int>("regularId")) { "regularId is required." }
 
     init {
-        Log.d("CreateRegularViewModel", "${eventId}, $isEditMode")
+        Log.d("CreateRegularViewModel", "${eventId}, $isEditMode, $regularId")
+        checkEditMode()
+        if (isEditMode) {
+            getRegularMeeting(regularId)
+        }
+    }
+
+    private fun checkEditMode() {
+        _createRegularMeetingUIState.update { state ->
+            state.copy(isEditMode = isEditMode)
+        }
+    }
+
+    private fun getRegularMeeting(regularId: Int) {
+        viewModelScope.launch {
+            _createRegularMeetingUIState.update { state ->
+                state.copy(
+                    isLoading = true,
+                    message = ""
+                )
+            }
+            try {
+                val result = regularMeetingRepository.getRegularMeeting(regularId)
+                val dateTime = result.dateTime
+                val dateSplitIndex = dateTime.indexOf(") ") + 1
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        regularMeeting = result,
+                        regularMeetingDate = dateTime.substring(0, dateSplitIndex),
+                        regularMeetingTime = dateTime.substring(dateSplitIndex + 1),
+                        isLoading = false
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
     }
 
     fun createRegularMeeting() {

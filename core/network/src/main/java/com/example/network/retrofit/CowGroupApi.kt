@@ -15,6 +15,7 @@ import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.ProfileResponse
+import com.example.network.model.RegularEventResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -102,6 +103,9 @@ interface CowGroupApi {
 
     @POST("/events/{event-id}/regular")
     suspend fun createRegularMeeting(@Path("event-id") eventId: Int, @Body regularMeeting: CreateRegularMeeting): ApiResponse<Unit>
+
+    @GET("/regular/{regular-id}")
+    suspend fun getRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<RegularEventResponse>
 
     @POST("/regular/{regular-id}/participation")
     suspend fun joinRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Unit>
