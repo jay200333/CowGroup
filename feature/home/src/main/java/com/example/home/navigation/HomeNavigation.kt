@@ -32,8 +32,8 @@ fun NavController.navigateMember(eventId: Int) {
     navigate(MemberRoute(eventId))
 }
 
-fun NavController.navigateCreateRegularMeeting(eventId: Int, isEditMode: Boolean) {
-    navigate(CreateRegularMeetingRoute(eventId, isEditMode))
+fun NavController.navigateCreateRegularMeeting(eventId: Int, isEditMode: Boolean, regularId: Int) {
+    navigate(CreateRegularMeetingRoute(eventId, isEditMode, regularId))
 }
 
 fun NavGraphBuilder.homeNavGraph(
@@ -44,7 +44,7 @@ fun NavGraphBuilder.homeNavGraph(
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
     onMemberButtonClick: (Int) -> Unit,
-    onCreateRegularMeetingClick: (Int, Boolean) -> Unit,
+    onCreateRegularMeetingClick: (Int, Boolean, Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: (Int) -> Unit,
     onEditMeetingSuccess: (Int) -> Unit,
@@ -86,10 +86,18 @@ fun NavGraphBuilder.homeNavGraph(
                     isEditMode
                 )
             },
-            onCreateRegularMeetingButtonClick = { eventId, isEditMode ->
+            onCreateRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
                 onCreateRegularMeetingClick(
                     eventId,
-                    isEditMode
+                    isEditMode,
+                    regularId
+                )
+            },
+            onEditRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
+                onCreateRegularMeetingClick(
+                    eventId,
+                    isEditMode,
+                    regularId
                 )
             },
             onDeleteMeetingSuccess = onDeleteMeetingSuccess
@@ -106,6 +114,7 @@ fun NavGraphBuilder.homeNavGraph(
     composable<CreateRegularMeetingRoute> {
         CreateRegularMeetingScreen(
             onCreateRegularMeetingSuccess = onNavigationButtonClick,
+            onEditRegularMeetingSuccess = onNavigationButtonClick,
             onNavigationButtonClick = onNavigationButtonClick,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
