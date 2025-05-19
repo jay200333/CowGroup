@@ -47,6 +47,7 @@ fun EventDetailScreen(
     viewModel: EventDetailViewModel = hiltViewModel(),
     onDeleteMeetingSuccess: () -> Unit,
     onMemberButtonClick: (Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onEditButtonClick: (Int, Boolean) -> Unit,
     onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
@@ -59,6 +60,7 @@ fun EventDetailScreen(
 
     EventDetailScreen(
         onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
+        onRegularMemberButtonClick = onRegularMemberButtonClick,
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
@@ -117,6 +119,7 @@ fun EventDetailScreen(
 @Composable
 fun EventDetailScreen(
     onMemberButtonClick: (Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
     onJoinButtonClick: () -> Unit,
     onJoinRegularMeetingClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
@@ -249,7 +252,8 @@ fun EventDetailScreen(
                     onJoinButtonClick = { onJoinButtonClick() },
                     onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(0, false, 0) },
                     onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
-                    onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) }
+                    onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) },
+                    onRegularMemberButtonClick = onRegularMemberButtonClick
                 )
 
                 1 -> EventDetailBoardScreen()
@@ -269,6 +273,7 @@ fun EventDetailPreview() {
     CowGroupTheme {
         EventDetailScreen(
             onMemberButtonClick = {},
+            onRegularMemberButtonClick = {},
             onJoinButtonClick = {},
             onNavigationButtonClick = {},
             onBookmarkButtonClick = {},

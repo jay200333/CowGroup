@@ -56,6 +56,7 @@ import com.example.model.RegularEvent
 fun EventDetailHomeScreen(
     detailEvent: DetailEvent,
     onMemberButtonClick: () -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
     onJoinButtonClick: () -> Unit,
     onJoinRegularMeetingClick: (Int) -> Unit,
     onCreateRegularMeetingButtonClick: () -> Unit,
@@ -87,7 +88,8 @@ fun EventDetailHomeScreen(
                         true,
                         selectedEvent!!.id
                     )
-                })
+                },
+                onMemberButtonClick = { onRegularMemberButtonClick(selectedEvent!!.id) })
         }
     }
 
@@ -301,6 +303,7 @@ fun EventDetailHomeScreenPreview() {
                 regularEvents = emptyList()
             ),
             onMemberButtonClick = {},
+            onRegularMemberButtonClick = {},
             onJoinButtonClick = {},
             onCreateRegularMeetingButtonClick = {},
             onEditRegularMeetingButtonClick = { _, _, _ -> },

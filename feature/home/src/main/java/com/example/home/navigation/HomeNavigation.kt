@@ -9,11 +9,13 @@ import com.example.home.presentation.CreateRegularMeetingScreen
 import com.example.home.presentation.EventDetailScreen
 import com.example.home.presentation.HomeScreen
 import com.example.home.presentation.MemberScreen
+import com.example.home.presentation.RegularMemberScreen
 import com.example.navigation.CreateMeetingRoute
 import com.example.navigation.CreateRegularMeetingRoute
 import com.example.navigation.EventDetailRoute
 import com.example.navigation.HomeScreenRoute
 import com.example.navigation.MemberRoute
+import com.example.navigation.RegularMemberRoute
 
 fun NavController.navigateHome() {
     navigate(HomeScreenRoute) {
@@ -32,6 +34,10 @@ fun NavController.navigateMember(eventId: Int) {
     navigate(MemberRoute(eventId))
 }
 
+fun NavController.navigateRegularMember(regularId: Int) {
+    navigate(RegularMemberRoute(regularId))
+}
+
 fun NavController.navigateCreateRegularMeeting(eventId: Int, isEditMode: Boolean, regularId: Int) {
     navigate(CreateRegularMeetingRoute(eventId, isEditMode, regularId))
 }
@@ -44,6 +50,7 @@ fun NavGraphBuilder.homeNavGraph(
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
     onMemberButtonClick: (Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
     onCreateRegularMeetingClick: (Int, Boolean, Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onCreateMeetingSuccess: (Int) -> Unit,
@@ -79,6 +86,7 @@ fun NavGraphBuilder.homeNavGraph(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
             onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
+            onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId)},
             onNavigationButtonClick = onHomeScreen,
             onEditButtonClick = { eventId, isEditMode ->
                 onCreateMeetingClick(
@@ -118,6 +126,14 @@ fun NavGraphBuilder.homeNavGraph(
             onNavigationButtonClick = onNavigationButtonClick,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
+        )
+    }
+
+    composable<RegularMemberRoute> {
+        RegularMemberScreen(
+            onNavigationButtonClick = onNavigationButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar
         )
     }
 }
