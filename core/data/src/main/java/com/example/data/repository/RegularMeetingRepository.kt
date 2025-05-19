@@ -7,5 +7,7 @@ interface RegularMeetingRepository {
 
     suspend fun getRegularMeeting(regularId: Int): CreateRegularMeeting
 
+    suspend fun editRegularMeeting(regularId: Int, regularMeeting: CreateRegularMeeting)
+
     suspend fun updateJoinRegularMeeting(regularEventId: Int, hasJoined: Boolean)
 }

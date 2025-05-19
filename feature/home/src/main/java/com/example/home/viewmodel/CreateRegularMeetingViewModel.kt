@@ -1,6 +1,5 @@
 package com.example.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,7 +56,6 @@ class CreateRegularMeetingViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Int>("regularId")) { "regularId is required." }
 
     init {
-        Log.d("CreateRegularViewModel", "${eventId}, $isEditMode, $regularId")
         checkEditMode()
         if (isEditMode) {
             getRegularMeeting(regularId)
@@ -128,6 +126,46 @@ class CreateRegularMeetingViewModel @Inject constructor(
                         isCreateRegularMeetingSuccess = true,
                         isLoading = false,
                         message = "정기 모임 생성이 완료되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
+    }
+
+    fun editRegularMeeting() {
+        viewModelScope.launch {
+            _createRegularMeetingUIState.update { state ->
+                state.copy(
+                    isLoading = true,
+                    message = ""
+                )
+            }
+            try {
+                regularMeetingRepository.editRegularMeeting(
+                    regularId,
+                    createRegularMeetingUIState.value.regularMeeting
+                )
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isEditRegularMeetingSuccess = true,
+                        isLoading = false,
+                        message = "정기 모임 편집이 완료되었습니다."
                     )
                 }
             } catch (e: HttpException) {

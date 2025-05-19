@@ -107,6 +107,9 @@ interface CowGroupApi {
     @GET("/regular/{regular-id}")
     suspend fun getRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<RegularEventResponse>
 
+    @PATCH("/regular/{regular-id}")
+    suspend fun editRegularMeeting(@Path("regular-id") regularId: Int, @Body regularMeeting: CreateRegularMeeting): ApiResponse<Unit>
+
     @POST("/regular/{regular-id}/participation")
     suspend fun joinRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Unit>
 
