@@ -38,7 +38,8 @@ import com.example.model.RegularEvent
 fun RegularMeetingBottomSheetContent(
     regularEvent: RegularEvent,
     onAttendButtonClick: () -> Unit,
-    onEditButtonClick: () -> Unit
+    onEditButtonClick: () -> Unit,
+    onMemberButtonClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -72,7 +73,7 @@ fun RegularMeetingBottomSheetContent(
                 })
 
             AssistChip(
-                onClick = {},
+                onClick = { onMemberButtonClick() },
                 label = {
                     Text(
                         text = "${regularEvent.applicants}/${regularEvent.capacity}명",
@@ -221,7 +222,8 @@ fun BottomSheetContentPreview() {
                 isParticipated = false
             ),
             onAttendButtonClick = {},
-            onEditButtonClick = {}
+            onEditButtonClick = {},
+            onMemberButtonClick = {}
         )
     }
 }
