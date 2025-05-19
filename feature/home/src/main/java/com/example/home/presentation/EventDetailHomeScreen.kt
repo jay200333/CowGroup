@@ -58,7 +58,8 @@ fun EventDetailHomeScreen(
     onMemberButtonClick: () -> Unit,
     onJoinButtonClick: () -> Unit,
     onJoinRegularMeetingClick: (Int) -> Unit,
-    onCreateRegularMeetingButtonClick: () -> Unit
+    onCreateRegularMeetingButtonClick: () -> Unit,
+    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
@@ -79,6 +80,13 @@ fun EventDetailHomeScreen(
                 onAttendButtonClick = {
                     onJoinRegularMeetingClick(selectedEvent!!.id)
                     showBottomSheet = false
+                },
+                onEditButtonClick = {
+                    onEditRegularMeetingButtonClick(
+                        detailEvent.id,
+                        true,
+                        selectedEvent!!.id
+                    )
                 })
         }
     }
@@ -238,10 +246,13 @@ fun EventDetailHomeScreen(
                 ) {
                     items(detailEvent.regularEvents.size) { index ->
                         val regularEvent = detailEvent.regularEvents[index]
-                        RegularMeetingItem(regularEvent, onItemClick = {
-                            selectedEvent = regularEvent
-                            showBottomSheet = true
-                        }, onJoinRegularEvent = { onJoinRegularMeetingClick(regularEvent.id) })
+                        RegularMeetingItem(
+                            regularEvent,
+                            onItemClick = {
+                                selectedEvent = regularEvent
+                                showBottomSheet = true
+                            },
+                            onJoinRegularEvent = { onJoinRegularMeetingClick(regularEvent.id) })
                     }
                 }
             }
@@ -292,7 +303,8 @@ fun EventDetailHomeScreenPreview() {
             onMemberButtonClick = {},
             onJoinButtonClick = {},
             onCreateRegularMeetingButtonClick = {},
-            onJoinRegularMeetingClick = {}
+            onEditRegularMeetingButtonClick = { _, _, _ -> },
+            onJoinRegularMeetingClick = {},
         )
     }
 }

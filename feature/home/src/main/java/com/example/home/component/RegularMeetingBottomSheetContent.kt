@@ -35,7 +35,11 @@ import com.example.home.R
 import com.example.model.RegularEvent
 
 @Composable
-fun RegularMeetingBottomSheetContent(regularEvent: RegularEvent, onAttendButtonClick: () -> Unit) {
+fun RegularMeetingBottomSheetContent(
+    regularEvent: RegularEvent,
+    onAttendButtonClick: () -> Unit,
+    onEditButtonClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,7 +159,7 @@ fun RegularMeetingBottomSheetContent(regularEvent: RegularEvent, onAttendButtonC
             ) {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = { onEditButtonClick() },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
@@ -205,15 +209,19 @@ fun RegularMeetingBottomSheetContent(regularEvent: RegularEvent, onAttendButtonC
 @Composable
 fun BottomSheetContentPreview() {
     CowGroupTheme {
-        RegularMeetingBottomSheetContent(regularEvent = RegularEvent(
-            id = 0,
-            name = "test",
-            location = "한국",
-            dateTime = "4/25(금) 오후 7:30",
-            capacity = 100,
-            applicants = 20,
-            isRegularRegistrant = false,
-            isParticipated = false
-        ), onAttendButtonClick = {})
+        RegularMeetingBottomSheetContent(
+            regularEvent = RegularEvent(
+                id = 0,
+                name = "test",
+                location = "한국",
+                dateTime = "4/25(금) 오후 7:30",
+                capacity = 100,
+                applicants = 20,
+                isRegularRegistrant = false,
+                isParticipated = false
+            ),
+            onAttendButtonClick = {},
+            onEditButtonClick = {}
+        )
     }
 }
