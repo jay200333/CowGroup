@@ -50,6 +50,7 @@ import com.example.home.R
 import com.example.home.component.RegularMeetingBottomSheetContent
 import com.example.home.component.RegularMeetingItem
 import com.example.model.DetailEvent
+import com.example.model.RegularEvent
 
 @Composable
 fun EventDetailHomeScreen(
@@ -62,6 +63,25 @@ fun EventDetailHomeScreen(
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedEvent by remember { mutableStateOf<RegularEvent?>(null) }
+
+    if (showBottomSheet && selectedEvent != null) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+                selectedEvent = null
+            },
+            sheetState = sheetState,
+            containerColor = Color.White
+        ) {
+            RegularMeetingBottomSheetContent(
+                regularEvent = selectedEvent!!,
+                onAttendButtonClick = {
+                    onJoinRegularMeetingClick(selectedEvent!!.id)
+                    showBottomSheet = false
+                })
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -219,6 +239,7 @@ fun EventDetailHomeScreen(
                     items(detailEvent.regularEvents.size) { index ->
                         val regularEvent = detailEvent.regularEvents[index]
                         RegularMeetingItem(regularEvent, onItemClick = {
+                            selectedEvent = regularEvent
                             showBottomSheet = true
                         }, onJoinRegularEvent = { onJoinRegularMeetingClick(regularEvent.id) })
                     }
@@ -245,18 +266,6 @@ fun EventDetailHomeScreen(
                         color = Color.White
                     )
                 }
-            }
-        }
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState,
-                containerColor = Color.White
-            ) {
-                RegularMeetingBottomSheetContent(onAttendButtonClick = {})
-                //val selectedMeeting = meetings.find{ it.id == selectedItemId}
             }
         }
     }

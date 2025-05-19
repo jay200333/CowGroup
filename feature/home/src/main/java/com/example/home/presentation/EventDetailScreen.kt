@@ -100,14 +100,6 @@ fun EventDetailScreen(
             viewModel.setMessageClear()
         }
     }
-
-    LaunchedEffect(uiState.detailEvent.isParticipated) {
-        viewModel.getEventDetail()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.getEventDetail()
-    }
 }
 
 @Composable

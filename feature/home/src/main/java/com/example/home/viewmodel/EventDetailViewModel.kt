@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.data.repository.EventRepository
+import com.example.data.repository.RegularMeetingRepository
 import com.example.model.DetailEvent
 import com.example.navigation.EventDetailRoute
 import com.example.network.model.ErrorResponse
@@ -41,6 +42,7 @@ data class EventDetailUIState(
 @HiltViewModel
 class EventDetailViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    private val regularMeetingRepository: RegularMeetingRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val eventId: Int = savedStateHandle.toRoute<EventDetailRoute>().eventId
@@ -56,7 +58,7 @@ class EventDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _eventDetailUIState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                val detailEvent = eventRepository.getEventDetail(eventId)
+                val detailEvent = eventRepository.getEventDetail(903) // eventId
                 _eventDetailUIState.update { state ->
                     state.copy(
                         detailEvent = detailEvent,
@@ -133,7 +135,7 @@ class EventDetailViewModel @Inject constructor(
                 _eventDetailUIState.update {
                     it.copy(
                         isLoading = false,
-                        message = "모임 삭제에 실패했습니다." //errorResponse.errors.message
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
@@ -161,6 +163,50 @@ class EventDetailViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         message = "북마크 업데이트에 실패했습니다."
+                    )
+                }
+            } catch (e: Exception) {
+                _eventDetailUIState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
+    fun updateJoinRegularMeeting(regularEventId: Int) {
+        viewModelScope.launch {
+            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            try {
+                val currentState = _eventDetailUIState.value
+                val regularEvent =
+                    currentState.detailEvent.regularEvents.find { it.id == regularEventId }
+                if (regularEvent != null) {
+                    regularMeetingRepository.updateJoinRegularMeeting(
+                        regularEventId,
+                        regularEvent.isParticipated
+                    )
+
+                    val updatedRegularEvents = currentState.detailEvent.regularEvents.map { event ->
+                        if (event.id == regularEventId) {
+                            event.copy(isParticipated = !event.isParticipated)
+                        } else {
+                            event
+                        }
+                    }
+                    _eventDetailUIState.update {
+                        it.copy(
+                            isLoading = false,
+                            detailEvent = it.detailEvent.copy(regularEvents = updatedRegularEvents)
+                        )
+                    }
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
