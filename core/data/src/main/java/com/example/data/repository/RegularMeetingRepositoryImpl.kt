@@ -1,7 +1,9 @@
 package com.example.data.repository
 
 import com.example.model.CreateRegularMeeting
+import com.example.model.EventMember
 import com.example.network.model.toCreateRegularMeeting
+import com.example.network.model.toEventMember
 import com.example.network.retrofit.CowGroupApi
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -48,6 +50,18 @@ internal class RegularMeetingRepositoryImpl @Inject constructor(
             } else {
                 api.joinRegularMeeting(regularEventId)
             }
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getRegularMemberList(regularId: Int): EventMember {
+        try {
+            val response = api.getRegularMemberList(regularId)
+            val regularMeetingMember = response.data.toEventMember()
+            return regularMeetingMember
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

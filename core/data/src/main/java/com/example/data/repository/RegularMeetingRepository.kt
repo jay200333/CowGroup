@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import com.example.model.CreateRegularMeeting
+import com.example.model.EventMember
 
 interface RegularMeetingRepository {
     suspend fun createRegularMeeting(eventId: Int, regularMeeting: CreateRegularMeeting)
@@ -10,4 +11,6 @@ interface RegularMeetingRepository {
     suspend fun editRegularMeeting(regularId: Int, regularMeeting: CreateRegularMeeting)
 
     suspend fun updateJoinRegularMeeting(regularEventId: Int, hasJoined: Boolean)
+
+    suspend fun getRegularMemberList(regularId: Int): EventMember
 }

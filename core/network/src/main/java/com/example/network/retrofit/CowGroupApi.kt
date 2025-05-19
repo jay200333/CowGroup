@@ -15,6 +15,7 @@ import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.ProfileResponse
+import com.example.network.model.RegularEventMemberResponse
 import com.example.network.model.RegularEventResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -115,4 +116,7 @@ interface CowGroupApi {
 
     @DELETE("/regular/participation/{participation-id}")
     suspend fun unJoinRegularMeeting(@Path("participation-id") participationId: Int): ApiResponse<Unit>
+
+    @GET("/regular/{regular-id}/participants")
+    suspend fun getRegularMemberList(@Path("regular-id") regularId: Int): ApiResponse<RegularEventMemberResponse>
 }
