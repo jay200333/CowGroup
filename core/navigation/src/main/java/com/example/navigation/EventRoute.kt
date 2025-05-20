@@ -16,3 +16,6 @@ data class CreateRegularMeetingRoute(val eventId: Int, val isEditMode: Boolean, 
 
 @Serializable
 data class RegularMemberRoute(val regularId: Int)
+
+@Serializable
+data object FullRegularMeetingRoute

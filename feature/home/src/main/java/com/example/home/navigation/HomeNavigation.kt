@@ -7,12 +7,14 @@ import androidx.navigation.compose.composable
 import com.example.home.presentation.CreateMeetingScreen
 import com.example.home.presentation.CreateRegularMeetingScreen
 import com.example.home.presentation.EventDetailScreen
+import com.example.home.presentation.FullRegularMeetingScreen
 import com.example.home.presentation.HomeScreen
 import com.example.home.presentation.MemberScreen
 import com.example.home.presentation.RegularMemberScreen
 import com.example.navigation.CreateMeetingRoute
 import com.example.navigation.CreateRegularMeetingRoute
 import com.example.navigation.EventDetailRoute
+import com.example.navigation.FullRegularMeetingRoute
 import com.example.navigation.HomeScreenRoute
 import com.example.navigation.MemberRoute
 import com.example.navigation.RegularMemberRoute
@@ -42,6 +44,10 @@ fun NavController.navigateCreateRegularMeeting(eventId: Int, isEditMode: Boolean
     navigate(CreateRegularMeetingRoute(eventId, isEditMode, regularId))
 }
 
+fun NavController.navigateFullRegularMeeting() {
+    navigate(FullRegularMeetingRoute)
+}
+
 fun NavGraphBuilder.homeNavGraph(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
@@ -56,6 +62,7 @@ fun NavGraphBuilder.homeNavGraph(
     onCreateMeetingSuccess: (Int) -> Unit,
     onEditMeetingSuccess: (Int) -> Unit,
     onDeleteMeetingSuccess: () -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit
 ) {
     composable<HomeScreenRoute> {
         HomeScreen(
@@ -108,7 +115,8 @@ fun NavGraphBuilder.homeNavGraph(
                     regularId
                 )
             },
-            onDeleteMeetingSuccess = onDeleteMeetingSuccess
+            onDeleteMeetingSuccess = onDeleteMeetingSuccess,
+            onShowFullRegularMeetingClick = onShowFullRegularMeetingClick
         )
     }
     composable<MemberRoute> {
@@ -131,6 +139,14 @@ fun NavGraphBuilder.homeNavGraph(
 
     composable<RegularMemberRoute> {
         RegularMemberScreen(
+            onNavigationButtonClick = onNavigationButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar
+        )
+    }
+
+    composable<FullRegularMeetingRoute> {
+        FullRegularMeetingScreen(
             onNavigationButtonClick = onNavigationButtonClick,
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar

@@ -61,6 +61,7 @@ fun EventDetailHomeScreen(
     onJoinRegularMeetingClick: (Int) -> Unit,
     onCreateRegularMeetingButtonClick: () -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
@@ -222,12 +223,14 @@ fun EventDetailHomeScreen(
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Text(
-                    modifier = Modifier.clickable {},
-                    text = "전체보기",
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleSmall
-                )
+                if (detailEvent.regularEvents.isNotEmpty()) {
+                    Text(
+                        modifier = Modifier.clickable{ onShowFullRegularMeetingClick()},
+                        text = "전체보기",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -308,6 +311,7 @@ fun EventDetailHomeScreenPreview() {
             onCreateRegularMeetingButtonClick = {},
             onEditRegularMeetingButtonClick = { _, _, _ -> },
             onJoinRegularMeetingClick = {},
+            onShowFullRegularMeetingClick = {}
         )
     }
 }

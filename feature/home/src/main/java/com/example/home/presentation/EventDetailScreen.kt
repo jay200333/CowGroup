@@ -52,6 +52,7 @@ fun EventDetailScreen(
     onEditButtonClick: (Int, Boolean) -> Unit,
     onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -61,6 +62,7 @@ fun EventDetailScreen(
     EventDetailScreen(
         onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
         onRegularMemberButtonClick = onRegularMemberButtonClick,
+        onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
         onNavigationButtonClick = onNavigationButtonClick,
         onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
         onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
@@ -120,6 +122,7 @@ fun EventDetailScreen(
 fun EventDetailScreen(
     onMemberButtonClick: (Int) -> Unit,
     onRegularMemberButtonClick: (Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit,
     onJoinButtonClick: () -> Unit,
     onJoinRegularMeetingClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
@@ -253,7 +256,8 @@ fun EventDetailScreen(
                     onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(0, false, 0) },
                     onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
                     onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) },
-                    onRegularMemberButtonClick = onRegularMemberButtonClick
+                    onRegularMemberButtonClick = onRegularMemberButtonClick,
+                    onShowFullRegularMeetingClick = onShowFullRegularMeetingClick
                 )
 
                 1 -> EventDetailBoardScreen()
@@ -274,6 +278,7 @@ fun EventDetailPreview() {
         EventDetailScreen(
             onMemberButtonClick = {},
             onRegularMemberButtonClick = {},
+            onShowFullRegularMeetingClick = {},
             onJoinButtonClick = {},
             onNavigationButtonClick = {},
             onBookmarkButtonClick = {},
