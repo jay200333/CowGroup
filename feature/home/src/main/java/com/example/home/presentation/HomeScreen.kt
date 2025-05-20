@@ -122,7 +122,7 @@ fun HomeScreen(
         ) {
             if (eventList.itemCount != 0) {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                     state = listState
                 ) {
                     items(eventList.itemCount, key = eventList.itemKey { it.id })

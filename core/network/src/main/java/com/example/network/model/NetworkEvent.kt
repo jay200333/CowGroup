@@ -11,7 +11,6 @@ data class NetworkEvent(
     val content: String,
     @SerializedName("createdDateTime")
     val createdDate: String,
-    val eventDate: String,
     val id: Int,
     val name: String,
     val bookmarkStatus: String,
@@ -23,7 +22,6 @@ fun NetworkEvent.toEvent(): Event {
         name = name,
         author = author,
         content = content,
-        eventDate = eventDate,
         createdDate = createdDate,
         participants = applicants,
         capacities = capacity,
