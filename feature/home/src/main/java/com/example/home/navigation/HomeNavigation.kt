@@ -1,6 +1,10 @@
 package com.example.home.navigation
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -8,7 +12,7 @@ import com.example.home.presentation.CreateMeetingScreen
 import com.example.home.presentation.CreateRegularMeetingScreen
 import com.example.home.presentation.EventDetailScreen
 import com.example.home.presentation.FullRegularMeetingScreen
-import com.example.home.presentation.HomeScreen
+import com.example.home.presentation.HomeMainScreen
 import com.example.home.presentation.MemberScreen
 import com.example.home.presentation.RegularMemberScreen
 import com.example.navigation.CreateMeetingRoute
@@ -62,12 +66,16 @@ fun NavGraphBuilder.homeNavGraph(
     onCreateMeetingSuccess: (Int) -> Unit,
     onEditMeetingSuccess: (Int) -> Unit,
     onDeleteMeetingSuccess: () -> Unit,
-    onShowFullRegularMeetingClick: () -> Unit
+    onShowFullRegularMeetingClick: () -> Unit,
+    twoClick: (Int) -> Unit
 ) {
     composable<HomeScreenRoute> {
-        HomeScreen(
+        var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+        HomeMainScreen(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
+            selectedTabIndex = selectedTabIndex,
+            onTabSelected = { selectedTabIndex = it },
             onLogoutButtonClick = onLogoutButtonClick,
             onEventClick = { eventId -> onEventClick(eventId) },
             onCreateMeetingClick = { eventId, isEditMode ->
@@ -76,6 +84,7 @@ fun NavGraphBuilder.homeNavGraph(
                     isEditMode
                 )
             },
+            twoClick = twoClick
         )
     }
     composable<CreateMeetingRoute>
@@ -93,7 +102,7 @@ fun NavGraphBuilder.homeNavGraph(
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar,
             onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
-            onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId)},
+            onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId) },
             onNavigationButtonClick = onHomeScreen,
             onEditButtonClick = { eventId, isEditMode ->
                 onCreateMeetingClick(

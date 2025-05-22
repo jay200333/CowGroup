@@ -6,13 +6,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Tab
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,8 +37,10 @@ import com.example.model.Event
 import kotlinx.coroutines.flow.map
 
 @Composable
-fun HomeScreen(
+fun HomeExploreScreen(
     viewModel: HomeViewModel = hiltViewModel(),
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
     onLogoutButtonClick: () -> Unit,
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
@@ -47,7 +52,9 @@ fun HomeScreen(
     val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
 
 
-    HomeScreen(
+    HomeExploreScreen(
+        selectedTabIndex = selectedTabIndex,
+        onTabSelected = onTabSelected,
         onSearchButtonClick = viewModel::insertQuery,
         onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         onLogoutButtonClick = viewModel::logout,
@@ -81,7 +88,9 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreen(
+fun HomeExploreScreen(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
     onSearchButtonClick: (String) -> Unit,
     onDeleteSearchHistoryButtonClick: (String) -> Unit,
     onLogoutButtonClick: () -> Unit,
@@ -93,6 +102,8 @@ fun HomeScreen(
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val listState = rememberLazyListState()
+    val tabTitles = listOf("둘러보기", "날짜보기")
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -116,10 +127,19 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            SecondaryTabRow(selectedTabIndex = selectedTabIndex) {
+                tabTitles.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { onTabSelected(index) },
+                        text = { Text(title) },
+                    )
+                }
+            }
+            Text(text = "${eventList.itemCount}")
             if (eventList.itemCount != 0) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -146,19 +166,3 @@ fun HomeScreen(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeScreenPreview() {
-//    HomeScreen(
-//        onLogoutButtonClick = {},
-//        onEventClick = {},
-//        onCreateMeetingClick = {},
-//        onBookMarkClick = { _, _ -> },
-//        eventList = listOf(
-//            Event(1, "test1", "test1", "2025-12-7", "2024-12-31", 10, 100, false),
-//            Event(2, "test2", "test2", "2025-11-3", "2024-12-30", 20, 200, true),
-//            Event(3, "test3", "test3", "2025-12-2", "2024-12-29", 30, 300, true),
-//        ),
-//    )
-//}

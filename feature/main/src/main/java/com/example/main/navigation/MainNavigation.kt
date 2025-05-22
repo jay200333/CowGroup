@@ -50,7 +50,8 @@ fun NavGraphBuilder.mainNavGraph(
                 popUpTo(HomeScreenRoute.route) { inclusive = false }
             }
         },
-        onShowFullRegularMeetingClick = navController::navigateFullRegularMeeting
+        onShowFullRegularMeetingClick = navController::navigateFullRegularMeeting,
+        twoClick =  navController::navigateMember
     )
     mapNavGraph(
         onEventClick = navController::navigateEventDetail,
