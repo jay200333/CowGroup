@@ -1,6 +1,5 @@
 package com.example.network.model
 
-import com.example.common.DateUtil
 import com.example.model.CreateRegularMeeting
 
 data class RegularEventResponse(
@@ -14,6 +13,6 @@ data class RegularEventResponse(
 fun RegularEventResponse.toCreateRegularMeeting(): CreateRegularMeeting = CreateRegularMeeting(
     name = name,
     location = location,
-    dateTime = DateUtil.formatIsoToCalendarDate(dateTime),
+    dateTime = dateTime,
     capacity = capacity
 )

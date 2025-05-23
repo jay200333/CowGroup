@@ -116,6 +116,10 @@ fun EventDetailScreen(
             viewModel.setMessageClear()
         }
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.getEventDetail()
+    }
 }
 
 @Composable
@@ -253,7 +257,7 @@ fun EventDetailScreen(
                 0 -> EventDetailHomeScreen(detailEvent = detailEvent,
                     onMemberButtonClick = { onMemberButtonClick(detailEvent.id) },
                     onJoinButtonClick = { onJoinButtonClick() },
-                    onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(0, false, 0) },
+                    onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(detailEvent.id, false, 0) },
                     onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
                     onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) },
                     onRegularMemberButtonClick = onRegularMemberButtonClick,

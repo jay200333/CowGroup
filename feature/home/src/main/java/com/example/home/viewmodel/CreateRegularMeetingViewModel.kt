@@ -31,7 +31,6 @@ data class CreateRegularMeetingUIState(
     val isEditRegularMeetingSuccess: Boolean = false,
     val regularMeetingDate: String = "",
     val regularMeetingTime: String = "",
-    val dateTime: String = "",
     val eventId: Int = 0,
     val regularId: Int = 0,
     val isValidCapacity: Boolean = false,
@@ -78,7 +77,7 @@ class CreateRegularMeetingViewModel @Inject constructor(
             }
             try {
                 val result = regularMeetingRepository.getRegularMeeting(regularId)
-                val dateTime = result.dateTime
+                val dateTime = DateUtil.formatIsoToCalendarDate(result.dateTime)
                 val dateSplitIndex = dateTime.indexOf(") ") + 1
                 _createRegularMeetingUIState.update { state ->
                     state.copy(
@@ -118,7 +117,7 @@ class CreateRegularMeetingViewModel @Inject constructor(
             }
             try {
                 regularMeetingRepository.createRegularMeeting(
-                    903,//eventId
+                    eventId,
                     createRegularMeetingUIState.value.regularMeeting
                 )
                 _createRegularMeetingUIState.update { state ->
