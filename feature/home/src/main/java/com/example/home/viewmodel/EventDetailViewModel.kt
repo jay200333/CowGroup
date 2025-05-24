@@ -217,6 +217,28 @@ class EventDetailViewModel @Inject constructor(
         }
     }
 
+    fun deleteRegularMeeting(regularId: Int) {
+        viewModelScope.launch {
+            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            try {
+                regularMeetingRepository.deleteRegularMeeting(regularId)
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _eventDetailUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _eventDetailUIState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
     fun setDeleteState(deleteState: Boolean) {
         viewModelScope.launch {
             _eventDetailUIState.update { state ->

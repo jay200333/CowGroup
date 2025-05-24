@@ -39,6 +39,7 @@ fun RegularMeetingBottomSheetContent(
     regularEvent: RegularEvent,
     onAttendButtonClick: () -> Unit,
     onEditButtonClick: () -> Unit,
+    onDeleteButtonClick: () -> Unit,
     onMemberButtonClick: () -> Unit
 ) {
     Column(
@@ -174,7 +175,7 @@ fun RegularMeetingBottomSheetContent(
 
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = { onDeleteButtonClick()},
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
@@ -223,6 +224,7 @@ fun BottomSheetContentPreview() {
             ),
             onAttendButtonClick = {},
             onEditButtonClick = {},
+            onDeleteButtonClick = {},
             onMemberButtonClick = {}
         )
     }

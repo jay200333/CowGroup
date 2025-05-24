@@ -73,6 +73,7 @@ fun EventDetailScreen(
                 regularId
             )
         },
+        onDeleteRegularMeetingButtonClick = { regularId -> viewModel.deleteRegularMeeting(regularId) },
         onJoinButtonClick = viewModel::updateJoinEvent,
         onJoinRegularMeetingClick = { regularEventId ->
             viewModel.updateJoinRegularMeeting(
@@ -133,6 +134,7 @@ fun EventDetailScreen(
     onBookmarkButtonClick: (Boolean) -> Unit,
     onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onDeleteRegularMeetingButtonClick: (Int) -> Unit,
     onDeleteButtonClick: () -> Unit,
     onExitButtonClick: () -> Unit,
     onEditButtonClick: () -> Unit,
@@ -259,6 +261,7 @@ fun EventDetailScreen(
                     onJoinButtonClick = { onJoinButtonClick() },
                     onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(detailEvent.id, false, 0) },
                     onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
+                    onDeleteRegularMeetingButtonClick = onDeleteRegularMeetingButtonClick,
                     onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) },
                     onRegularMemberButtonClick = onRegularMemberButtonClick,
                     onShowFullRegularMeetingClick = onShowFullRegularMeetingClick
@@ -288,6 +291,7 @@ fun EventDetailPreview() {
             onBookmarkButtonClick = {},
             onCreateRegularMeetingButtonClick = { _, _, _ -> },
             onEditRegularMeetingButtonClick = { _, _, _ -> },
+            onDeleteRegularMeetingButtonClick = {},
             onDeleteButtonClick = {},
             onExitButtonClick = {},
             onEditButtonClick = {},

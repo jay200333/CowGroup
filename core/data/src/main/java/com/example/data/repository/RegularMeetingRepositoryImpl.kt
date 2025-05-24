@@ -43,10 +43,20 @@ internal class RegularMeetingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteRegularMeeting(regularId: Int) {
+        try {
+            api.deleteRegularMeeting(regularId)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     override suspend fun updateJoinRegularMeeting(regularEventId: Int, hasJoined: Boolean) {
         try {
             if (hasJoined) {
-                api.unJoinRegularMeeting(regularEventId)
+                api.unJoinRegularMeeting(38)
             } else {
                 api.joinRegularMeeting(regularEventId)
             }
