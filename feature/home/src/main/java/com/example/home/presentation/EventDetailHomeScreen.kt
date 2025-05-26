@@ -31,6 +31,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,25 +46,59 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.RegularMeetingBottomSheetContent
 import com.example.home.component.RegularMeetingItem
+import com.example.home.viewmodel.EventDetailHomeUIState
+import com.example.home.viewmodel.EventDetailHomeViewModel
 import com.example.model.DetailEvent
 import com.example.model.RegularEvent
 
 @Composable
 fun EventDetailHomeScreen(
-    detailEvent: DetailEvent,
-    onMemberButtonClick: () -> Unit,
+    viewModel: EventDetailHomeViewModel = hiltViewModel(),
+    eventId: Int,
+    onMemberButtonClick: (Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onRegularMemberButtonClick: (Int) -> Unit,
-    onJoinButtonClick: () -> Unit,
+    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+) {
+    val uiState: EventDetailHomeUIState by viewModel.uiState.collectAsState()
+
+    EventDetailHomeScreen(
+        onMemberButtonClick = onMemberButtonClick,
+        onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
+        onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
+        onRegularMemberButtonClick = onRegularMemberButtonClick,
+        onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
+        onJoinButtonClick = viewModel::updateJoinEvent,
+        onJoinRegularMeetingClick = viewModel::updateJoinRegularMeeting,
+        onDeleteRegularMeetingButtonClick = viewModel::deleteRegularMeeting,
+        detailEvent = uiState.detailEvent,
+        eventId = eventId,
+    )
+
+    LaunchedEffect(eventId) {
+        viewModel.getEventDetail(eventId)
+    }
+}
+
+@Composable
+fun EventDetailHomeScreen(
+    eventId: Int,
+    detailEvent: DetailEvent,
+    onMemberButtonClick: (Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
+    onJoinButtonClick: (Int) -> Unit,
     onJoinRegularMeetingClick: (Int) -> Unit,
-    onCreateRegularMeetingButtonClick: () -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onDeleteRegularMeetingButtonClick: (Int) -> Unit,
-    onShowFullRegularMeetingClick: () -> Unit
+    onShowFullRegularMeetingClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
@@ -91,7 +127,7 @@ fun EventDetailHomeScreen(
                         selectedEvent!!.id
                     )
                 },
-                onDeleteButtonClick = { onDeleteRegularMeetingButtonClick(selectedEvent!!.id)},
+                onDeleteButtonClick = { onDeleteRegularMeetingButtonClick(selectedEvent!!.id) },
                 onMemberButtonClick = { onRegularMemberButtonClick(selectedEvent!!.id) })
         }
     }
@@ -101,7 +137,13 @@ fun EventDetailHomeScreen(
         floatingActionButton = {
             if (detailEvent.isParticipated) {
                 ExtendedFloatingActionButton(
-                    onClick = onCreateRegularMeetingButtonClick,
+                    onClick = {
+                        onCreateRegularMeetingButtonClick(
+                            detailEvent.id,
+                            false,
+                            0
+                        )
+                    },
                     icon = {
                         Icon(
                             modifier = Modifier.size(18.dp),
@@ -120,7 +162,7 @@ fun EventDetailHomeScreen(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             }
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -168,7 +210,7 @@ fun EventDetailHomeScreen(
                     })
 
                 AssistChip(
-                    onClick = onMemberButtonClick,
+                    onClick = { onMemberButtonClick(eventId) },
                     label = {
                         Text(
                             text = "${detailEvent.applicants}/${detailEvent.capacity}명",
@@ -227,7 +269,7 @@ fun EventDetailHomeScreen(
 
                 if (detailEvent.regularEvents.isNotEmpty()) {
                     Text(
-                        modifier = Modifier.clickable{ onShowFullRegularMeetingClick()},
+                        modifier = Modifier.clickable { onShowFullRegularMeetingClick() },
                         text = "전체보기",
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.titleSmall
@@ -268,7 +310,7 @@ fun EventDetailHomeScreen(
 
             if (detailEvent.isParticipated.not()) {
                 Button(
-                    onClick = onJoinButtonClick,
+                    onClick = { onJoinButtonClick(eventId) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 30.dp),
@@ -294,6 +336,7 @@ fun EventDetailHomeScreen(
 fun EventDetailHomeScreenPreview() {
     CowGroupTheme {
         EventDetailHomeScreen(
+            eventId = 0,
             detailEvent = DetailEvent(
                 id = 0,
                 name = "test",
@@ -310,7 +353,7 @@ fun EventDetailHomeScreenPreview() {
             onMemberButtonClick = {},
             onRegularMemberButtonClick = {},
             onJoinButtonClick = {},
-            onCreateRegularMeetingButtonClick = {},
+            onCreateRegularMeetingButtonClick = { _, _, _ -> },
             onEditRegularMeetingButtonClick = { _, _, _ -> },
             onDeleteRegularMeetingButtonClick = {},
             onJoinRegularMeetingClick = {},

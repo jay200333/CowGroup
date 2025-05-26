@@ -10,7 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.home.presentation.CreateMeetingScreen
 import com.example.home.presentation.CreateRegularMeetingScreen
-import com.example.home.presentation.EventDetailScreen
+import com.example.home.presentation.EventDetailMainScreen
 import com.example.home.presentation.FullRegularMeetingScreen
 import com.example.home.presentation.HomeMainScreen
 import com.example.home.presentation.MemberScreen
@@ -97,19 +97,19 @@ fun NavGraphBuilder.homeNavGraph(
             onEditMeetingSuccess = { eventId -> onEditMeetingSuccess(eventId) },
         )
     }
+
     composable<EventDetailRoute> {
-        EventDetailScreen(
-            snackBarHostState = snackBarHostState,
-            onShowSnackBar = onShowSnackBar,
-            onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
-            onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId) },
-            onNavigationButtonClick = onHomeScreen,
+        EventDetailMainScreen(
+            onDeleteMeetingSuccess = onDeleteMeetingSuccess,
+            onNavigationButtonClick = onNavigationButtonClick,
             onEditButtonClick = { eventId, isEditMode ->
                 onCreateMeetingClick(
                     eventId,
                     isEditMode
                 )
             },
+            onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
+            onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
             onCreateRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
                 onCreateRegularMeetingClick(
                     eventId,
@@ -117,6 +117,7 @@ fun NavGraphBuilder.homeNavGraph(
                     regularId
                 )
             },
+            onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId) },
             onEditRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
                 onCreateRegularMeetingClick(
                     eventId,
@@ -124,8 +125,8 @@ fun NavGraphBuilder.homeNavGraph(
                     regularId
                 )
             },
-            onDeleteMeetingSuccess = onDeleteMeetingSuccess,
-            onShowFullRegularMeetingClick = onShowFullRegularMeetingClick
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar
         )
     }
     composable<MemberRoute> {

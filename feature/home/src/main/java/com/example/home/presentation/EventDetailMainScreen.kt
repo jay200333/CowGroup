@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -29,60 +29,40 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.component.CowGroupDialog
 import com.example.designsystem.component.MarkButton
-import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.DropDownMenuItem
 import com.example.home.component.EditDropDownMenu
-import com.example.home.viewmodel.EventDetailUIState
-import com.example.home.viewmodel.EventDetailViewModel
+import com.example.home.viewmodel.EventDetailMainUIState
+import com.example.home.viewmodel.EventDetailMainViewModel
 import com.example.model.DetailEvent
 
 @Composable
-fun EventDetailScreen(
-    viewModel: EventDetailViewModel = hiltViewModel(),
+fun EventDetailMainScreen(
+    viewModel: EventDetailMainViewModel = hiltViewModel(),
     onDeleteMeetingSuccess: () -> Unit,
-    onMemberButtonClick: (Int) -> Unit,
-    onRegularMemberButtonClick: (Int) -> Unit,
     onNavigationButtonClick: () -> Unit,
     onEditButtonClick: (Int, Boolean) -> Unit,
-    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
-    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onMemberButtonClick: (Int) -> Unit,
     onShowFullRegularMeetingClick: () -> Unit,
+    onCreateRegularMeetingButtonClick: (Int,Boolean,Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
+    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     snackBarHostState: SnackbarHostState,
-    onShowSnackBar: (String) -> Unit,
+    onShowSnackBar: (String) -> Unit
 ) {
-    val uiState: EventDetailUIState by viewModel.eventDetailUIState.collectAsState()
+    val uiState: EventDetailMainUIState by viewModel.uiState.collectAsState()
     var showDialog: DialogType? by remember { mutableStateOf(null) }
 
-    EventDetailScreen(
-        onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
-        onRegularMemberButtonClick = onRegularMemberButtonClick,
-        onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
+    EventDetailMainScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        onBookmarkButtonClick = { isBookmarked -> viewModel.updateBookmark(isBookmarked) },
-        onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
-        onEditRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
-            onEditRegularMeetingButtonClick(
-                eventId,
-                isEditMode,
-                regularId
-            )
-        },
-        onDeleteRegularMeetingButtonClick = { regularId -> viewModel.deleteRegularMeeting(regularId) },
-        onJoinButtonClick = viewModel::updateJoinEvent,
-        onJoinRegularMeetingClick = { regularEventId ->
-            viewModel.updateJoinRegularMeeting(
-                regularEventId
-            )
-        },
+        onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true) },
+        onBookmarkButtonClick = viewModel::updateBookmark,
         onDeleteButtonClick = { showDialog = DialogType.DeleteEvent },
         onExitButtonClick = { showDialog = DialogType.LeaveEvent },
-        onEditButtonClick = { onEditButtonClick(uiState.detailEvent.id, true) },
         detailEvent = uiState.detailEvent,
         showDialog = showDialog,
         onDismissDialog = { showDialog = null },
@@ -101,7 +81,13 @@ fun EventDetailScreen(
                 null -> {}
             }
         },
-        snackBarHostState = snackBarHostState,
+        onMemberButtonClick = onMemberButtonClick,
+        onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
+        onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
+        onRegularMemberButtonClick = onRegularMemberButtonClick,
+        onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
+        onShowSnackBar = onShowSnackBar,
+        snackBarHostState = snackBarHostState
     )
     LaunchedEffect(uiState.isDeleteSuccess) {
         if (uiState.isDeleteSuccess) {
@@ -111,40 +97,34 @@ fun EventDetailScreen(
         }
     }
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(uiState.message) {
         if (uiState.message.isNotEmpty()) {
             onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
         }
     }
-
-    LaunchedEffect(Unit) {
-        viewModel.getEventDetail()
-    }
 }
 
 @Composable
-fun EventDetailScreen(
-    onMemberButtonClick: (Int) -> Unit,
-    onRegularMemberButtonClick: (Int) -> Unit,
-    onShowFullRegularMeetingClick: () -> Unit,
-    onJoinButtonClick: () -> Unit,
-    onJoinRegularMeetingClick: (Int) -> Unit,
+fun EventDetailMainScreen(
     onNavigationButtonClick: () -> Unit,
+    onEditButtonClick: () -> Unit,
     onBookmarkButtonClick: (Boolean) -> Unit,
-    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
-    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
-    onDeleteRegularMeetingButtonClick: (Int) -> Unit,
     onDeleteButtonClick: () -> Unit,
     onExitButtonClick: () -> Unit,
-    onEditButtonClick: () -> Unit,
     detailEvent: DetailEvent,
     showDialog: DialogType?,
-    onDismissDialog: () -> Unit,
     onConfirmDialog: () -> Unit,
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    onDismissDialog: () -> Unit,
+    onMemberButtonClick: (Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
+    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onShowSnackBar: (String) -> Unit,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
-    var state by remember { mutableIntStateOf(0) }
+    var currentTab by remember { mutableIntStateOf(0) }
     val titles = listOf("홈", "게시판")
 
     Scaffold(
@@ -247,27 +227,29 @@ fun EventDetailScreen(
                 .padding(innerPadding)
                 .padding(top = 8.dp, bottom = 8.dp)
         ) {
-            SecondaryTabRow(selectedTabIndex = state) {
+            SecondaryTabRow(selectedTabIndex = currentTab) {
                 titles.forEachIndexed { index, title ->
                     Tab(
                         text = { Text(text = title) },
-                        selected = state == index,
-                        onClick = { state = index })
+                        selected = currentTab == index,
+                        onClick = { currentTab = index })
                 }
             }
-            when (state) {
-                0 -> EventDetailHomeScreen(detailEvent = detailEvent,
+
+            when (currentTab) {
+                0 -> EventDetailHomeScreen(
+                    eventId = detailEvent.id,
                     onMemberButtonClick = { onMemberButtonClick(detailEvent.id) },
-                    onJoinButtonClick = { onJoinButtonClick() },
-                    onCreateRegularMeetingButtonClick = { onCreateRegularMeetingButtonClick(detailEvent.id, false, 0) },
-                    onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
-                    onDeleteRegularMeetingButtonClick = onDeleteRegularMeetingButtonClick,
-                    onJoinRegularMeetingClick = { regularEventId -> onJoinRegularMeetingClick(regularEventId) },
+                    onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
+                    onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
                     onRegularMemberButtonClick = onRegularMemberButtonClick,
-                    onShowFullRegularMeetingClick = onShowFullRegularMeetingClick
+                    onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
                 )
 
-                1 -> EventDetailBoardScreen()
+                1 -> EventDetailBoardScreen(
+                    snackBarHostState = snackBarHostState,
+                    onShowSnackBar = onShowSnackBar
+                )
             }
         }
     }
@@ -276,42 +258,4 @@ fun EventDetailScreen(
 sealed class DialogType {
     object DeleteEvent : DialogType()
     object LeaveEvent : DialogType()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EventDetailPreview() {
-    CowGroupTheme {
-        EventDetailScreen(
-            onMemberButtonClick = {},
-            onRegularMemberButtonClick = {},
-            onShowFullRegularMeetingClick = {},
-            onJoinButtonClick = {},
-            onNavigationButtonClick = {},
-            onBookmarkButtonClick = {},
-            onCreateRegularMeetingButtonClick = { _, _, _ -> },
-            onEditRegularMeetingButtonClick = { _, _, _ -> },
-            onDeleteRegularMeetingButtonClick = {},
-            onDeleteButtonClick = {},
-            onExitButtonClick = {},
-            onEditButtonClick = {},
-            detailEvent = DetailEvent(
-                id = 0,
-                name = "test",
-                category = "Sports",
-                content = "내용",
-                capacity = 100,
-                applicants = 20,
-                isBookmarked = false,
-                url = "",
-                eventRegistrant = false,
-                isParticipated = false,
-                regularEvents = emptyList()
-            ),
-            showDialog = null,
-            onDismissDialog = {},
-            onConfirmDialog = {},
-            onJoinRegularMeetingClick = {}
-        )
-    }
 }
