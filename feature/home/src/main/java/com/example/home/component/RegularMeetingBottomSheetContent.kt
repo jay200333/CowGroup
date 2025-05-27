@@ -194,11 +194,11 @@ fun RegularMeetingBottomSheetContent(
                     .padding(bottom = 30.dp),
                 onClick = { onAttendButtonClick() },
                 shape = RoundedCornerShape(6.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = if (regularEvent.isParticipated) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(containerColor = if (regularEvent.participationId != 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary)
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp),
-                    text = if (regularEvent.isParticipated) "참석취소" else "참석하기",
+                    text = if (regularEvent.participationId != 0) "참석취소" else "참석하기",
                     color = Color.White,
                     fontSize = 18.sp
                 )
@@ -214,13 +214,13 @@ fun BottomSheetContentPreview() {
         RegularMeetingBottomSheetContent(
             regularEvent = RegularEvent(
                 id = 0,
+                participationId = 0,
                 name = "test",
                 location = "한국",
                 dateTime = "4/25(금) 오후 7:30",
                 capacity = 100,
                 applicants = 20,
                 isRegularRegistrant = false,
-                isParticipated = false
             ),
             onAttendButtonClick = {},
             onEditButtonClick = {},

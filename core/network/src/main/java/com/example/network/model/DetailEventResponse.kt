@@ -19,13 +19,13 @@ data class DetailEventResponse(
 
 data class RegularEventDto(
     val id: Int,
+    val participationId: Int?,
     val name: String,
     val location: String,
     val dateTime: String,
     val capacity: Int,
     val applicants: Int,
     val regularRegistrant: Boolean,
-    val participated: Boolean
 )
 
 fun DetailEventResponse.toDetailEvent(): DetailEvent = DetailEvent(
@@ -44,11 +44,11 @@ fun DetailEventResponse.toDetailEvent(): DetailEvent = DetailEvent(
 
 fun RegularEventDto.toRegularEvent(): RegularEvent = RegularEvent(
     id = id,
+    participationId = participationId ?: 0,
     name = name,
     location = location,
     dateTime = dateTime,
     capacity = capacity,
     applicants = applicants,
     isRegularRegistrant = regularRegistrant,
-    isParticipated = participated
 )

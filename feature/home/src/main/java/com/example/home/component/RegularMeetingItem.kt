@@ -155,7 +155,7 @@ fun RegularMeetingItem(
                 onClick = onJoinRegularEvent,
                 shape = RoundedCornerShape(6.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (regularEvent.isParticipated) {
+                    containerColor = if (regularEvent.participationId != 0) {
                         MaterialTheme.colorScheme.onPrimary
                     } else {
                         MaterialTheme.colorScheme.primary
@@ -163,7 +163,7 @@ fun RegularMeetingItem(
                 )
             ) {
                 Text(
-                    text = if (regularEvent.isParticipated) {
+                    text = if (regularEvent.participationId != 0) {
                         "참석취소"
                     } else {
                         "참석하기"
@@ -183,13 +183,13 @@ fun RegularMeetingItemPreview() {
         RegularMeetingItem(
             regularEvent = RegularEvent(
                 id = 0,
+                participationId = 0,
                 name = "test",
                 location = "서울",
                 dateTime = "",
                 capacity = 100,
                 applicants = 20,
                 isRegularRegistrant = false,
-                isParticipated = false
             ),
             onItemClick = {},
             onJoinRegularEvent = {}
