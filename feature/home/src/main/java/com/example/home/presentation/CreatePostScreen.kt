@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.viewmodel.CreatePostUIState
 import com.example.home.viewmodel.CreatePostViewModel
+import com.example.model.CreatePost
 
 @Composable
 fun CreatePostScreen(
@@ -52,12 +53,13 @@ fun CreatePostScreen(
 
     CreatePostScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        onCreateButtonClick = {},
+        onCreateButtonClick = viewModel::createPost,
         onEditButtonClick = {},
-        updateTitle = {},
-        updateContent = {},
+        updateTitle = viewModel::updateTitle,
+        updateContent = viewModel::updateContent,
         isEditMode = uiState.isEditMode,
         createButtonEnabled = uiState.createButtonEnabled,
+        post = uiState.post,
         snackBarHostState = snackBarHostState
     )
 
@@ -86,6 +88,7 @@ fun CreatePostScreen(
     updateContent: (String) -> Unit,
     isEditMode: Boolean,
     createButtonEnabled: Boolean,
+    post: CreatePost,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val scrollState = rememberScrollState()
@@ -127,7 +130,7 @@ fun CreatePostScreen(
             )
 
             OutlinedTextField(
-                value = "",
+                value = post.subject,
                 onValueChange = updateTitle,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
@@ -146,7 +149,7 @@ fun CreatePostScreen(
             )
 
             OutlinedTextField(
-                value = "",
+                value = post.content,
                 onValueChange = updateContent,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -190,7 +193,8 @@ fun CreatePostScreenPreview() {
             updateTitle = {},
             updateContent = {},
             isEditMode = false,
-            createButtonEnabled = false
+            createButtonEnabled = false,
+            post = CreatePost("제목", "내용")
         )
     }
 }
