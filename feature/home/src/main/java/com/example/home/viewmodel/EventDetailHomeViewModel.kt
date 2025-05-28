@@ -114,14 +114,18 @@ class EventDetailHomeViewModel @Inject constructor(
                 val regularEvent =
                     currentState.detailEvent.regularEvents.find { it.id == regularEventId }
                 if (regularEvent != null) {
-                    regularMeetingRepository.updateJoinRegularMeeting(
+                    val result = regularMeetingRepository.updateJoinRegularMeeting(
                         regularEvent.id,
-                        regularEvent.isParticipated
+                        regularEvent.participationId
                     )
 
                     val updatedRegularEvents = currentState.detailEvent.regularEvents.map { event ->
                         if (event.id == regularEventId) {
-                            event.copy(isParticipated = !event.isParticipated)
+                            if (result != 0) {
+                                event.copy(applicants = event.applicants.plus(1), participationId = result)
+                            } else {
+                                event.copy(applicants = event.applicants.minus(1), participationId = result)
+                            }
                         } else {
                             event
                         }

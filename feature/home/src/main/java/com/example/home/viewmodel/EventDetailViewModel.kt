@@ -183,20 +183,20 @@ class EventDetailViewModel @Inject constructor(
                 if (regularEvent != null) {
                     regularMeetingRepository.updateJoinRegularMeeting(
                         regularEventId,
-                        regularEvent.isParticipated
+                        regularEvent.participationId
                     )
 
-                    val updatedRegularEvents = currentState.detailEvent.regularEvents.map { event ->
-                        if (event.id == regularEventId) {
-                            event.copy(isParticipated = !event.isParticipated)
-                        } else {
-                            event
-                        }
-                    }
+//                    val updatedRegularEvents = currentState.detailEvent.regularEvents.map { event ->
+//                        if (event.id == regularEventId) {
+//                            event.copy(isParticipated = !event.isParticipated)
+//                        } else {
+//                            event
+//                        }
+//                    }
                     _eventDetailUIState.update {
                         it.copy(
                             isLoading = false,
-                            detailEvent = it.detailEvent.copy(regularEvents = updatedRegularEvents)
+                            //detailEvent = it.detailEvent.copy(regularEvents = updatedRegularEvents)
                         )
                     }
                 }
