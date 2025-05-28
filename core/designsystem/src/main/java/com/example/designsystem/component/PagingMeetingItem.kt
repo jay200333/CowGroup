@@ -1,6 +1,5 @@
 package com.example.designsystem.component
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,24 +19,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.example.cowgroup.core.designsystem.R
 import com.example.model.Event
 
 @Composable
 fun PagingMeetingItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventClick: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth().clickable { onEventClick() }, verticalAlignment = Alignment.CenterVertically) {
-        AsyncImage(
+        CowGroupAsyncImage(
             modifier = Modifier.clip(MaterialTheme.shapes.medium).size(70.dp),
-            model = Uri.parse("https://picsum.photos/200/300"),
+            imgUrl = "",
             contentDescription = "profile_img",
-            contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {

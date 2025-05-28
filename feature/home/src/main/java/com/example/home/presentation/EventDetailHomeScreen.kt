@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
+import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.RegularMeetingBottomSheetContent
@@ -170,13 +170,13 @@ fun EventDetailHomeScreen(
                 .padding(innerPadding)
                 .verticalScroll(scrollState)
         ) {
-            AsyncImage(
+            CowGroupAsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .background(MaterialTheme.colorScheme.onTertiary),
-                model = detailEvent.url,
-                contentDescription = "",
+                imgUrl = detailEvent.url,
+                contentDescription = ""
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(

@@ -67,8 +67,6 @@ fun FullRegularMeetingScreen(
     regularEventList: LazyPagingItems<RegularEvent>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    val loadState = regularEventList.loadState
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

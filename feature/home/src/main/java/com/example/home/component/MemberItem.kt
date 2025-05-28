@@ -1,6 +1,5 @@
 package com.example.home.component
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
+import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.model.MemberInfo
 
@@ -37,13 +35,12 @@ fun MemberItem(memberInfo: MemberInfo) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
+            CowGroupAsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(40.dp),
-                model = Uri.parse("https://picsum.photos/200/300"),
+                imgUrl = "",
                 contentDescription = "profile_img",
-                contentScale = ContentScale.Crop
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp),
