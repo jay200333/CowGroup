@@ -1,6 +1,7 @@
 package com.example.network.model
 
 import com.example.model.RegularEvent
+import com.google.gson.annotations.SerializedName
 
 data class PagingRegularEventResponse(
     val regularEventInfos: List<RegularEventInfo>,
@@ -15,6 +16,7 @@ data class RegularEventInfo(
     val location: String,
     val participantsCount: Int,
     val capacity: Int,
+    @SerializedName("regularRegistrant")
     val isRegularRegistrant: Boolean,
 )
 
