@@ -51,6 +51,7 @@ fun EventDetailMainScreen(
     onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onRegularMemberButtonClick: (Int) -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onCreatePostButtonClick: (Int, Int, Boolean) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit
 ) {
@@ -86,6 +87,7 @@ fun EventDetailMainScreen(
         onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
         onRegularMemberButtonClick = onRegularMemberButtonClick,
         onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
+        onCreatePostButtonClick = onCreatePostButtonClick,
         onShowSnackBar = onShowSnackBar,
         snackBarHostState = snackBarHostState
     )
@@ -121,6 +123,7 @@ fun EventDetailMainScreen(
     onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onRegularMemberButtonClick: (Int) -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onCreatePostButtonClick: (Int, Int, Boolean) -> Unit,
     onShowSnackBar: (String) -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
@@ -247,6 +250,8 @@ fun EventDetailMainScreen(
                 )
 
                 1 -> EventDetailBoardScreen(
+                    eventId = detailEvent.id,
+                    onCreatePostButtonClick = onCreatePostButtonClick,
                     snackBarHostState = snackBarHostState,
                     onShowSnackBar = onShowSnackBar
                 )

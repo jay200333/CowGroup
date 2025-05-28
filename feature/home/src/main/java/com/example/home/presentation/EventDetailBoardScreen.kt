@@ -40,12 +40,15 @@ import com.example.home.viewmodel.EventDetailBoardViewModel
 @Composable
 fun EventDetailBoardScreen(
     viewModel: EventDetailBoardViewModel = hiltViewModel(),
+    onCreatePostButtonClick: (Int, Int, Boolean) -> Unit,
+    eventId: Int,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailBoardUIState by viewModel.uiState.collectAsState()
 
     EventDetailBoardScreen(
+        onCreatePostButtonClick = { onCreatePostButtonClick(eventId, 0, false) },
         snackBarHostState = snackBarHostState,
     )
     LaunchedEffect(uiState.message) {
@@ -58,6 +61,7 @@ fun EventDetailBoardScreen(
 
 @Composable
 fun EventDetailBoardScreen(
+    onCreatePostButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -67,7 +71,7 @@ fun EventDetailBoardScreen(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = {},
+                onClick = onCreatePostButtonClick,
                 icon = {
                     Icon(
                         modifier = Modifier.size(18.dp),
@@ -126,6 +130,8 @@ fun EventDetailBoardScreen(
 @Composable
 fun EventDetailBoardScreenPreview() {
     CowGroupTheme {
-        EventDetailBoardScreen()
+        EventDetailBoardScreen(
+            onCreatePostButtonClick = {}
+        )
     }
 }

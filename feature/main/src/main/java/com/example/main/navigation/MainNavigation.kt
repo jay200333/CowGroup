@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.example.home.navigation.homeNavGraph
 import com.example.home.navigation.navigateCreateMeeting
+import com.example.home.navigation.navigateCreatePost
 import com.example.home.navigation.navigateCreateRegularMeeting
 import com.example.home.navigation.navigateEventDetail
 import com.example.home.navigation.navigateFullRegularMeeting
@@ -51,7 +52,8 @@ fun NavGraphBuilder.mainNavGraph(
             }
         },
         onShowFullRegularMeetingClick = navController::navigateFullRegularMeeting,
-        twoClick =  navController::navigateMember
+        twoClick =  navController::navigateMember,
+        onCreatePostButtonClick = navController::navigateCreatePost
     )
     mapNavGraph(
         onEventClick = navController::navigateEventDetail,
