@@ -30,11 +30,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.common.DateUtil
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
+import com.example.model.RegularEvent
 
 @Composable
-fun RegularMeetingItem(onItemClick: () -> Unit) {
+fun RegularMeetingItem(
+    regularEvent: RegularEvent,
+    onItemClick: () -> Unit,
+    onJoinRegularEvent: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +64,7 @@ fun RegularMeetingItem(onItemClick: () -> Unit) {
             ) {
                 Text(
                     modifier = Modifier.padding(bottom = 10.dp),
-                    text = "비 맞으며 뛰는 게 국룰이지\uD83C\uDFC3\u200D♂\uFE0F",
+                    text = regularEvent.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
@@ -80,7 +86,7 @@ fun RegularMeetingItem(onItemClick: () -> Unit) {
                     )
                     Text(
                         modifier = Modifier.padding(start = 6.dp),
-                        text = "4/25 (금) 오후 7:30",
+                        text = DateUtil.formatIsoToRegularDate(regularEvent.dateTime),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondary
                     )
@@ -103,7 +109,7 @@ fun RegularMeetingItem(onItemClick: () -> Unit) {
                     )
                     Text(
                         modifier = Modifier.padding(start = 6.dp),
-                        text = "여의도공원",
+                        text = regularEvent.location,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondary
                     )
@@ -128,16 +134,16 @@ fun RegularMeetingItem(onItemClick: () -> Unit) {
                         modifier = Modifier.padding(start = 6.dp),
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) {
-                                append("10")
+                                append("${regularEvent.applicants}")
                             }
                             withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSecondary)) {
-                                append("/20")
+                                append("/${regularEvent.capacity}")
                             }
                         },
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
-                        text = "(10자리 남음)",
+                        text = "(${regularEvent.capacity - regularEvent.applicants}자리 남음)",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
@@ -146,12 +152,22 @@ fun RegularMeetingItem(onItemClick: () -> Unit) {
 
             Button(
                 modifier = Modifier.wrapContentWidth(),
-                onClick = {},
+                onClick = onJoinRegularEvent,
                 shape = RoundedCornerShape(6.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (regularEvent.participationId != 0) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                )
             ) {
                 Text(
-                    text = "참석하기",
+                    text = if (regularEvent.participationId != 0) {
+                        "참석취소"
+                    } else {
+                        "참석하기"
+                    },
                     color = Color.White,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -164,6 +180,19 @@ fun RegularMeetingItem(onItemClick: () -> Unit) {
 @Composable
 fun RegularMeetingItemPreview() {
     CowGroupTheme {
-        RegularMeetingItem(onItemClick = {})
+        RegularMeetingItem(
+            regularEvent = RegularEvent(
+                id = 0,
+                participationId = 0,
+                name = "test",
+                location = "서울",
+                dateTime = "",
+                capacity = 100,
+                applicants = 20,
+                isRegularRegistrant = false,
+            ),
+            onItemClick = {},
+            onJoinRegularEvent = {}
+        )
     }
 }

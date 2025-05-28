@@ -1,6 +1,7 @@
 package com.example.network.retrofit
 
 import com.example.model.CreateMeeting
+import com.example.model.CreateRegularMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
@@ -13,7 +14,10 @@ import com.example.network.model.MyPageResponse
 import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
+import com.example.network.model.PagingRegularEventResponse
 import com.example.network.model.ProfileResponse
+import com.example.network.model.RegularEventMemberResponse
+import com.example.network.model.RegularEventResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -99,15 +103,27 @@ interface CowGroupApi {
     @GET("/events/bookmarks")
     suspend fun getBookmarkEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingBookmarkEventResponse>
 
+    @GET("/events/{event-id}/regular/search")
+    suspend fun getPagingRegularMeeting(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingRegularEventResponse>
 
+    @POST("/events/{event-id}/regular")
+    suspend fun createRegularMeeting(@Path("event-id") eventId: Int, @Body regularMeeting: CreateRegularMeeting): ApiResponse<Unit>
 
+    @GET("/regular/{regular-id}")
+    suspend fun getRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<RegularEventResponse>
 
+    @PATCH("/regular/{regular-id}")
+    suspend fun editRegularMeeting(@Path("regular-id") regularId: Int, @Body regularMeeting: CreateRegularMeeting): ApiResponse<Unit>
 
+    @DELETE("/regular/{regular-id}")
+    suspend fun deleteRegularMeeting(@Path("regular-id") regularId: Int): Response<Unit>
 
+    @POST("/regular/{regular-id}/participation")
+    suspend fun joinRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Int>
 
+    @DELETE("/regular/participation/{participation-id}")
+    suspend fun unJoinRegularMeeting(@Path("participation-id") participationId: Int): ApiResponse<Unit>
 
-
-
-
-
+    @GET("/regular/{regular-id}/participants")
+    suspend fun getRegularMemberList(@Path("regular-id") regularId: Int): ApiResponse<RegularEventMemberResponse>
 }

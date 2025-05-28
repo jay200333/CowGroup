@@ -37,16 +37,6 @@ internal class EventRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun getEvents(page: Int, size: Int): Flow<List<Event>> = flow {
-        try {
-            val networkEvents = api.getEvents(page, size)
-            val events = networkEvents.data.content.map { it.toEvent() }
-            emit(events)
-        } catch (e: IOException) {
-            throw e
-        }
-    }
-
     override suspend fun getParticipateEvents(page: Int, size: Int): Flow<List<Event>> = flow {
         try {
             val participateEvents = api.getParticipateEvents(page, size)

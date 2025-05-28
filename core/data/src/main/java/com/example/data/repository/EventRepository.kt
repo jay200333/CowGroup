@@ -13,8 +13,6 @@ interface EventRepository {
 
     fun getPagingBookmarkEvents(pageSize: Int): Flow<PagingData<Event>>
 
-    suspend fun getEvents(page: Int, size: Int): Flow<List<Event>>
-
     suspend fun updateBookmark(eventId: Int, isBookmarked: Boolean)
 
     suspend fun createMeeting(createMeeting: CreateMeeting): Int

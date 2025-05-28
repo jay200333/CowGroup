@@ -4,19 +4,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cowgroup.core.designsystem.R
 
 @Composable
 fun MarkButton(
+    modifier: Modifier = Modifier,
     isMarked: Boolean,
     onMarkClick: (Boolean) -> Unit,
     markedIconId: Int,
     unMarkedIconId: Int,
 ) {
     IconButton(
+        modifier = modifier,
         onClick = {
             onMarkClick(!isMarked)
         },
@@ -24,7 +26,7 @@ fun MarkButton(
         Icon(
             painter = painterResource(if (isMarked) markedIconId else unMarkedIconId),
             contentDescription = "btn_book_mark",
-            tint = if (isMarked) MaterialTheme.colorScheme.primary else Color.Gray,
+            tint = if (isMarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
         )
     }
 }
@@ -33,9 +35,10 @@ fun MarkButton(
 @Composable
 fun MarkButtonPreview() {
     MarkButton(
+        modifier = Modifier,
         isMarked = true,
         onMarkClick = {},
-        markedIconId = R.drawable.baseline_bookmarks_24,
+        markedIconId = R.drawable.baseline_bookmark_24,
         unMarkedIconId = R.drawable.baseline_bookmark_border_24,
     )
 }

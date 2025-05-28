@@ -5,7 +5,6 @@ data class Event(
     val name: String,
     val author: String,
     val content: String,
-    val eventDate: String,
     val createdDate: String,
     val participants: Int,
     val capacities: Int,

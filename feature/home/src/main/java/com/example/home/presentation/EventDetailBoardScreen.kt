@@ -12,9 +12,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +29,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.CommentBottomSheetContent
 import com.example.home.component.EventDetailBoardItem
+import com.example.home.viewmodel.EventDetailBoardUIState
+import com.example.home.viewmodel.EventDetailBoardViewModel
 
 @Composable
-fun EventDetailBoardScreen() {
+fun EventDetailBoardScreen(
+    viewModel: EventDetailBoardViewModel = hiltViewModel(),
+    snackBarHostState: SnackbarHostState,
+    onShowSnackBar: (String) -> Unit,
+) {
+    val uiState: EventDetailBoardUIState by viewModel.uiState.collectAsState()
+
+    EventDetailBoardScreen(
+        snackBarHostState = snackBarHostState,
+    )
+    LaunchedEffect(uiState.message) {
+        if (uiState.message.isNotEmpty()) {
+            onShowSnackBar(uiState.message)
+            viewModel.setMessageClear()
+        }
+    }
+}
+
+@Composable
+fun EventDetailBoardScreen(
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -57,7 +85,8 @@ fun EventDetailBoardScreen() {
                 },
                 containerColor = MaterialTheme.colorScheme.primary
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -2,6 +2,8 @@ package com.example.data.di
 
 import com.example.data.repository.EventRepository
 import com.example.data.repository.EventRepositoryImpl
+import com.example.data.repository.RegularMeetingRepository
+import com.example.data.repository.RegularMeetingRepositoryImpl
 import com.example.data.repository.SearchHistoryRepository
 import com.example.data.repository.SearchHistoryRepositoryImpl
 import com.example.data.repository.UserRepository
@@ -22,4 +24,7 @@ abstract class RepositoryModule {
 
     @Binds
     internal abstract fun bindSearchHistoryRepository(searchHistoryRepositoryImpl: SearchHistoryRepositoryImpl): SearchHistoryRepository
+
+    @Binds
+    internal abstract fun bindRegularMeetingRepository(regularMeetingRepositoryImpl: RegularMeetingRepositoryImpl): RegularMeetingRepository
 }

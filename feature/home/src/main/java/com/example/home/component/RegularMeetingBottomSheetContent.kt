@@ -25,18 +25,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.common.DateUtil
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
+import com.example.model.RegularEvent
 
 @Composable
-fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
+fun RegularMeetingBottomSheetContent(
+    regularEvent: RegularEvent,
+    onAttendButtonClick: () -> Unit,
+    onEditButtonClick: () -> Unit,
+    onDeleteButtonClick: () -> Unit,
+    onMemberButtonClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +55,7 @@ fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
         ) {
             AssistChip(
                 onClick = {},
-                label = { Text(text = "카테고리", style = MaterialTheme.typography.bodySmall) },
+                label = { Text(text = "정기모임", style = MaterialTheme.typography.bodySmall) },
                 shape = RoundedCornerShape(6.dp),
                 border = BorderStroke(0.dp, MaterialTheme.colorScheme.onTertiary),
                 colors = AssistChipDefaults.assistChipColors(
@@ -69,8 +74,13 @@ fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
                 })
 
             AssistChip(
-                onClick = {},
-                label = { Text(text = "88명", style = MaterialTheme.typography.bodySmall) },
+                onClick = { onMemberButtonClick() },
+                label = {
+                    Text(
+                        text = "${regularEvent.applicants}/${regularEvent.capacity}명",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
                 shape = RoundedCornerShape(6.dp),
                 border = BorderStroke(0.dp, MaterialTheme.colorScheme.onTertiary),
                 colors = AssistChipDefaults.assistChipColors(
@@ -89,7 +99,7 @@ fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
 
         Text(
             modifier = Modifier.padding(bottom = 10.dp),
-            text = "비 맞으며 뛰는 게 국룰이지\uD83C\uDFC3\u200D♂\uFE0F",
+            text = regularEvent.name,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
@@ -111,7 +121,7 @@ fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
-                text = "4/25 (금) 오후 7:30",
+                text = DateUtil.formatIsoToRegularDate(regularEvent.dateTime),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondary
             )
@@ -134,67 +144,65 @@ fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
-                text = "여의도공원",
+                text = regularEvent.location,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondary
             )
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Icon(
-                modifier = Modifier.size(16.dp),
-                imageVector = Icons.Default.Person,
-                contentDescription = "icon_meeting_people",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                text = "참석",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                modifier = Modifier.padding(start = 6.dp),
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.error,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    ) {
-                        append("10")
-                    }
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSecondary)) {
-                        append("/20")
-                    }
-                },
-                style = MaterialTheme.typography.titleSmall,
-            )
-            Text(
-                text = "(10자리 남음)",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-
         Spacer(modifier = Modifier.height(30.dp))
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 30.dp),
-            onClick = {},
-            shape = RoundedCornerShape(6.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Text(
-                modifier = Modifier.padding(vertical = 10.dp),
-                text = "참석하기",
-                color = Color.White,
-                fontSize = 18.sp
-            )
+        if (regularEvent.isRegularRegistrant) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = { onEditButtonClick() },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        text = "수정하기",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                }
+
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = { onDeleteButtonClick()},
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        text = "삭제하기",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+        } else {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
+                onClick = { onAttendButtonClick() },
+                shape = RoundedCornerShape(6.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = if (regularEvent.participationId != 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary)
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    text = if (regularEvent.participationId != 0) "참석취소" else "참석하기",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            }
         }
     }
 }
@@ -203,6 +211,21 @@ fun RegularMeetingBottomSheetContent(onAttendButtonClick: () -> Unit) {
 @Composable
 fun BottomSheetContentPreview() {
     CowGroupTheme {
-        RegularMeetingBottomSheetContent(onAttendButtonClick = {})
+        RegularMeetingBottomSheetContent(
+            regularEvent = RegularEvent(
+                id = 0,
+                participationId = 0,
+                name = "test",
+                location = "한국",
+                dateTime = "4/25(금) 오후 7:30",
+                capacity = 100,
+                applicants = 20,
+                isRegularRegistrant = false,
+            ),
+            onAttendButtonClick = {},
+            onEditButtonClick = {},
+            onDeleteButtonClick = {},
+            onMemberButtonClick = {}
+        )
     }
 }

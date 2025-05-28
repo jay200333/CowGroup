@@ -2,6 +2,7 @@ package com.example.home.presentation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -42,30 +46,111 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.RegularMeetingBottomSheetContent
 import com.example.home.component.RegularMeetingItem
+import com.example.home.viewmodel.EventDetailHomeUIState
+import com.example.home.viewmodel.EventDetailHomeViewModel
 import com.example.model.DetailEvent
+import com.example.model.RegularEvent
 
 @Composable
 fun EventDetailHomeScreen(
+    viewModel: EventDetailHomeViewModel = hiltViewModel(),
+    eventId: Int,
+    onMemberButtonClick: (Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
+    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+) {
+    val uiState: EventDetailHomeUIState by viewModel.uiState.collectAsState()
+
+    EventDetailHomeScreen(
+        onMemberButtonClick = onMemberButtonClick,
+        onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
+        onCreateRegularMeetingButtonClick = onCreateRegularMeetingButtonClick,
+        onRegularMemberButtonClick = onRegularMemberButtonClick,
+        onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
+        onJoinButtonClick = viewModel::updateJoinEvent,
+        onJoinRegularMeetingClick = viewModel::updateJoinRegularMeeting,
+        onDeleteRegularMeetingButtonClick = viewModel::deleteRegularMeeting,
+        detailEvent = uiState.detailEvent,
+        eventId = eventId,
+    )
+
+    LaunchedEffect(eventId) {
+        viewModel.getEventDetail(eventId)
+    }
+}
+
+@Composable
+fun EventDetailHomeScreen(
+    eventId: Int,
     detailEvent: DetailEvent,
-    onMemberButtonClick: () -> Unit,
-    onJoinButtonClick: () -> Unit,
-    onCreateRegularMeetingButtonClick: () -> Unit
+    onMemberButtonClick: (Int) -> Unit,
+    onRegularMemberButtonClick: (Int) -> Unit,
+    onJoinButtonClick: (Int) -> Unit,
+    onJoinRegularMeetingClick: (Int) -> Unit,
+    onCreateRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
+    onDeleteRegularMeetingButtonClick: (Int) -> Unit,
+    onShowFullRegularMeetingClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedEvent by remember { mutableStateOf<RegularEvent?>(null) }
+
+    if (showBottomSheet && selectedEvent != null) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+                selectedEvent = null
+            },
+            sheetState = sheetState,
+            containerColor = Color.White
+        ) {
+            RegularMeetingBottomSheetContent(
+                regularEvent = selectedEvent!!,
+                onAttendButtonClick = {
+                    onJoinRegularMeetingClick(selectedEvent!!.id)
+                    showBottomSheet = false
+                },
+                onEditButtonClick = {
+                    onEditRegularMeetingButtonClick(
+                        detailEvent.id,
+                        true,
+                        selectedEvent!!.id
+                    )
+                    showBottomSheet = false
+                },
+                onDeleteButtonClick = {
+                    onDeleteRegularMeetingButtonClick(selectedEvent!!.id)
+                    showBottomSheet = false
+                },
+                onMemberButtonClick = {
+                    onRegularMemberButtonClick(selectedEvent!!.id)
+                    showBottomSheet = false
+                })
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             if (detailEvent.isParticipated) {
                 ExtendedFloatingActionButton(
-                    onClick = onCreateRegularMeetingButtonClick,
+                    onClick = {
+                        onCreateRegularMeetingButtonClick(
+                            detailEvent.id,
+                            false,
+                            0
+                        )
+                    },
                     icon = {
                         Icon(
                             modifier = Modifier.size(18.dp),
@@ -84,7 +169,7 @@ fun EventDetailHomeScreen(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             }
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -92,13 +177,13 @@ fun EventDetailHomeScreen(
                 .padding(innerPadding)
                 .verticalScroll(scrollState)
         ) {
-            AsyncImage(
+            CowGroupAsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .background(MaterialTheme.colorScheme.onTertiary),
-                model = detailEvent.url,
-                contentDescription = "",
+                imgUrl = detailEvent.url,
+                contentDescription = ""
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -132,7 +217,7 @@ fun EventDetailHomeScreen(
                     })
 
                 AssistChip(
-                    onClick = onMemberButtonClick,
+                    onClick = { onMemberButtonClick(eventId) },
                     label = {
                         Text(
                             text = "${detailEvent.applicants}/${detailEvent.capacity}명",
@@ -175,15 +260,29 @@ fun EventDetailHomeScreen(
             Spacer(modifier = Modifier.height(30.dp))
             HorizontalDivider(thickness = 4.dp, color = MaterialTheme.colorScheme.onTertiary)
             Spacer(modifier = Modifier.height(20.dp))
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                text = "정기모임",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "정기모임",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                if (detailEvent.regularEvents.isNotEmpty()) {
+                    Text(
+                        modifier = Modifier.clickable { onShowFullRegularMeetingClick() },
+                        text = "전체보기",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -201,10 +300,15 @@ fun EventDetailHomeScreen(
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(5) {
-                        RegularMeetingItem(onItemClick = {
-                            showBottomSheet = true
-                        })
+                    items(detailEvent.regularEvents.size) { index ->
+                        val regularEvent = detailEvent.regularEvents[index]
+                        RegularMeetingItem(
+                            regularEvent,
+                            onItemClick = {
+                                selectedEvent = regularEvent
+                                showBottomSheet = true
+                            },
+                            onJoinRegularEvent = { onJoinRegularMeetingClick(regularEvent.id) })
                     }
                 }
             }
@@ -213,7 +317,7 @@ fun EventDetailHomeScreen(
 
             if (detailEvent.isParticipated.not()) {
                 Button(
-                    onClick = onJoinButtonClick,
+                    onClick = { onJoinButtonClick(eventId) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 30.dp),
@@ -231,18 +335,6 @@ fun EventDetailHomeScreen(
                 }
             }
         }
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState,
-                containerColor = Color.White
-            ) {
-                RegularMeetingBottomSheetContent(onAttendButtonClick = {})
-                //val selectedMeeting = meetings.find{ it.id == selectedItemId}
-            }
-        }
     }
 }
 
@@ -251,6 +343,7 @@ fun EventDetailHomeScreen(
 fun EventDetailHomeScreenPreview() {
     CowGroupTheme {
         EventDetailHomeScreen(
+            eventId = 0,
             detailEvent = DetailEvent(
                 id = 0,
                 name = "test",
@@ -265,8 +358,13 @@ fun EventDetailHomeScreenPreview() {
                 regularEvents = emptyList()
             ),
             onMemberButtonClick = {},
+            onRegularMemberButtonClick = {},
             onJoinButtonClick = {},
-            onCreateRegularMeetingButtonClick = {}
+            onCreateRegularMeetingButtonClick = { _, _, _ -> },
+            onEditRegularMeetingButtonClick = { _, _, _ -> },
+            onDeleteRegularMeetingButtonClick = {},
+            onJoinRegularMeetingClick = {},
+            onShowFullRegularMeetingClick = {}
         )
     }
 }

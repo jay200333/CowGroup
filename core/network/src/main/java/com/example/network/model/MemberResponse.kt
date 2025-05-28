@@ -10,6 +10,12 @@ data class MemberResponse(
     val participantCount: Int
 )
 
+data class RegularEventMemberResponse(
+    @SerializedName("regularParticipants")
+    val participants: List<ParticipantInfo>,
+    val participantCount: Int
+)
+
 data class ParticipantInfo(
     val name: String,
     val mbti: String,
@@ -17,6 +23,11 @@ data class ParticipantInfo(
 )
 
 fun MemberResponse.toEventMember(): EventMember = EventMember(
+    memberInfoList = participants.map { it.toMemberInfo() },
+    memberCount = participantCount
+)
+
+fun RegularEventMemberResponse.toEventMember(): EventMember = EventMember(
     memberInfoList = participants.map { it.toMemberInfo() },
     memberCount = participantCount
 )

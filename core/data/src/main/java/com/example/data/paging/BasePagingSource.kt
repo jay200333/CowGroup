@@ -2,12 +2,11 @@ package com.example.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.model.Event
 
-abstract class BaseEventPagingSource(
-    private val pageFetcher: suspend (Int, Int) -> List<Event>
-): PagingSource<Int, Event>() {
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Event> {
+abstract class BasePagingSource<T: Any>(
+    private val pageFetcher: suspend (Int, Int) -> List<T>
+): PagingSource<Int, T>() {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         return try {
             val page = params.key ?: 0
             val events = pageFetcher(page, params.loadSize)
@@ -20,7 +19,7 @@ abstract class BaseEventPagingSource(
             LoadResult.Error(e)
         }
     }
-    override fun getRefreshKey(state: PagingState<Int, Event>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, T>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.let { page ->
                 page.prevKey?.plus(1) ?: page.nextKey?.minus(1)

@@ -64,4 +64,20 @@ object DateUtil {
         val isoString = zonedDateTime.format(isoFormat)
         return isoString
     }
+
+    fun formatIsoToRegularDate(isoString: String): String {
+        val localDateTime = LocalDateTime.parse(isoString)
+        val seoulZone = ZoneId.of("Asia/Seoul")
+        val zonedDateTime = localDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(seoulZone)
+        val outputFormatter = DateTimeFormatter.ofPattern("M/dd (E) a h:mm", Locale.KOREAN)
+        return zonedDateTime.format(outputFormatter)
+    }
+
+    fun formatIsoToCalendarDate(isoString: String): String {
+        val localDateTime = LocalDateTime.parse(isoString)
+        val seoulZone = ZoneId.of("Asia/Seoul")
+        val zonedDateTime = localDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(seoulZone)
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E) a h:mm", Locale.KOREAN)
+        return zonedDateTime.format(outputFormatter)
+    }
 }

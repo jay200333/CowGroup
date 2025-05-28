@@ -1,12 +1,10 @@
 package com.example.home.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.example.data.repository.EventRepository
+import com.example.data.repository.RegularMeetingRepository
 import com.example.model.DetailEvent
-import com.example.navigation.EventDetailRoute
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,10 +16,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
-data class EventDetailUIState(
+data class EventDetailHomeUIState(
     val isLoading: Boolean = false,
-    val isLogout: Boolean = false,
-    val isDeleteSuccess: Boolean = false,
     val detailEvent: DetailEvent = DetailEvent(
         id = 0,
         name = "",
@@ -35,29 +31,24 @@ data class EventDetailUIState(
         isParticipated = false,
         regularEvents = emptyList()
     ),
-    val message: String = "",
+    val message: String = ""
 )
 
 @HiltViewModel
-class EventDetailViewModel @Inject constructor(
+class EventDetailHomeViewModel @Inject constructor(
     private val eventRepository: EventRepository,
-    savedStateHandle: SavedStateHandle
+    private val regularMeetingRepository: RegularMeetingRepository
 ) : ViewModel() {
-    private val eventId: Int = savedStateHandle.toRoute<EventDetailRoute>().eventId
-    private val _eventDetailUIState: MutableStateFlow<EventDetailUIState> =
-        MutableStateFlow(EventDetailUIState())
-    val eventDetailUIState: StateFlow<EventDetailUIState> = _eventDetailUIState.asStateFlow()
+    private val _uiState: MutableStateFlow<EventDetailHomeUIState> =
+        MutableStateFlow(EventDetailHomeUIState())
+    val uiState: StateFlow<EventDetailHomeUIState> = _uiState.asStateFlow()
 
-    init {
-        getEventDetail()
-    }
-
-    fun getEventDetail() {
+    fun getEventDetail(eventId: Int) {
         viewModelScope.launch {
-            _eventDetailUIState.update { state -> state.copy(isLoading = true, message = "") }
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
             try {
                 val detailEvent = eventRepository.getEventDetail(eventId)
-                _eventDetailUIState.update { state ->
+                _uiState.update { state ->
                     state.copy(
                         detailEvent = detailEvent,
                         isLoading = false
@@ -66,14 +57,14 @@ class EventDetailViewModel @Inject constructor(
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
-                _eventDetailUIState.update { state ->
+                _uiState.update { state ->
                     state.copy(
                         isLoading = false,
                         message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
-                _eventDetailUIState.update { state ->
+                _uiState.update { state ->
                     state.copy(
                         isLoading = false,
                         message = "알 수 없는 오류가 발생했습니다."
@@ -83,15 +74,15 @@ class EventDetailViewModel @Inject constructor(
         }
     }
 
-    fun updateJoinEvent() {
+    fun updateJoinEvent(eventId: Int) {
         viewModelScope.launch {
-            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            _uiState.update { it.copy(isLoading = true, message = "") }
             try {
                 eventRepository.updateJoinEvent(
                     eventId,
-                    _eventDetailUIState.value.detailEvent.isParticipated
+                    _uiState.value.detailEvent.isParticipated
                 )
-                _eventDetailUIState.update {
+                _uiState.update {
                     it.copy(
                         isLoading = false,
                         detailEvent = it.detailEvent.copy(isParticipated = it.detailEvent.isParticipated.not()),
@@ -101,87 +92,101 @@ class EventDetailViewModel @Inject constructor(
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
-                _eventDetailUIState.update {
+                _uiState.update {
                     it.copy(
                         isLoading = false,
                         message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
-                _eventDetailUIState.update {
+                _uiState.update {
                     it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
                 }
             }
         }
     }
 
-    fun deleteEvent() {
+    fun updateJoinRegularMeeting(regularEventId: Int) {
         viewModelScope.launch {
-            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
+            _uiState.update { it.copy(isLoading = true, message = "") }
             try {
-                eventRepository.deleteEvent(eventId)
-                _eventDetailUIState.update {
+                val currentState = _uiState.value
+                val regularEvent =
+                    currentState.detailEvent.regularEvents.find { it.id == regularEventId }
+                if (regularEvent != null) {
+                    val result = regularMeetingRepository.updateJoinRegularMeeting(
+                        regularEvent.id,
+                        regularEvent.participationId
+                    )
+
+                    val updatedRegularEvents = currentState.detailEvent.regularEvents.map { event ->
+                        if (event.id == regularEventId) {
+                            if (result != 0) {
+                                event.copy(
+                                    applicants = event.applicants.plus(1),
+                                    participationId = result
+                                )
+                            } else {
+                                event.copy(
+                                    applicants = event.applicants.minus(1),
+                                    participationId = result
+                                )
+                            }
+                        } else {
+                            event
+                        }
+                    }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            detailEvent = it.detailEvent.copy(regularEvents = updatedRegularEvents)
+                        )
+                    }
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update {
                     it.copy(
                         isLoading = false,
-                        isDeleteSuccess = true,
-                        message = "모임이 성공적으로 삭제되었습니다."
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
+    fun deleteRegularMeeting(regularId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, message = "") }
+            try {
+                regularMeetingRepository.deleteRegularMeeting(regularId)
+                val updatedList = _uiState.value.detailEvent.regularEvents.filterNot { it.id == regularId }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        detailEvent = currentState.detailEvent.copy(
+                            regularEvents = updatedList
+                        )
                     )
                 }
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
-                _eventDetailUIState.update {
+                _uiState.update {
                     it.copy(
                         isLoading = false,
-                        message = "모임 삭제에 실패했습니다." //errorResponse.errors.message
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
-                _eventDetailUIState.update {
+                _uiState.update {
                     it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
                 }
             }
-        }
-    }
-
-    fun updateBookmark(isBookmarked: Boolean) {
-        viewModelScope.launch {
-            _eventDetailUIState.update { it.copy(isLoading = true, message = "") }
-            try {
-                eventRepository.updateBookmark(eventId, isBookmarked)
-                _eventDetailUIState.update {
-                    it.copy(
-                        isLoading = false,
-                        message = "북마크가 업데이트 되었습니다.",
-                        detailEvent = it.detailEvent.copy(isBookmarked = isBookmarked.not())
-                    )
-                }
-            } catch (e: HttpException) {
-                _eventDetailUIState.update {
-                    it.copy(
-                        isLoading = false,
-                        message = "북마크 업데이트에 실패했습니다."
-                    )
-                }
-            } catch (e: Exception) {
-                _eventDetailUIState.update {
-                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
-                }
-            }
-        }
-    }
-
-    fun setDeleteState(deleteState: Boolean) {
-        viewModelScope.launch {
-            _eventDetailUIState.update { state ->
-                state.copy(isDeleteSuccess = deleteState)
-            }
-        }
-    }
-
-    fun setMessageClear() {
-        _eventDetailUIState.update { state ->
-            state.copy(message = "")
         }
     }
 }

@@ -1,15 +1,20 @@
 package com.example.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.common.DateUtil
+import com.example.data.repository.RegularMeetingRepository
 import com.example.model.CreateRegularMeeting
+import com.example.network.model.ErrorResponse
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class CreateRegularMeetingUIState(
@@ -22,11 +27,12 @@ data class CreateRegularMeetingUIState(
         capacity = 0
     ),
     val createButtonEnabled: Boolean = false,
-    val isCreateMeetingSuccess: Boolean = false,
+    val isCreateRegularMeetingSuccess: Boolean = false,
+    val isEditRegularMeetingSuccess: Boolean = false,
     val regularMeetingDate: String = "",
     val regularMeetingTime: String = "",
-    val dateTime: String = "",
     val eventId: Int = 0,
+    val regularId: Int = 0,
     val isValidCapacity: Boolean = false,
     val capacityMessage: String = "",
     val message: String = ""
@@ -34,6 +40,7 @@ data class CreateRegularMeetingUIState(
 
 @HiltViewModel
 class CreateRegularMeetingViewModel @Inject constructor(
+    private val regularMeetingRepository: RegularMeetingRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _createRegularMeetingUIState: MutableStateFlow<CreateRegularMeetingUIState> =
@@ -44,9 +51,140 @@ class CreateRegularMeetingViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
     private val isEditMode: Boolean =
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
+    private val regularId: Int =
+        requireNotNull(savedStateHandle.get<Int>("regularId")) { "regularId is required." }
 
     init {
-        Log.d("CreateRegularViewModel", "${eventId}, $isEditMode")
+        checkEditMode()
+        if (isEditMode) {
+            getRegularMeeting(regularId)
+        }
+    }
+
+    private fun checkEditMode() {
+        _createRegularMeetingUIState.update { state ->
+            state.copy(isEditMode = isEditMode)
+        }
+    }
+
+    private fun getRegularMeeting(regularId: Int) {
+        viewModelScope.launch {
+            _createRegularMeetingUIState.update { state ->
+                state.copy(
+                    isLoading = true,
+                    message = ""
+                )
+            }
+            try {
+                val result = regularMeetingRepository.getRegularMeeting(regularId)
+                val dateTime = DateUtil.formatIsoToCalendarDate(result.dateTime)
+                val dateSplitIndex = dateTime.indexOf(") ") + 1
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        regularMeeting = result,
+                        regularMeetingDate = dateTime.substring(0, dateSplitIndex),
+                        regularMeetingTime = dateTime.substring(dateSplitIndex + 1),
+                        isLoading = false
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
+    }
+
+    fun createRegularMeeting() {
+        viewModelScope.launch {
+            _createRegularMeetingUIState.update { state ->
+                state.copy(
+                    isLoading = true,
+                    message = ""
+                )
+            }
+            try {
+                regularMeetingRepository.createRegularMeeting(
+                    eventId,
+                    createRegularMeetingUIState.value.regularMeeting
+                )
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isCreateRegularMeetingSuccess = true,
+                        isLoading = false,
+                        message = "정기 모임 생성이 완료되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
+    }
+
+    fun editRegularMeeting() {
+        viewModelScope.launch {
+            _createRegularMeetingUIState.update { state ->
+                state.copy(
+                    isLoading = true,
+                    message = ""
+                )
+            }
+            try {
+                regularMeetingRepository.editRegularMeeting(
+                    regularId,
+                    createRegularMeetingUIState.value.regularMeeting
+                )
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isEditRegularMeetingSuccess = true,
+                        isLoading = false,
+                        message = "정기 모임 편집이 완료되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _createRegularMeetingUIState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
     }
 
     fun setRegularMeetingDate(date: String) {
@@ -69,7 +207,7 @@ class CreateRegularMeetingViewModel @Inject constructor(
         )
     }
 
-    fun setDateTime(date: String, time: String) {
+    private fun setDateTime(date: String, time: String) {
         if (date.isNotEmpty() && time.isNotEmpty()) {
             val dateTime = DateUtil.formatDateTimeToIso8601(
                 _createRegularMeetingUIState.value.regularMeetingDate,
