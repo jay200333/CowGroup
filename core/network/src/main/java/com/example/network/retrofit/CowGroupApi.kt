@@ -116,7 +116,7 @@ interface CowGroupApi {
     suspend fun editRegularMeeting(@Path("regular-id") regularId: Int, @Body regularMeeting: CreateRegularMeeting): ApiResponse<Unit>
 
     @DELETE("/regular/{regular-id}")
-    suspend fun deleteRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Unit>
+    suspend fun deleteRegularMeeting(@Path("regular-id") regularId: Int): Response<Unit>
 
     @POST("/regular/{regular-id}/participation")
     suspend fun joinRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Int>

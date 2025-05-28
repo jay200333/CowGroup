@@ -126,9 +126,16 @@ fun EventDetailHomeScreen(
                         true,
                         selectedEvent!!.id
                     )
+                    showBottomSheet = false
                 },
-                onDeleteButtonClick = { onDeleteRegularMeetingButtonClick(selectedEvent!!.id) },
-                onMemberButtonClick = { onRegularMemberButtonClick(selectedEvent!!.id) })
+                onDeleteButtonClick = {
+                    onDeleteRegularMeetingButtonClick(selectedEvent!!.id)
+                    showBottomSheet = false
+                },
+                onMemberButtonClick = {
+                    onRegularMemberButtonClick(selectedEvent!!.id)
+                    showBottomSheet = false
+                })
         }
     }
 

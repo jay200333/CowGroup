@@ -1,5 +1,6 @@
 package com.example.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,6 +53,8 @@ class FullRegularMeetingViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun getEventId(): Int = eventId
+
     fun updateJoinRegularMeeting(regularEventId: Int, participationId: Int?) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, message = "") }
@@ -88,6 +91,29 @@ class FullRegularMeetingViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
+    }
+
+    fun deleteRegularMeeting(regularId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, message = "") }
+            try {
+                regularMeetingRepository.deleteRegularMeeting(regularId)
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                Log.d("123123", "${e.message}")
                 _uiState.update {
                     it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
                 }

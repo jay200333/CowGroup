@@ -122,9 +122,15 @@ class EventDetailHomeViewModel @Inject constructor(
                     val updatedRegularEvents = currentState.detailEvent.regularEvents.map { event ->
                         if (event.id == regularEventId) {
                             if (result != 0) {
-                                event.copy(applicants = event.applicants.plus(1), participationId = result)
+                                event.copy(
+                                    applicants = event.applicants.plus(1),
+                                    participationId = result
+                                )
                             } else {
-                                event.copy(applicants = event.applicants.minus(1), participationId = result)
+                                event.copy(
+                                    applicants = event.applicants.minus(1),
+                                    participationId = result
+                                )
                             }
                         } else {
                             event
@@ -159,6 +165,14 @@ class EventDetailHomeViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, message = "") }
             try {
                 regularMeetingRepository.deleteRegularMeeting(regularId)
+                val updatedList = _uiState.value.detailEvent.regularEvents.filterNot { it.id == regularId }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        detailEvent = currentState.detailEvent.copy(
+                            regularEvents = updatedList
+                        )
+                    )
+                }
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)

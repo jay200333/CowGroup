@@ -158,6 +158,14 @@ fun NavGraphBuilder.homeNavGraph(
     composable<FullRegularMeetingRoute> {
         FullRegularMeetingScreen(
             onNavigationButtonClick = onNavigationButtonClick,
+            onEditRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
+                onCreateRegularMeetingClick(
+                    eventId,
+                    isEditMode,
+                    regularId
+                )
+            },
+            onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId) },
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar
         )

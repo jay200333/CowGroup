@@ -16,7 +16,7 @@ data class RegularEventInfo(
     val location: String,
     val participantsCount: Int,
     val capacity: Int,
-    @SerializedName("regularRegistrant")
+    @SerializedName("registrant")
     val isRegularRegistrant: Boolean,
 )
 
