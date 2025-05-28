@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.home.presentation.CreateMeetingScreen
+import com.example.home.presentation.CreatePostScreen
 import com.example.home.presentation.CreateRegularMeetingScreen
 import com.example.home.presentation.EventDetailMainScreen
 import com.example.home.presentation.FullRegularMeetingScreen
@@ -16,6 +17,7 @@ import com.example.home.presentation.HomeMainScreen
 import com.example.home.presentation.MemberScreen
 import com.example.home.presentation.RegularMemberScreen
 import com.example.navigation.CreateMeetingRoute
+import com.example.navigation.CreatePostRoute
 import com.example.navigation.CreateRegularMeetingRoute
 import com.example.navigation.EventDetailRoute
 import com.example.navigation.FullRegularMeetingRoute
@@ -52,6 +54,10 @@ fun NavController.navigateFullRegularMeeting(eventId: Int) {
     navigate(FullRegularMeetingRoute(eventId))
 }
 
+fun NavController.navigateCreatePost(eventId: Int, postId: Int, isEditMode: Boolean) {
+    navigate(CreatePostRoute(eventId, postId, isEditMode))
+}
+
 fun NavGraphBuilder.homeNavGraph(
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
@@ -67,7 +73,8 @@ fun NavGraphBuilder.homeNavGraph(
     onEditMeetingSuccess: (Int) -> Unit,
     onDeleteMeetingSuccess: () -> Unit,
     onShowFullRegularMeetingClick: (Int) -> Unit,
-    twoClick: (Int) -> Unit
+    twoClick: (Int) -> Unit,
+    onCreatePostButtonClick: (Int, Int, Boolean) -> Unit
 ) {
     composable<HomeScreenRoute> {
         var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -125,6 +132,13 @@ fun NavGraphBuilder.homeNavGraph(
                     regularId
                 )
             },
+            onCreatePostButtonClick = { eventId, postId, isEditMode ->
+                onCreatePostButtonClick(
+                    eventId,
+                    postId,
+                    isEditMode
+                )
+            },
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar
         )
@@ -168,6 +182,16 @@ fun NavGraphBuilder.homeNavGraph(
             onRegularMemberButtonClick = { regularId -> onRegularMemberButtonClick(regularId) },
             snackBarHostState = snackBarHostState,
             onShowSnackBar = onShowSnackBar
+        )
+    }
+
+    composable<CreatePostRoute> {
+        CreatePostScreen(
+            onNavigationButtonClick = onNavigationButtonClick,
+            onCreatePostSuccess = onNavigationButtonClick,
+            onEditPostSuccess = onNavigationButtonClick,
+            snackBarHostState = snackBarHostState,
+            onShowSnackBar = onShowSnackBar,
         )
     }
 }
