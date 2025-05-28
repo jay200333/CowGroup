@@ -1,6 +1,7 @@
 package com.example.network.retrofit
 
 import com.example.model.CreateMeeting
+import com.example.model.CreatePost
 import com.example.model.CreateRegularMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
@@ -126,4 +127,7 @@ interface CowGroupApi {
 
     @GET("/regular/{regular-id}/participants")
     suspend fun getRegularMemberList(@Path("regular-id") regularId: Int): ApiResponse<RegularEventMemberResponse>
+
+    @POST("/events/{event-id}/posts")
+    suspend fun createPost(@Path("event-id") eventId: Int, @Body createPost: CreatePost): ApiResponse<Unit>
 }
