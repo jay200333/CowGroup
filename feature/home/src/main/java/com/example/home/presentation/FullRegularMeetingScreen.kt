@@ -23,10 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.home.component.RegularMeetingItem
 import com.example.home.viewmodel.FullRegularMeetingUIState
 import com.example.home.viewmodel.FullRegularMeetingViewModel
 import com.example.model.RegularEvent
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun FullRegularMeetingScreen(
@@ -36,10 +39,11 @@ fun FullRegularMeetingScreen(
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: FullRegularMeetingUIState by viewModel.uiState.collectAsState()
+    val pagingRegularMeetings = viewModel.uiState.map { it.regularMeetingList }.collectAsLazyPagingItems()
 
     FullRegularMeetingScreen(
         onNavigationButtonClick = onNavigationButtonClick,
-        regularEventList = uiState.regularMeetingList,
+        regularEventList = pagingRegularMeetings,
         onJoinRegularEvent = viewModel::updateJoinRegularMeeting,
         snackBarHostState = snackBarHostState,
     )
@@ -52,17 +56,19 @@ fun FullRegularMeetingScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getRegularMeeting()
+        pagingRegularMeetings.refresh()
     }
 }
 
 @Composable
 fun FullRegularMeetingScreen(
     onNavigationButtonClick: () -> Unit,
-    onJoinRegularEvent: (Int) -> Unit,
-    regularEventList: List<RegularEvent>,
+    onJoinRegularEvent: (Int, Int?) -> Unit,
+    regularEventList: LazyPagingItems<RegularEvent>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    val loadState = regularEventList.loadState
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -88,12 +94,14 @@ fun FullRegularMeetingScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(regularEventList.size) { index ->
+                items(regularEventList.itemCount) { index ->
                     val regularEvent = regularEventList[index]
-                    RegularMeetingItem(
-                        regularEvent = regularEvent,
-                        onItemClick = {},
-                        onJoinRegularEvent = { onJoinRegularEvent(regularEvent.id) })
+                    if (regularEvent != null) {
+                        RegularMeetingItem(
+                            regularEvent = regularEvent,
+                            onItemClick = {},
+                            onJoinRegularEvent = { onJoinRegularEvent(regularEvent.id, regularEvent.participationId ) })
+                    }
                 }
             }
         }

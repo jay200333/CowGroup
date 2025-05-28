@@ -14,6 +14,7 @@ import com.example.network.model.MyPageResponse
 import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
+import com.example.network.model.PagingRegularEventResponse
 import com.example.network.model.ProfileResponse
 import com.example.network.model.RegularEventMemberResponse
 import com.example.network.model.RegularEventResponse
@@ -102,6 +103,9 @@ interface CowGroupApi {
     @GET("/events/bookmarks")
     suspend fun getBookmarkEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingBookmarkEventResponse>
 
+    @GET("/events/{event-id}/regular/search")
+    suspend fun getPagingRegularMeeting(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingRegularEventResponse>
+
     @POST("/events/{event-id}/regular")
     suspend fun createRegularMeeting(@Path("event-id") eventId: Int, @Body regularMeeting: CreateRegularMeeting): ApiResponse<Unit>
 
@@ -115,7 +119,7 @@ interface CowGroupApi {
     suspend fun deleteRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Unit>
 
     @POST("/regular/{regular-id}/participation")
-    suspend fun joinRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Unit>
+    suspend fun joinRegularMeeting(@Path("regular-id") regularId: Int): ApiResponse<Int>
 
     @DELETE("/regular/participation/{participation-id}")
     suspend fun unJoinRegularMeeting(@Path("participation-id") participationId: Int): ApiResponse<Unit>
