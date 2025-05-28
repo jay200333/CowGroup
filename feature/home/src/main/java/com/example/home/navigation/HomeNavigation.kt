@@ -48,8 +48,8 @@ fun NavController.navigateCreateRegularMeeting(eventId: Int, isEditMode: Boolean
     navigate(CreateRegularMeetingRoute(eventId, isEditMode, regularId))
 }
 
-fun NavController.navigateFullRegularMeeting() {
-    navigate(FullRegularMeetingRoute)
+fun NavController.navigateFullRegularMeeting(eventId: Int) {
+    navigate(FullRegularMeetingRoute(eventId))
 }
 
 fun NavGraphBuilder.homeNavGraph(
@@ -66,7 +66,7 @@ fun NavGraphBuilder.homeNavGraph(
     onCreateMeetingSuccess: (Int) -> Unit,
     onEditMeetingSuccess: (Int) -> Unit,
     onDeleteMeetingSuccess: () -> Unit,
-    onShowFullRegularMeetingClick: () -> Unit,
+    onShowFullRegularMeetingClick: (Int) -> Unit,
     twoClick: (Int) -> Unit
 ) {
     composable<HomeScreenRoute> {
@@ -101,7 +101,7 @@ fun NavGraphBuilder.homeNavGraph(
     composable<EventDetailRoute> {
         EventDetailMainScreen(
             onDeleteMeetingSuccess = onDeleteMeetingSuccess,
-            onNavigationButtonClick = onNavigationButtonClick,
+            onNavigationButtonClick = onHomeScreen,
             onEditButtonClick = { eventId, isEditMode ->
                 onCreateMeetingClick(
                     eventId,
@@ -109,7 +109,7 @@ fun NavGraphBuilder.homeNavGraph(
                 )
             },
             onMemberButtonClick = { eventId -> onMemberButtonClick(eventId) },
-            onShowFullRegularMeetingClick = onShowFullRegularMeetingClick,
+            onShowFullRegularMeetingClick = { eventId -> onShowFullRegularMeetingClick(eventId) },
             onCreateRegularMeetingButtonClick = { eventId, isEditMode, regularId ->
                 onCreateRegularMeetingClick(
                     eventId,
