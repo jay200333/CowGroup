@@ -134,4 +134,7 @@ interface CowGroupApi {
 
     @GET("/events/{event-id}/posts/search")
     suspend fun getPagingPosts(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingPostResponse>
+
+    @DELETE("/posts/{post-id}")
+    suspend fun deletePost(@Path("post-id") postId: Int): ApiResponse<Unit>
 }

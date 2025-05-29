@@ -35,6 +35,16 @@ internal class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deletePost(postId: Int) {
+        try {
+            api.deletePost(postId)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     companion object {
         private const val INITIAL_LOAD_SIZE = 10
     }
