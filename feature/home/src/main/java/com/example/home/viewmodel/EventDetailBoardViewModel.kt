@@ -9,6 +9,8 @@ import androidx.paging.cachedIn
 import com.example.data.repository.PostRepository
 import com.example.model.Post
 import com.example.navigation.EventDetailRoute
+import com.example.network.model.ErrorResponse
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class EventDetailBoardUIState(
@@ -27,7 +31,7 @@ data class EventDetailBoardUIState(
 
 @HiltViewModel
 class EventDetailBoardViewModel @Inject constructor(
-    postRepository: PostRepository,
+    private val postRepository: PostRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val eventId: Int = savedStateHandle.toRoute<EventDetailRoute>().eventId
@@ -46,6 +50,29 @@ class EventDetailBoardViewModel @Inject constructor(
                 )
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun deletePost(postId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, message = "") }
+            try {
+                postRepository.deletePost(postId)
+                _uiState.update { it.copy(isLoading = false, message = "게시글이 삭제되었습니다.") }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, message = "알 수 없는 오류가 발생했습니다.")
+                }
+            }
+        }
     }
 
     fun setMessageClear() {

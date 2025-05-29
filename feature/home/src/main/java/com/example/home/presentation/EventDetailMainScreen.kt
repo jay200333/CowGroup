@@ -88,7 +88,6 @@ fun EventDetailMainScreen(
         onRegularMemberButtonClick = onRegularMemberButtonClick,
         onEditRegularMeetingButtonClick = onEditRegularMeetingButtonClick,
         onCreatePostButtonClick = onCreatePostButtonClick,
-        onShowSnackBar = onShowSnackBar,
         snackBarHostState = snackBarHostState
     )
     LaunchedEffect(uiState.isDeleteSuccess) {
@@ -124,7 +123,6 @@ fun EventDetailMainScreen(
     onRegularMemberButtonClick: (Int) -> Unit,
     onEditRegularMeetingButtonClick: (Int, Boolean, Int) -> Unit,
     onCreatePostButtonClick: (Int, Int, Boolean) -> Unit,
-    onShowSnackBar: (String) -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     var currentTab by remember { mutableIntStateOf(0) }
@@ -253,7 +251,6 @@ fun EventDetailMainScreen(
                     eventId = detailEvent.id,
                     onCreatePostButtonClick = onCreatePostButtonClick,
                     snackBarHostState = snackBarHostState,
-                    onShowSnackBar = onShowSnackBar
                 )
             }
         }
