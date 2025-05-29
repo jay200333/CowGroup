@@ -17,6 +17,7 @@ import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.PagingPostResponse
 import com.example.network.model.PagingRegularEventResponse
+import com.example.network.model.PostResponse
 import com.example.network.model.ProfileResponse
 import com.example.network.model.RegularEventMemberResponse
 import com.example.network.model.RegularEventResponse
@@ -30,6 +31,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -137,4 +139,10 @@ interface CowGroupApi {
 
     @DELETE("/posts/{post-id}")
     suspend fun deletePost(@Path("post-id") postId: Int): ApiResponse<Unit>
+
+    @PUT("/posts/{post-id}")
+    suspend fun editPost(@Path("post-id") postId: Int, @Body createPost: CreatePost): ApiResponse<Unit>
+
+    @GET("/posts/{post-id}")
+    suspend fun getPost(@Path("post-id") postId: Int): ApiResponse<PostResponse>
 }

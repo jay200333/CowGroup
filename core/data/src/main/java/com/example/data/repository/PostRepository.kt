@@ -11,4 +11,8 @@ interface PostRepository {
     fun getPagingPosts(pageSize: Int, eventId: Int): Flow<PagingData<Post>>
 
     suspend fun deletePost(postId: Int)
+
+    suspend fun editPost(postId: Int, post: CreatePost)
+
+    suspend fun getPost(postId: Int): CreatePost
 }

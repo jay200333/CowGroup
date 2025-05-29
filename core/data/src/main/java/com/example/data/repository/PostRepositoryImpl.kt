@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.example.data.paging.PostPagingSource
 import com.example.model.CreatePost
 import com.example.model.Post
+import com.example.network.model.toCreatePost
 import com.example.network.retrofit.CowGroupApi
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
@@ -35,9 +36,30 @@ internal class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPost(postId: Int): CreatePost {
+        try {
+            val response = api.getPost(postId)
+            return response.data.toCreatePost()
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     override suspend fun deletePost(postId: Int) {
         try {
             api.deletePost(postId)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun editPost(postId: Int, post: CreatePost) {
+        try {
+            api.editPost(postId, post)
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {
