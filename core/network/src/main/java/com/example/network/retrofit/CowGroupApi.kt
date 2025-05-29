@@ -15,6 +15,7 @@ import com.example.network.model.MyPageResponse
 import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
+import com.example.network.model.PagingPostResponse
 import com.example.network.model.PagingRegularEventResponse
 import com.example.network.model.ProfileResponse
 import com.example.network.model.RegularEventMemberResponse
@@ -130,4 +131,7 @@ interface CowGroupApi {
 
     @POST("/events/{event-id}/posts")
     suspend fun createPost(@Path("event-id") eventId: Int, @Body createPost: CreatePost): ApiResponse<Unit>
+
+    @GET("/events/{event-id}/posts/search")
+    suspend fun getPagingPosts(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingPostResponse>
 }
