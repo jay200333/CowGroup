@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.map
 fun EventDetailBoardScreen(
     viewModel: EventDetailBoardViewModel = hiltViewModel(),
     onCreatePostButtonClick: (Int, Int, Boolean) -> Unit,
+    onEditPostButtonClick: (Int, Int, Boolean) -> Unit,
     eventId: Int,
     snackBarHostState: SnackbarHostState,
 ) {
@@ -55,6 +56,7 @@ fun EventDetailBoardScreen(
 
     EventDetailBoardScreen(
         onCreatePostButtonClick = { onCreatePostButtonClick(eventId, 0, false) },
+        onEditPostButtonClick = onEditPostButtonClick,
         onDeletePostButtonClick = viewModel::deletePost,
         postList = pagingPosts,
         snackBarHostState = snackBarHostState,
@@ -74,6 +76,7 @@ fun EventDetailBoardScreen(
 @Composable
 fun EventDetailBoardScreen(
     onCreatePostButtonClick: () -> Unit,
+    onEditPostButtonClick: (Int, Int, Boolean) -> Unit,
     onDeletePostButtonClick: (Int) -> Unit,
     postList: LazyPagingItems<Post>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -134,7 +137,12 @@ fun EventDetailBoardScreen(
                                 onDeleteButtonClick = {
                                     selectedPostId = post.id
                                     showDeleteDialog = true
-                                })
+                                },
+                                onEditButtonClick = {
+                                    selectedPostId = post.id
+                                    onEditPostButtonClick(0, selectedPostId, true)
+                                }
+                            )
                             HorizontalDivider(
                                 thickness = 5.dp,
                                 color = MaterialTheme.colorScheme.onPrimary

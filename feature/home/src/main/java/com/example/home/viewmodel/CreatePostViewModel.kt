@@ -1,6 +1,5 @@
 package com.example.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,7 +45,47 @@ class CreatePostViewModel @Inject constructor(
         requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
 
     init {
-        Log.d("CreatePostViewModel", "eventId: $eventId, postId: $postId, isEditMode: $isEditMode")
+        checkEditMode()
+        if (isEditMode) {
+            getPost(postId)
+        }
+    }
+
+    private fun checkEditMode() {
+        _uiState.update { state ->
+            state.copy(isEditMode = isEditMode)
+        }
+    }
+
+    private fun getPost(postId: Int) {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                val result = postRepository.getPost(postId)
+                _uiState.update { state ->
+                    state.copy(
+                        post = result,
+                        isLoading = false
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
+                    )
+                }
+            }
+        }
     }
 
     fun createPost() {
@@ -75,6 +114,38 @@ class CreatePostViewModel @Inject constructor(
                     state.copy(
                         isLoading = false,
                         message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
+
+    fun editPost() {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                postRepository.editPost(postId, uiState.value.post)
+                _uiState.update { state ->
+                    state.copy(
+                        isEditPostSuccess = true,
+                        isLoading = false,
+                        message = "게시글 편집이 완료되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다."
                     )
                 }
             }

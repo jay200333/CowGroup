@@ -30,7 +30,12 @@ import com.example.home.R
 import com.example.model.Post
 
 @Composable
-fun EventDetailBoardItem(post: Post, onChatClick: () -> Unit, onDeleteButtonClick: () -> Unit) {
+fun EventDetailBoardItem(
+    post: Post,
+    onChatClick: () -> Unit,
+    onDeleteButtonClick: () -> Unit,
+    onEditButtonClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,7 +69,7 @@ fun EventDetailBoardItem(post: Post, onChatClick: () -> Unit, onDeleteButtonClic
 
             EditDropDownMenu(
                 menuItems = listOf(
-                    DropDownMenuItem("수정하기") { },
+                    DropDownMenuItem("수정하기") { onEditButtonClick() },
                     DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
                 )
             )
@@ -133,6 +138,7 @@ fun EventDetailBoardItemPreview() {
         EventDetailBoardItem(
             onChatClick = {},
             onDeleteButtonClick = {},
+            onEditButtonClick = {},
             post = Post(
                 id = 0,
                 title = "test1",

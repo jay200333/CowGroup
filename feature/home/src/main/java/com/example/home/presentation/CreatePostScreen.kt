@@ -54,7 +54,7 @@ fun CreatePostScreen(
     CreatePostScreen(
         onNavigationButtonClick = onNavigationButtonClick,
         onCreateButtonClick = viewModel::createPost,
-        onEditButtonClick = {},
+        onEditButtonClick = viewModel::editPost,
         updateTitle = viewModel::updateTitle,
         updateContent = viewModel::updateContent,
         isEditMode = uiState.isEditMode,

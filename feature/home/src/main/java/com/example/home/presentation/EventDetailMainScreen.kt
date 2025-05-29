@@ -250,6 +250,7 @@ fun EventDetailMainScreen(
                 1 -> EventDetailBoardScreen(
                     eventId = detailEvent.id,
                     onCreatePostButtonClick = onCreatePostButtonClick,
+                    onEditPostButtonClick = onCreatePostButtonClick,
                     snackBarHostState = snackBarHostState,
                 )
             }
