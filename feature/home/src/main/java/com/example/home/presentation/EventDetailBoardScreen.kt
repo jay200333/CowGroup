@@ -26,16 +26,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.designsystem.theme.CowGroupTheme
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.home.R
 import com.example.home.component.CommentBottomSheetContent
 import com.example.home.component.EventDetailBoardItem
 import com.example.home.viewmodel.EventDetailBoardUIState
 import com.example.home.viewmodel.EventDetailBoardViewModel
+import com.example.model.Post
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun EventDetailBoardScreen(
@@ -46,9 +48,11 @@ fun EventDetailBoardScreen(
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailBoardUIState by viewModel.uiState.collectAsState()
+    val pagingPosts = viewModel.uiState.map { it.postList }.collectAsLazyPagingItems()
 
     EventDetailBoardScreen(
         onCreatePostButtonClick = { onCreatePostButtonClick(eventId, 0, false) },
+        postList = pagingPosts,
         snackBarHostState = snackBarHostState,
     )
     LaunchedEffect(uiState.message) {
@@ -57,11 +61,16 @@ fun EventDetailBoardScreen(
             viewModel.setMessageClear()
         }
     }
+
+    LaunchedEffect(Unit) {
+        pagingPosts.refresh()
+    }
 }
 
 @Composable
 fun EventDetailBoardScreen(
     onCreatePostButtonClick: () -> Unit,
+    postList: LazyPagingItems<Post>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -100,14 +109,19 @@ fun EventDetailBoardScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(5) {
-                    EventDetailBoardItem(onChatClick = {
-                        showBottomSheet = true
-                    })
-                    HorizontalDivider(
-                        thickness = 5.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                items(postList.itemCount) { index ->
+                    val post = postList[index]
+                    if (post != null) {
+                        EventDetailBoardItem(
+                            post = post,
+                            onChatClick = {
+                                showBottomSheet = true
+                            })
+                        HorizontalDivider(
+                            thickness = 5.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             }
         }
@@ -123,15 +137,5 @@ fun EventDetailBoardScreen(
                 //val selectedMeeting = meetings.find{ it.id == selectedItemId}
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EventDetailBoardScreenPreview() {
-    CowGroupTheme {
-        EventDetailBoardScreen(
-            onCreatePostButtonClick = {}
-        )
     }
 }

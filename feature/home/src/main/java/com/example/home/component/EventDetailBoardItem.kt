@@ -1,6 +1,5 @@
 package com.example.home.component
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,18 +18,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
+import com.example.common.DateUtil
+import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
+import com.example.model.Post
 
 @Composable
-fun EventDetailBoardItem(onChatClick: () -> Unit) {
+fun EventDetailBoardItem(post: Post, onChatClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,24 +40,23 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
+            CowGroupAsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(35.dp),
-                model = Uri.parse("https://picsum.photos/200/300"),
-                contentDescription = "profile_img",
-                contentScale = ContentScale.Crop
+                imgUrl = "",
+                contentDescription = "profile_img"
             )
 
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = "홍길동",
+                text = post.userName,
                 style = MaterialTheme.typography.titleMedium,
             )
 
             Text(
                 modifier = Modifier.padding(start = 12.dp),
-                text = "5월 3일 오전 12:36",
+                text = DateUtil.formatIsoToRegularDate(post.dateTime),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -74,7 +73,7 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "게시글 제목",
+            text = post.title,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary
@@ -83,7 +82,7 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "게시글 내용",
+            text = post.content,
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.primaryContainer
         )
@@ -118,7 +117,7 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
             )
             Text(
                 modifier = Modifier.clickable { onChatClick() },
-                text = "2",
+                text = "${post.commentCount}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primaryContainer,
                 fontWeight = FontWeight.SemiBold
@@ -132,7 +131,16 @@ fun EventDetailBoardItem(onChatClick: () -> Unit) {
 fun EventDetailBoardItemPreview() {
     CowGroupTheme {
         EventDetailBoardItem(
-            onChatClick = {}
+            onChatClick = {},
+            post = Post(
+                id = 0,
+                title = "test1",
+                content = "test1",
+                dateTime = "",
+                userName = "manager",
+                commentCount = 5,
+                isRegistrant = false
+            )
         )
     }
 }
