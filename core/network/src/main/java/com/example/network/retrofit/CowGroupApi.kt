@@ -152,4 +152,7 @@ interface CowGroupApi {
 
     @GET("/posts/{post-id}/comments")
     suspend fun getCommentList(@Path("post-id") postId: Int): ApiResponse<CommentResponse>
+
+    @DELETE("/comments/{comment-id}")
+    suspend fun deleteComment(@Path("comment-id") commentId: Int) : ApiResponse<Unit>
 }

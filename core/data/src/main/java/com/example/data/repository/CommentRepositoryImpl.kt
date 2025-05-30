@@ -29,4 +29,14 @@ internal class CommentRepositoryImpl @Inject constructor(
             throw e
         }
     }
+
+    override suspend fun deleteComment(commentId: Int) {
+        try {
+            api.deleteComment(commentId)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 }
