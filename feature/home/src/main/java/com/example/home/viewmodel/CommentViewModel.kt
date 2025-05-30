@@ -96,6 +96,38 @@ class CommentViewModel @Inject constructor(
         }
     }
 
+    fun deleteComment(postId: Int?, commentId: Int) {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                commentRepository.deleteComment(commentId)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "댓글이 삭제되었습니다."
+                    )
+                }
+                getCommentList(postId!!)
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
+
     fun updateComment(comment: String) {
         _uiState.update { state ->
             state.copy(

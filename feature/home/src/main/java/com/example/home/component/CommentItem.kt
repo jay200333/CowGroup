@@ -19,7 +19,7 @@ import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.model.Comment
 
 @Composable
-fun CommentItem(comment: Comment) {
+fun CommentItem(comment: Comment, onDeleteButtonClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,7 +43,7 @@ fun CommentItem(comment: Comment) {
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = comment.daysAgo,//DateUtil.timeAgoFromISOString(comment.daysAgo),
+                text = comment.daysAgo,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -52,7 +52,7 @@ fun CommentItem(comment: Comment) {
 
             EditDropDownMenu(
                 menuItems = listOf(
-                    DropDownMenuItem("삭제하기") { }
+                    DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
                 )
             )
         }
