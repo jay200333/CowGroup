@@ -145,4 +145,7 @@ interface CowGroupApi {
 
     @GET("/posts/{post-id}")
     suspend fun getPost(@Path("post-id") postId: Int): ApiResponse<PostResponse>
+
+    @POST("/posts/{post-id}/comments")
+    suspend fun createComment(@Path("post-id") postId: Int, @Body content: String): ApiResponse<Unit>
 }
