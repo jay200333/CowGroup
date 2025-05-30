@@ -2,11 +2,13 @@ package com.example.home.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,6 +49,9 @@ fun CommentBottomSheetContent(
         updateComment = viewModel::updateComment,
         postComment = viewModel::postComment,
         deleteComment = viewModel::deleteComment,
+        editComment = viewModel::editComment,
+        switchEditMode = viewModel::switchEditMode,
+        cancelEdit = viewModel::cancelEditMode,
         postId = postId,
         comment = uiState.comment,
         commentList = uiState.commentList,
@@ -62,11 +68,14 @@ fun CommentBottomSheetContent(
 
 @Composable
 fun CommentBottomSheetContent(
-    updateComment: (String) -> Unit,
+    updateComment: (TextFieldValue) -> Unit,
     postComment: (Int) -> Unit,
     deleteComment: (Int?, Int) -> Unit,
+    editComment: (Int) -> Unit,
+    switchEditMode: (Int) -> Unit,
+    cancelEdit: () -> Unit,
     postId: Int?,
-    comment: String,
+    comment: TextFieldValue,
     commentList: List<Comment>,
     isEditMode: Boolean,
     sendButtonEnabled: Boolean
@@ -136,6 +145,10 @@ fun CommentBottomSheetContent(
                     onDeleteButtonClick = {
                         showCommentDialog = true
                         selectedCommentId = commentInfo.id
+                    },
+                    onEditButtonClick = {
+                        switchEditMode(commentInfo.id)
+                        selectedCommentId = commentInfo.id
                     }
                 )
             }
@@ -158,6 +171,7 @@ fun CommentBottomSheetContent(
                 textStyle = MaterialTheme.typography.titleMedium,
                 value = comment,
                 onValueChange = updateComment,
+                singleLine = true,
                 label = { Text(text = "댓글을 입력해주세요.") },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
@@ -165,11 +179,37 @@ fun CommentBottomSheetContent(
                 )
             )
 
+            if (isEditMode) {
+                Button(
+                    modifier = Modifier.wrapContentWidth(),
+                    onClick = { cancelEdit() },
+                    shape = RoundedCornerShape(10.dp),
+                    enabled = sendButtonEnabled,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimary),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        text = "취소",
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
             Button(
-                onClick = { postComment(postId!!) },
+                onClick = {
+                    if (isEditMode) {
+                        editComment(selectedCommentId!!)
+                    } else {
+                        postComment(postId!!)
+                    }
+                },
                 shape = RoundedCornerShape(10.dp),
                 enabled = sendButtonEnabled,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp),

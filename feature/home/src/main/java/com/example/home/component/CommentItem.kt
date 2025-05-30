@@ -19,7 +19,7 @@ import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.model.Comment
 
 @Composable
-fun CommentItem(comment: Comment, onDeleteButtonClick: () -> Unit) {
+fun CommentItem(comment: Comment, onDeleteButtonClick: () -> Unit, onEditButtonClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -49,12 +49,14 @@ fun CommentItem(comment: Comment, onDeleteButtonClick: () -> Unit) {
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
-            EditDropDownMenu(
-                menuItems = listOf(
-                    DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
+            if (comment.isRegistrant) {
+                EditDropDownMenu(
+                    menuItems = listOf(
+                        DropDownMenuItem("수정하기") { onEditButtonClick() },
+                        DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
+                    )
                 )
-            )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))

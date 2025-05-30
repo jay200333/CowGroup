@@ -1,5 +1,7 @@
 package com.example.home.viewmodel
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.CommentRepository
@@ -20,7 +22,7 @@ data class CommentUIState(
     val isEditMode: Boolean = false,
     val sendButtonEnabled: Boolean = false,
     val commentList: List<Comment> = emptyList(),
-    val comment: String = "",
+    val comment: TextFieldValue = TextFieldValue(),
     val message: String = ""
 )
 
@@ -48,7 +50,7 @@ class CommentViewModel @Inject constructor(
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
@@ -66,12 +68,12 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                commentRepository.createComment(postId, _uiState.value.comment)
+                commentRepository.createComment(postId, _uiState.value.comment.text)
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
                         sendButtonEnabled = false,
-                        comment = "",
+                        comment = TextFieldValue(text = ""),
                         message = "댓글이 등록되었습니다."
                     )
                 }
@@ -82,7 +84,7 @@ class CommentViewModel @Inject constructor(
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
@@ -114,7 +116,7 @@ class CommentViewModel @Inject constructor(
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
+                        message = errorResponse.errors.message
                     )
                 }
             } catch (e: Exception) {
@@ -128,11 +130,68 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    fun updateComment(comment: String) {
+    fun editComment(commentId: Int) {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                commentRepository.editComment(commentId, _uiState.value.comment.text)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        isEditMode = false,
+                        sendButtonEnabled = false,
+                        comment = TextFieldValue(text = ""),
+                        message = "댓글이 수정되었습니다."
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
+
+    fun switchEditMode(commentId: Int) {
+        val editComment = _uiState.value.commentList.find { it.id == commentId }
+        val content = editComment?.content.orEmpty()
+        _uiState.update { state ->
+            state.copy(
+                isEditMode = true,
+                comment = TextFieldValue(
+                    text = content,
+                    selection = TextRange(content.length)
+                )
+            )
+        }
+    }
+
+    fun cancelEditMode() {
+        _uiState.update { state ->
+            state.copy(
+                isEditMode = false,
+                comment = TextFieldValue(text = "")
+            )
+        }
+    }
+
+    fun updateComment(comment: TextFieldValue) {
         _uiState.update { state ->
             state.copy(
                 comment = comment,
-                sendButtonEnabled = comment.isNotEmpty()
+                sendButtonEnabled = comment.text.isNotBlank()
             )
         }
     }
