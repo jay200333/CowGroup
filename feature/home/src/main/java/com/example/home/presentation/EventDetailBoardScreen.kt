@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -82,10 +81,8 @@ fun EventDetailBoardScreen(
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-
     var showDeleteDialog by remember { mutableStateOf(false) }
-    var selectedPostId by remember { mutableIntStateOf(-1) }
+    var selectedPostId by remember { mutableStateOf<Int?>(null) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -133,14 +130,17 @@ fun EventDetailBoardScreen(
                         if (post != null) {
                             EventDetailBoardItem(
                                 post = post,
-                                onChatClick = { showBottomSheet = true },
+                                onChatClick = {
+                                    selectedPostId = post.id
+                                },
                                 onDeleteButtonClick = {
                                     selectedPostId = post.id
                                     showDeleteDialog = true
                                 },
                                 onEditButtonClick = {
                                     selectedPostId = post.id
-                                    onEditPostButtonClick(0, selectedPostId, true)
+                                    onEditPostButtonClick(0, selectedPostId!!, true)
+                                    selectedPostId = null
                                 }
                             )
                             HorizontalDivider(
@@ -158,8 +158,14 @@ fun EventDetailBoardScreen(
                 title = "게시글 삭제",
                 confirmButtonMessage = "확인",
                 dismissButtonMessage = "취소",
-                onDismissRequest = { showDeleteDialog = false },
-                onDismiss = { showDeleteDialog = false },
+                onDismissRequest = {
+                    showDeleteDialog = false
+                    selectedPostId = null
+                },
+                onDismiss = {
+                    showDeleteDialog = false
+                    selectedPostId = null
+                },
                 content = {
                     Text(
                         text = "정말 게시글을 삭제하시겠습니까?",
@@ -169,21 +175,21 @@ fun EventDetailBoardScreen(
                     )
                 },
                 onConfirm = {
-                    onDeletePostButtonClick(selectedPostId)
+                    onDeletePostButtonClick(selectedPostId!!)
                     showDeleteDialog = false
+                    selectedPostId = null
                 }
             )
         }
-        if (showBottomSheet) {
+        if (selectedPostId != null && !showDeleteDialog) {
             ModalBottomSheet(
                 onDismissRequest = {
-                    showBottomSheet = false
+                    selectedPostId = null
                 },
                 sheetState = sheetState,
                 containerColor = Color.White
             ) {
-                CommentBottomSheetContent()
-                //val selectedMeeting = meetings.find{ it.id == selectedItemId}
+                CommentBottomSheetContent(selectedPostId!!)
             }
         }
     }
