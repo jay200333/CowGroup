@@ -16,17 +16,45 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.designsystem.theme.CowGroupTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.home.viewmodel.CommentUIState
+import com.example.home.viewmodel.CommentViewModel
 
 @Composable
-fun CommentBottomSheetContent() {
+fun CommentBottomSheetContent(
+    viewModel: CommentViewModel = hiltViewModel(),
+    postId: Int?
+) {
+    val uiState: CommentUIState by viewModel.uiState.collectAsState()
+
+    CommentBottomSheetContent(
+        updateComment = viewModel::updateComment,
+        postComment = viewModel::postComment,
+        postId = postId,
+        comment = uiState.comment,
+        isEditMode = uiState.isEditMode,
+        sendButtonEnabled = uiState.sendButtonEnabled
+    )
+}
+
+@Composable
+fun CommentBottomSheetContent(
+    updateComment: (String) -> Unit,
+    postComment: (Int) -> Unit,
+    postId: Int?,
+    comment: String,
+    isEditMode: Boolean,
+    sendButtonEnabled: Boolean
+
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,7 +93,9 @@ fun CommentBottomSheetContent() {
         Spacer(modifier = Modifier.height(18.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -75,22 +105,24 @@ fun CommentBottomSheetContent() {
                     .clip(RoundedCornerShape(10.dp)),
                 shape = RoundedCornerShape(10.dp),
                 textStyle = MaterialTheme.typography.titleMedium,
-                value = "",
-                onValueChange = {},
+                value = comment,
+                onValueChange = updateComment,
                 label = { Text(text = "댓글을 입력해주세요.") },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary)
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary
+                )
             )
 
             Button(
-                onClick = {},
+                onClick = { postComment(postId!!) },
                 shape = RoundedCornerShape(10.dp),
+                enabled = sendButtonEnabled,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp),
-                    text = "전송",
+                    text = if (isEditMode)"수정" else "전송",
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
@@ -100,10 +132,10 @@ fun CommentBottomSheetContent() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CommentBottomSheetContentPreview() {
-    CowGroupTheme {
-        CommentBottomSheetContent()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CommentBottomSheetContentPreview() {
+//    CowGroupTheme {
+//        CommentBottomSheetContent()
+//    }
+//}

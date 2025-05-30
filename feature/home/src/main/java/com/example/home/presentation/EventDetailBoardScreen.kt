@@ -189,7 +189,7 @@ fun EventDetailBoardScreen(
                 sheetState = sheetState,
                 containerColor = Color.White
             ) {
-                CommentBottomSheetContent(selectedPostId!!)
+                CommentBottomSheetContent(postId = selectedPostId!!)
             }
         }
     }
