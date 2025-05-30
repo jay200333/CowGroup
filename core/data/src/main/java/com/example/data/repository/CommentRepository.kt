@@ -8,4 +8,6 @@ interface CommentRepository {
     suspend fun getCommentList(postId: Int): List<Comment>
 
     suspend fun deleteComment(commentId: Int)
+
+    suspend fun editComment(commentId: Int, content: String)
 }

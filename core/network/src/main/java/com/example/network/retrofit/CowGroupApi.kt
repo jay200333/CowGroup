@@ -155,4 +155,7 @@ interface CowGroupApi {
 
     @DELETE("/comments/{comment-id}")
     suspend fun deleteComment(@Path("comment-id") commentId: Int) : ApiResponse<Unit>
+
+    @PUT("/comments/{comment-id}")
+    suspend fun editComment(@Path("comment-id") commentId: Int, @Body content: String): ApiResponse<Unit>
 }

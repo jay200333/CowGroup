@@ -39,4 +39,14 @@ internal class CommentRepositoryImpl @Inject constructor(
             throw e
         }
     }
+
+    override suspend fun editComment(commentId: Int, content: String) {
+        try {
+            api.editComment(commentId, content)
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 }
