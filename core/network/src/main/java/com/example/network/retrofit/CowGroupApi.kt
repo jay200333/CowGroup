@@ -9,6 +9,7 @@ import com.example.model.Profile
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckVerificationResponse
+import com.example.network.model.CommentResponse
 import com.example.network.model.DetailEventResponse
 import com.example.network.model.MemberResponse
 import com.example.network.model.MyPageResponse
@@ -148,4 +149,7 @@ interface CowGroupApi {
 
     @POST("/posts/{post-id}/comments")
     suspend fun createComment(@Path("post-id") postId: Int, @Body content: String): ApiResponse<Unit>
+
+    @GET("/posts/{post-id}/comments")
+    suspend fun getCommentList(@Path("post-id") postId: Int): ApiResponse<CommentResponse>
 }
