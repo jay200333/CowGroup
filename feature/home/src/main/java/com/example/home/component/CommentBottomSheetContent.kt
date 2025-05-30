@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.home.viewmodel.CommentUIState
 import com.example.home.viewmodel.CommentViewModel
+import com.example.model.Comment
 
 @Composable
 fun CommentBottomSheetContent(
@@ -40,9 +42,16 @@ fun CommentBottomSheetContent(
         postComment = viewModel::postComment,
         postId = postId,
         comment = uiState.comment,
+        commentList = uiState.commentList,
         isEditMode = uiState.isEditMode,
         sendButtonEnabled = uiState.sendButtonEnabled
     )
+
+    LaunchedEffect(postId) {
+        if (postId != null) {
+            viewModel.getCommentList(postId)
+        }
+    }
 }
 
 @Composable
@@ -51,6 +60,7 @@ fun CommentBottomSheetContent(
     postComment: (Int) -> Unit,
     postId: Int?,
     comment: String,
+    commentList: List<Comment>,
     isEditMode: Boolean,
     sendButtonEnabled: Boolean
 
@@ -73,7 +83,7 @@ fun CommentBottomSheetContent(
             )
 
             Text(
-                text = "2",
+                text = "${commentList.size}",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
@@ -85,8 +95,9 @@ fun CommentBottomSheetContent(
             modifier = Modifier.height(200.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            items(5) {
-                CommentItem()
+            items(commentList.size) { index ->
+                val commentInfo = commentList[index]
+                CommentItem(commentInfo)
             }
         }
 

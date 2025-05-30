@@ -31,6 +31,37 @@ class CommentViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CommentUIState())
     val uiState: StateFlow<CommentUIState> = _uiState.asStateFlow()
 
+    fun getCommentList(postId: Int) {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                val result = commentRepository.getCommentList(postId)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        commentList = result
+                    )
+                }
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
+
     fun postComment(postId: Int) {
         viewModelScope.launch {
             _uiState.update { state -> state.copy(isLoading = true, message = "") }
@@ -44,6 +75,7 @@ class CommentViewModel @Inject constructor(
                         message = "댓글이 등록되었습니다."
                     )
                 }
+                getCommentList(postId)
             } catch (e: HttpException) {
                 val response = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
