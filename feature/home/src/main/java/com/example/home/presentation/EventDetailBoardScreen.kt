@@ -1,6 +1,7 @@
 package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,9 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,19 +112,38 @@ fun EventDetailBoardScreen(
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            if (postList.itemCount == 0) {
-                Text(
+        if (postList.itemCount == 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "등록된 게시글이 없습니다.",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondary
-                )
-            } else {
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 20.dp),
+                        text = "등록된 게시글이 없어요.",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "모임의 첫 게시글을 작성해 보세요.",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -152,45 +174,45 @@ fun EventDetailBoardScreen(
                 }
             }
         }
+    }
 
-        if (showDeleteDialog) {
-            CowGroupDialog(
-                title = "게시글 삭제",
-                confirmButtonMessage = "확인",
-                dismissButtonMessage = "취소",
-                onDismissRequest = {
-                    showDeleteDialog = false
-                    selectedPostId = null
-                },
-                onDismiss = {
-                    showDeleteDialog = false
-                    selectedPostId = null
-                },
-                content = {
-                    Text(
-                        text = "정말 게시글을 삭제하시겠습니까?",
-                        modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
-                },
-                onConfirm = {
-                    onDeletePostButtonClick(selectedPostId!!)
-                    showDeleteDialog = false
-                    selectedPostId = null
-                }
-            )
-        }
-        if (selectedPostId != null && !showDeleteDialog) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    selectedPostId = null
-                },
-                sheetState = sheetState,
-                containerColor = Color.White
-            ) {
-                CommentBottomSheetContent(postId = selectedPostId!!)
+    if (showDeleteDialog) {
+        CowGroupDialog(
+            title = "게시글 삭제",
+            confirmButtonMessage = "확인",
+            dismissButtonMessage = "취소",
+            onDismissRequest = {
+                showDeleteDialog = false
+                selectedPostId = null
+            },
+            onDismiss = {
+                showDeleteDialog = false
+                selectedPostId = null
+            },
+            content = {
+                Text(
+                    text = "정말 게시글을 삭제하시겠습니까?",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            },
+            onConfirm = {
+                onDeletePostButtonClick(selectedPostId!!)
+                showDeleteDialog = false
+                selectedPostId = null
             }
+        )
+    }
+    if (selectedPostId != null && !showDeleteDialog) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                selectedPostId = null
+            },
+            sheetState = sheetState,
+            containerColor = Color.White
+        ) {
+            CommentBottomSheetContent(postId = selectedPostId!!)
         }
     }
 }
