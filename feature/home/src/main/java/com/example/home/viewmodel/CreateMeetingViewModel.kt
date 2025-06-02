@@ -81,7 +81,7 @@ class CreateMeetingViewModel @Inject constructor(
                 _createMeetingUIState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "모임 등록이 실패하였습니다."//errorResponse.errors.message //"모임 등록이 실패하였습니다."
+                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
                     )
                 }
             } catch (e: Exception) {

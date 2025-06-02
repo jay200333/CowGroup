@@ -1,6 +1,7 @@
 package com.example.network.retrofit
 
 import com.example.model.CreateMeeting
+import com.example.model.CreatePost
 import com.example.model.CreateRegularMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
@@ -8,13 +9,16 @@ import com.example.model.Profile
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckVerificationResponse
+import com.example.network.model.CommentResponse
 import com.example.network.model.DetailEventResponse
 import com.example.network.model.MemberResponse
 import com.example.network.model.MyPageResponse
 import com.example.network.model.PagingBookmarkEventResponse
 import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
+import com.example.network.model.PagingPostResponse
 import com.example.network.model.PagingRegularEventResponse
+import com.example.network.model.PostResponse
 import com.example.network.model.ProfileResponse
 import com.example.network.model.RegularEventMemberResponse
 import com.example.network.model.RegularEventResponse
@@ -28,6 +32,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -126,4 +131,31 @@ interface CowGroupApi {
 
     @GET("/regular/{regular-id}/participants")
     suspend fun getRegularMemberList(@Path("regular-id") regularId: Int): ApiResponse<RegularEventMemberResponse>
+
+    @POST("/events/{event-id}/posts")
+    suspend fun createPost(@Path("event-id") eventId: Int, @Body createPost: CreatePost): ApiResponse<Unit>
+
+    @GET("/events/{event-id}/posts/search")
+    suspend fun getPagingPosts(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingPostResponse>
+
+    @DELETE("/posts/{post-id}")
+    suspend fun deletePost(@Path("post-id") postId: Int): ApiResponse<Unit>
+
+    @PUT("/posts/{post-id}")
+    suspend fun editPost(@Path("post-id") postId: Int, @Body createPost: CreatePost): ApiResponse<Unit>
+
+    @GET("/posts/{post-id}")
+    suspend fun getPost(@Path("post-id") postId: Int): ApiResponse<PostResponse>
+
+    @POST("/posts/{post-id}/comments")
+    suspend fun createComment(@Path("post-id") postId: Int, @Body content: String): ApiResponse<Unit>
+
+    @GET("/posts/{post-id}/comments")
+    suspend fun getCommentList(@Path("post-id") postId: Int): ApiResponse<CommentResponse>
+
+    @DELETE("/comments/{comment-id}")
+    suspend fun deleteComment(@Path("comment-id") commentId: Int) : ApiResponse<Unit>
+
+    @PUT("/comments/{comment-id}")
+    suspend fun editComment(@Path("comment-id") commentId: Int, @Body content: String): ApiResponse<Unit>
 }

@@ -1,8 +1,10 @@
 package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,49 +25,67 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.designsystem.theme.CowGroupTheme
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.designsystem.component.CowGroupDialog
 import com.example.home.R
 import com.example.home.component.CommentBottomSheetContent
 import com.example.home.component.EventDetailBoardItem
 import com.example.home.viewmodel.EventDetailBoardUIState
 import com.example.home.viewmodel.EventDetailBoardViewModel
+import com.example.model.Post
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun EventDetailBoardScreen(
     viewModel: EventDetailBoardViewModel = hiltViewModel(),
     onCreatePostButtonClick: (Int, Int, Boolean) -> Unit,
+    onEditPostButtonClick: (Int, Int, Boolean) -> Unit,
     eventId: Int,
     snackBarHostState: SnackbarHostState,
-    onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: EventDetailBoardUIState by viewModel.uiState.collectAsState()
+    val pagingPosts = viewModel.uiState.map { it.postList }.collectAsLazyPagingItems()
 
     EventDetailBoardScreen(
         onCreatePostButtonClick = { onCreatePostButtonClick(eventId, 0, false) },
+        onEditPostButtonClick = onEditPostButtonClick,
+        onDeletePostButtonClick = viewModel::deletePost,
+        postList = pagingPosts,
         snackBarHostState = snackBarHostState,
     )
     LaunchedEffect(uiState.message) {
         if (uiState.message.isNotEmpty()) {
-            onShowSnackBar(uiState.message)
             viewModel.setMessageClear()
+            pagingPosts.refresh()
         }
+    }
+
+    LaunchedEffect(Unit) {
+        pagingPosts.refresh()
     }
 }
 
 @Composable
 fun EventDetailBoardScreen(
     onCreatePostButtonClick: () -> Unit,
+    onEditPostButtonClick: (Int, Int, Boolean) -> Unit,
+    onDeletePostButtonClick: (Int) -> Unit,
+    postList: LazyPagingItems<Post>,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedPostId by remember { mutableStateOf<Int?>(null) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -92,46 +112,107 @@ fun EventDetailBoardScreen(
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+        if (postList.itemCount == 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
             ) {
-                items(5) {
-                    EventDetailBoardItem(onChatClick = {
-                        showBottomSheet = true
-                    })
-                    HorizontalDivider(
-                        thickness = 5.dp,
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 20.dp),
+                        text = "등록된 게시글이 없어요.",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "모임의 첫 게시글을 작성해 보세요.",
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
-        }
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState,
-                containerColor = Color.White
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CommentBottomSheetContent()
-                //val selectedMeeting = meetings.find{ it.id == selectedItemId}
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(postList.itemCount) { index ->
+                        val post = postList[index]
+                        if (post != null) {
+                            EventDetailBoardItem(
+                                post = post,
+                                onChatClick = {
+                                    selectedPostId = post.id
+                                },
+                                onDeleteButtonClick = {
+                                    selectedPostId = post.id
+                                    showDeleteDialog = true
+                                },
+                                onEditButtonClick = {
+                                    selectedPostId = post.id
+                                    onEditPostButtonClick(0, selectedPostId!!, true)
+                                    selectedPostId = null
+                                }
+                            )
+                            HorizontalDivider(
+                                thickness = 5.dp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                }
             }
         }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun EventDetailBoardScreenPreview() {
-    CowGroupTheme {
-        EventDetailBoardScreen(
-            onCreatePostButtonClick = {}
+    if (showDeleteDialog) {
+        CowGroupDialog(
+            title = "게시글 삭제",
+            confirmButtonMessage = "확인",
+            dismissButtonMessage = "취소",
+            onDismissRequest = {
+                showDeleteDialog = false
+                selectedPostId = null
+            },
+            onDismiss = {
+                showDeleteDialog = false
+                selectedPostId = null
+            },
+            content = {
+                Text(
+                    text = "정말 게시글을 삭제하시겠습니까?",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            },
+            onConfirm = {
+                onDeletePostButtonClick(selectedPostId!!)
+                showDeleteDialog = false
+                selectedPostId = null
+            }
         )
+    }
+    if (selectedPostId != null && !showDeleteDialog) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                selectedPostId = null
+            },
+            sheetState = sheetState,
+            containerColor = Color.White
+        ) {
+            CommentBottomSheetContent(postId = selectedPostId!!)
+        }
     }
 }

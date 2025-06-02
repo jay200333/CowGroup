@@ -1,10 +1,11 @@
 package com.example.home.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.repository.PostRepository
-import com.example.model.CreatePost
+import com.example.data.repository.CommentRepository
+import com.example.model.Comment
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,56 +17,31 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
-data class CreatePostUIState(
-    val isEditMode: Boolean = false,
+data class CommentUIState(
     val isLoading: Boolean = false,
-    val post: CreatePost = CreatePost(
-        subject = "",
-        content = ""
-    ),
-    val createButtonEnabled: Boolean = false,
-    val isCreatePostSuccess: Boolean = false,
-    val isEditPostSuccess: Boolean = false,
+    val isEditMode: Boolean = false,
+    val sendButtonEnabled: Boolean = false,
+    val commentList: List<Comment> = emptyList(),
+    val comment: TextFieldValue = TextFieldValue(),
     val message: String = ""
 )
 
 @HiltViewModel
-class CreatePostViewModel @Inject constructor(
-    private val postRepository: PostRepository,
-    savedStateHandle: SavedStateHandle
+class CommentViewModel @Inject constructor(
+    private val commentRepository: CommentRepository
 ) : ViewModel() {
-    private val _uiState: MutableStateFlow<CreatePostUIState> =
-        MutableStateFlow(CreatePostUIState())
-    val uiState: StateFlow<CreatePostUIState> = _uiState.asStateFlow()
-    private val eventId: Int =
-        requireNotNull(savedStateHandle.get<Int>("eventId")) { "eventId is required." }
-    private val postId: Int =
-        requireNotNull(savedStateHandle.get<Int>("postId")) { "postId is required." }
-    private val isEditMode: Boolean =
-        requireNotNull(savedStateHandle.get<Boolean>("isEditMode")) { "isEditMode is required." }
+    private val _uiState = MutableStateFlow(CommentUIState())
+    val uiState: StateFlow<CommentUIState> = _uiState.asStateFlow()
 
-    init {
-        checkEditMode()
-        if (isEditMode) {
-            getPost(postId)
-        }
-    }
-
-    private fun checkEditMode() {
-        _uiState.update { state ->
-            state.copy(isEditMode = isEditMode)
-        }
-    }
-
-    private fun getPost(postId: Int) {
+    fun getCommentList(postId: Int) {
         viewModelScope.launch {
             _uiState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                val result = postRepository.getPost(postId)
+                val result = commentRepository.getCommentList(postId)
                 _uiState.update { state ->
                     state.copy(
-                        post = result,
-                        isLoading = false
+                        isLoading = false,
+                        commentList = result
                     )
                 }
             } catch (e: HttpException) {
@@ -75,38 +51,6 @@ class CreatePostViewModel @Inject constructor(
                     state.copy(
                         isLoading = false,
                         message = errorResponse.errors.message
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update { state ->
-                    state.copy(
-                        isLoading = false,
-                        message = "알 수 없는 오류가 발생했습니다."
-                    )
-                }
-            }
-        }
-    }
-
-    fun createPost() {
-        viewModelScope.launch {
-            _uiState.update { state -> state.copy(isLoading = true, message = "") }
-            try {
-                postRepository.createPost(eventId, uiState.value.post)
-                _uiState.update { state ->
-                    state.copy(
-                        isCreatePostSuccess = true,
-                        isLoading = false,
-                        message = "게시글 생성이 완료되었습니다."
-                    )
-                }
-            } catch (e: HttpException) {
-                val response = e.response()?.errorBody()?.string()
-                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
-                _uiState.update { state ->
-                    state.copy(
-                        isLoading = false,
-                        message = errorResponse.errors.message //"모임 등록이 실패하였습니다."
                     )
                 }
             } catch (e: Exception) {
@@ -120,16 +64,84 @@ class CreatePostViewModel @Inject constructor(
         }
     }
 
-    fun editPost() {
+    fun postComment(postId: Int) {
         viewModelScope.launch {
             _uiState.update { state -> state.copy(isLoading = true, message = "") }
             try {
-                postRepository.editPost(postId, uiState.value.post)
+                commentRepository.createComment(postId, _uiState.value.comment.text)
                 _uiState.update { state ->
                     state.copy(
-                        isEditPostSuccess = true,
                         isLoading = false,
-                        message = "게시글 편집이 완료되었습니다."
+                        sendButtonEnabled = false,
+                        comment = TextFieldValue(text = ""),
+                        message = "댓글이 등록되었습니다."
+                    )
+                }
+                getCommentList(postId)
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteComment(postId: Int?, commentId: Int) {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                commentRepository.deleteComment(commentId)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "댓글이 삭제되었습니다."
+                    )
+                }
+                getCommentList(postId!!)
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(response, ErrorResponse::class.java)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = errorResponse.errors.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        message = "알 수 없는 오류가 발생했습니다.",
+                    )
+                }
+            }
+        }
+    }
+
+    fun editComment(commentId: Int) {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isLoading = true, message = "") }
+            try {
+                commentRepository.editComment(commentId, _uiState.value.comment.text)
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        isEditMode = false,
+                        sendButtonEnabled = false,
+                        comment = TextFieldValue(text = ""),
+                        message = "댓글이 수정되었습니다."
                     )
                 }
             } catch (e: HttpException) {
@@ -145,42 +157,42 @@ class CreatePostViewModel @Inject constructor(
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
-                        message = "알 수 없는 오류가 발생했습니다."
+                        message = "알 수 없는 오류가 발생했습니다.",
                     )
                 }
             }
         }
     }
 
-    fun updateTitle(title: String) {
+    fun switchEditMode(commentId: Int) {
+        val editComment = _uiState.value.commentList.find { it.id == commentId }
+        val content = editComment?.content.orEmpty()
         _uiState.update { state ->
-            val updatedPost = state.post.copy(subject = title)
             state.copy(
-                post = updatedPost,
-                createButtonEnabled = createPostCondition(state.copy(post = updatedPost))
+                isEditMode = true,
+                comment = TextFieldValue(
+                    text = content,
+                    selection = TextRange(content.length)
+                )
             )
         }
     }
 
-    fun updateContent(content: String) {
+    fun cancelEditMode() {
         _uiState.update { state ->
-            val updatedPost = state.post.copy(content = content)
             state.copy(
-                post = updatedPost,
-                createButtonEnabled = createPostCondition(state.copy(post = updatedPost))
+                isEditMode = false,
+                comment = TextFieldValue(text = "")
             )
         }
     }
 
-
-    fun setMessageClear() {
+    fun updateComment(comment: TextFieldValue) {
         _uiState.update { state ->
-            state.copy(message = "")
+            state.copy(
+                comment = comment,
+                sendButtonEnabled = comment.text.isNotBlank()
+            )
         }
     }
-
-    private fun createPostCondition(
-        state: CreatePostUIState
-    ): Boolean = state.post.subject.isNotEmpty() && state.post.content.isNotEmpty()
-
 }

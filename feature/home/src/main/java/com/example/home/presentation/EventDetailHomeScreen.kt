@@ -43,11 +43,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.component.CowGroupAsyncImage
+import com.example.designsystem.component.CowGroupDialog
 import com.example.designsystem.theme.CowGroupTheme
 import com.example.home.R
 import com.example.home.component.RegularMeetingBottomSheetContent
@@ -103,7 +105,30 @@ fun EventDetailHomeScreen(
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     var selectedEvent by remember { mutableStateOf<RegularEvent?>(null) }
+
+    if (showDeleteDialog) {
+        CowGroupDialog(
+            title = "정기모임 삭제",
+            confirmButtonMessage = "확인",
+            dismissButtonMessage = "취소",
+            onDismissRequest = { showDeleteDialog = false },
+            onDismiss = { showDeleteDialog = false },
+            content = {
+                Text(
+                    text = "정기모임을 삭제하시겠습니까?",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            },
+            onConfirm = {
+                onDeleteRegularMeetingButtonClick(selectedEvent!!.id)
+                showDeleteDialog = false
+            }
+        )
+    }
 
     if (showBottomSheet && selectedEvent != null) {
         ModalBottomSheet(
@@ -129,8 +154,8 @@ fun EventDetailHomeScreen(
                     showBottomSheet = false
                 },
                 onDeleteButtonClick = {
-                    onDeleteRegularMeetingButtonClick(selectedEvent!!.id)
                     showBottomSheet = false
+                    showDeleteDialog = true
                 },
                 onMemberButtonClick = {
                     onRegularMemberButtonClick(selectedEvent!!.id)

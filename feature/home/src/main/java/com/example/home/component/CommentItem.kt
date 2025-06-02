@@ -1,6 +1,5 @@
 package com.example.home.component
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import com.example.designsystem.component.CowGroupAsyncImage
+import com.example.model.Comment
 
 @Composable
-fun CommentItem() {
+fun CommentItem(comment: Comment, onDeleteButtonClick: () -> Unit, onEditButtonClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,40 +28,41 @@ fun CommentItem() {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
+            CowGroupAsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(35.dp),
-                model = Uri.parse("https://picsum.photos/200/300"),
+                imgUrl = "",
                 contentDescription = "profile_img",
-                contentScale = ContentScale.Crop
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "홍길동",
+                text = comment.username,
                 style = MaterialTheme.typography.titleMedium,
             )
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "1일 전",
+                text = comment.daysAgo,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
-            EditDropDownMenu(
-                menuItems = listOf(
-                    DropDownMenuItem("삭제하기") { }
+            if (comment.isRegistrant) {
+                EditDropDownMenu(
+                    menuItems = listOf(
+                        DropDownMenuItem("수정하기") { onEditButtonClick() },
+                        DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
+                    )
                 )
-            )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "반갑습니다.",
+            text = comment.content,
             style = MaterialTheme.typography.titleSmall,
         )
     }

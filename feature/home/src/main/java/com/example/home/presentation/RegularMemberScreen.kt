@@ -1,6 +1,7 @@
 package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -21,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,7 +56,7 @@ fun RegularMemberScreen(
         }
     }
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.getMemberList()
     }
 }
@@ -81,17 +84,44 @@ fun RegularMemberScreen(
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(regularMember.memberInfoList.size) { index ->
-                    val memberInfo = regularMember.memberInfoList[index]
-                    MemberItem(memberInfo)
+        if (regularMember.memberInfoList.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 20.dp),
+                        text = "아직 참가한 인원이 없어요.",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "정기 모임의 첫 번째 인원이 되어보세요.",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    items(regularMember.memberInfoList.size) { index ->
+                        val memberInfo = regularMember.memberInfoList[index]
+                        MemberItem(memberInfo)
+                    }
                 }
             }
         }
