@@ -2,15 +2,18 @@ package com.example.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Tab
+import androidx.compose.material3.Tab
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SnackbarHost
@@ -23,16 +26,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.example.data.model.SearchHistory
 import com.example.designsystem.component.PagingMeetingItem
+import com.example.home.component.CategorySelector
+import com.example.home.component.CowGroupSortDropdownMenu
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
+import com.example.model.Category
 import com.example.model.Event
 import kotlinx.coroutines.flow.map
 
@@ -115,12 +123,17 @@ fun HomeExploreScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onCreateMeetingClick) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Fab_HomeScreen",
-                )
-            }
+            ExtendedFloatingActionButton(
+                onClick = onCreateMeetingClick,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        tint = Color.White,
+                        contentDescription = "Fab_HomeScreen"
+                    )
+                },
+                text = { Text(text = "모임 등록", color = Color.White, fontSize = 18.sp) }
+            )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
@@ -139,7 +152,23 @@ fun HomeExploreScreen(
                     )
                 }
             }
-            Text(text = "${eventList.itemCount}")
+            CategorySelector(
+                selectedCategory = Category.PET,
+                onCategoryClick = {}
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ) {
+                Text(
+                    text = "총 ${eventList.itemCount}개",
+                    style = MaterialTheme.typography.titleSmall
+                )
+                CowGroupSortDropdownMenu()
+            }
             if (eventList.itemCount != 0) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
