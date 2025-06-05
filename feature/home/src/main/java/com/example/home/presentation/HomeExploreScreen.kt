@@ -68,6 +68,7 @@ fun HomeExploreScreen(
         onSearchButtonClick = viewModel::insertQuery,
         onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         onLogoutButtonClick = viewModel::logout,
+        updateCategory = viewModel::updateCategory,
         onEventClick = { eventId -> onEventClick(eventId) },
         onCreateMeetingClick = { onCreateMeetingClick(0, false) },
         onBookMarkClick = { eventId, isBookmarked ->
@@ -78,6 +79,7 @@ fun HomeExploreScreen(
         },
         eventList = pagingEvents,
         recentSearches = recentSearches,
+        selectedCategory = uiState.selectedCategory,
         snackBarHostState = snackBarHostState,
     )
 
@@ -107,8 +109,10 @@ fun HomeExploreScreen(
     onEventClick: (Int) -> Unit,
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
+    updateCategory: (Category?) -> Unit,
     eventList: LazyPagingItems<Event>,
     recentSearches: List<SearchHistory>,
+    selectedCategory: Category?,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val listState = rememberLazyListState()
@@ -155,8 +159,8 @@ fun HomeExploreScreen(
                 }
             }
             CategorySelector(
-                selectedCategory = Category.PET,
-                onCategoryClick = {}
+                selectedCategory = selectedCategory,
+                onCategoryClick = updateCategory
             )
             Row(
                 modifier = Modifier
