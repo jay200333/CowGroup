@@ -10,7 +10,6 @@ fun HomeMainScreen(
     onCreateMeetingClick: (Int, Boolean) -> Unit,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    twoClick: (Int) -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit,
 ) {
@@ -27,7 +26,7 @@ fun HomeMainScreen(
         1 -> HomeCalendarScreen(
             selectedTabIndex = selectedTabIndex,
             onTabSelected = onTabSelected,
-            twoClick = twoClick
+            onCreateMeetingClick = onCreateMeetingClick,
         )
     }
 }
