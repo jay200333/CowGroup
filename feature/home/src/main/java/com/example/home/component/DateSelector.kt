@@ -41,7 +41,7 @@ fun DateSelector(
                 date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
             val dayOfMonth = date.dayOfMonth
             Button(
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier.width(45.dp),
                 onClick = { onDateClick(date) },
                 border = BorderStroke(
                     width = 1.dp,
