@@ -21,7 +21,7 @@ import com.example.model.Category
 @Composable
 fun CategorySelector(
     selectedCategory: Category?,
-    onCategoryClick: (Category) -> Unit
+    onCategoryClick: (Category?) -> Unit
 ) {
     LazyRow(
         modifier = Modifier
@@ -33,7 +33,7 @@ fun CategorySelector(
             val isSelected = selectedCategory == category
 
             Button(
-                onClick = { onCategoryClick(category) },
+                onClick = { onCategoryClick(if (isSelected) null else category) },
                 border = BorderStroke(
                     width = 1.dp,
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
