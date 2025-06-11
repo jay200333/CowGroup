@@ -1,6 +1,5 @@
 package com.example.mypage.presentation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,15 +7,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,17 +24,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.component.CowGroupAsyncImage
+import com.example.designsystem.theme.CowGroupTheme
 import com.example.model.MyPageInfo
 import com.example.model.MyPageUserInfo
 import com.example.mypage.R
-import com.example.mypage.component.MeetingItem
 import com.example.mypage.viewmodel.MyPageUIState
 import com.example.mypage.viewmodel.MyPageViewModel
 
@@ -93,188 +91,203 @@ fun MyPageScreen(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "마이 페이지") },
-                actions = {
-                    IconButton(onClick = onEditProfileButtonClick) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "top_bar_icon_edit"
-                        )
-                    }
-
-                    IconButton(onClick = onSettingButtonClick) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "top_bar_icon_setting",
-                        )
-                    }
-                },
-            )
-        },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                .padding(innerPadding).padding(top = 60.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                CowGroupAsyncImage(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(64.dp),
+                    imgUrl = "",
+                    contentDescription = "img_myPage"
+                )
+                Column(modifier = Modifier.padding(start = 12.dp)) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        text = "홍길동",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "기본 정보 보기",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    painter = painterResource(R.drawable.baseline_keyboard_arrow_right_24),
+                    contentDescription = "icon_user_info"
+                )
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 10.dp,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "내 모임 활동",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
                 Column(
-                    modifier = Modifier.padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    modifier = Modifier.padding(top = 36.dp),
+                    verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "닉네임",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                        Icon(
+                            painter = painterResource(R.drawable.outline_local_offer_24),
+                            contentDescription = "icon_join_meeting"
                         )
                         Text(
-                            text = myPageInfo.userInfo.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Text(
-                            text = "성별",
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = "가입한 모임 목록",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = "12개",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                         Icon(
+                            painter = painterResource(R.drawable.baseline_keyboard_arrow_right_24),
+                            contentDescription = "icon_user_info"
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(com.example.cowgroup.core.designsystem.R.drawable.baseline_bookmark_border_24),
+                            contentDescription = "icon_join_meeting"
+                        )
+                        Text(
                             modifier = Modifier.padding(start = 8.dp),
-                            painter = painterResource(
-                                if (myPageInfo.userInfo.gender == "MALE") R.drawable.baseline_male_24 else R.drawable.baseline_female_24,
-                            ),
-                            contentDescription = "gender_icon",
-                            tint = if (myPageInfo.userInfo.gender == "MALE") Color(0XFF2E27F9) else Color(
-                                0XFFF674D6
-                            ),
+                            text = "관심 모임 목록",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = "2개",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_keyboard_arrow_right_24),
+                            contentDescription = "icon_user_info"
                         )
                     }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_calendar_month_24),
+                            contentDescription = "icon_join_meeting"
+                        )
                         Text(
-                            text = "지역",
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = "참여 일정 캘린더 보기",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.primary
                         )
-                        Text(
-                            text = myPageInfo.userInfo.location,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            text = "생일",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = myPageInfo.userInfo.birth,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            text = "MBTI",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = myPageInfo.userInfo.mbti,
-                            style = MaterialTheme.typography.bodyLarge
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_keyboard_arrow_right_24),
+                            contentDescription = "icon_user_info"
                         )
                     }
-                    Text(
-                        text = "소개",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = myPageInfo.userInfo.introduction,
-                        style = MaterialTheme.typography.bodySmall
-                    )
                 }
-            }
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onTertiary
+                )
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-            ) {
+                Text(
+                    text = "내 활동",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(top = 36.dp),
+                    verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "icon_join_meeting"
+                        )
                         Text(
-                            text = "참여 모임",
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = "작성한 게시글 목록",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.primary
                         )
-                        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                        Text(
-                            modifier = Modifier.clickable { onFullMeetingButtonClick(false) },
-                            text = "전체 보기 >",
-                            style = MaterialTheme.typography.titleSmall,
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_keyboard_arrow_right_24),
+                            contentDescription = "icon_user_info"
                         )
                     }
 
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(myPageInfo.eventList.size) { index ->
-                            val event = myPageInfo.eventList[index]
-                            MeetingItem(event, onBookMarkClick, onEventClick)
-                        }
-                    }
-                }
-            }
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_chat_bubble_outline_24),
+                            contentDescription = "icon_join_meeting"
+                        )
                         Text(
-                            text = "북마크 모임",
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = "작성한 댓글 목록",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.primary
                         )
-                        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                        Text(
-                            modifier = Modifier.clickable { onFullMeetingButtonClick(true) },
-                            text = "전체 보기 >",
-                            style = MaterialTheme.typography.titleSmall,
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_keyboard_arrow_right_24),
+                            contentDescription = "icon_user_info"
                         )
-                    }
-
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(myPageInfo.bookmarkList.size) { index ->
-                            val event = myPageInfo.bookmarkList[index]
-                            MeetingItem(event, onBookMarkClick, onEventClick)
-                        }
                     }
                 }
             }
@@ -285,23 +298,25 @@ fun MyPageScreen(
 @Preview(showBackground = true)
 @Composable
 fun MyPageScreenPreview() {
-    MyPageScreen(
-        onEventClick = {},
-        onEditProfileButtonClick = {},
-        onSettingButtonClick = {},
-        onFullMeetingButtonClick = {},
-        myPageInfo = MyPageInfo(
-            userInfo = MyPageUserInfo(
-                name = " 안드로이드",
-                gender = "MALE",
-                birth = "1997-06-25",
-                mbti = "ISFP",
-                location = "서울",
-                introduction = "안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이"
+    CowGroupTheme {
+        MyPageScreen(
+            onEventClick = {},
+            onEditProfileButtonClick = {},
+            onSettingButtonClick = {},
+            onFullMeetingButtonClick = {},
+            myPageInfo = MyPageInfo(
+                userInfo = MyPageUserInfo(
+                    name = " 안드로이드",
+                    gender = "MALE",
+                    birth = "1997-06-25",
+                    mbti = "ISFP",
+                    location = "서울",
+                    introduction = "안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이드 안드로이"
+                ),
+                eventList = emptyList(),
+                bookmarkList = emptyList()
             ),
-            eventList = emptyList(),
-            bookmarkList = emptyList()
-        ),
-        onBookMarkClick = { _, _ -> },
-    )
+            onBookMarkClick = { _, _ -> },
+        )
+    }
 }

@@ -21,14 +21,14 @@ data object HomeScreenRoute : ScreenRouter(
 
 @Serializable
 data object MapScreenRoute : ScreenRouter(
-    R.drawable.baseline_map_24,
-    "지도",
+    R.drawable.baseline_chat_bubble_outline_24,
+    "채팅",
     "com.example.navigation.MapScreenRoute",
 )
 
 @Serializable
 data object MyPageScreenRoute : ScreenRouter(
-    R.drawable.baseline_account_circle_24,
+    R.drawable.outline_person_24,
     "마이 페이지",
     "com.example.navigation.MyPageScreenRoute",
 )
