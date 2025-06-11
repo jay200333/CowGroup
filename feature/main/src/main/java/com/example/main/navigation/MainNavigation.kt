@@ -14,8 +14,13 @@ import com.example.home.navigation.navigateRegularMember
 import com.example.map.navigation.mapNavGraph
 import com.example.mypage.navigation.myPageNavGraph
 import com.example.mypage.navigation.navigateEditProfile
+import com.example.mypage.navigation.navigateFullBookmarkMeeting
+import com.example.mypage.navigation.navigateFullJoinMeeting
 import com.example.mypage.navigation.navigateFullMeeting
-import com.example.mypage.navigation.navigateSetting
+import com.example.mypage.navigation.navigateMeetingSchedule
+import com.example.mypage.navigation.navigateMyComments
+import com.example.mypage.navigation.navigateMyPosts
+import com.example.mypage.navigation.navigateUserInfo
 import com.example.navigation.HomeScreenRoute
 import com.example.navigation.LoginRoute
 import com.example.navigation.MainGraphRoute
@@ -62,9 +67,14 @@ fun NavGraphBuilder.mainNavGraph(
         onShowSnackBar = onShowSnackBar,
         onEventClick = navController::navigateEventDetail,
         onEditProfileButtonClick = navController::navigateEditProfile,
-        onSettingButtonClick = navController::navigateSetting,
         onFullMeetingButtonClick = navController::navigateFullMeeting,
         onNavigationButtonClick = navController::navigateUp,
+        onUserInfoNavButtonClick = navController::navigateUserInfo,
+        onJoinMeetingNavButtonClick = navController::navigateFullJoinMeeting,
+        onBookmarkMeetingNavButtonClick = navController::navigateFullBookmarkMeeting,
+        onMeetingScheduleNavButtonClick = navController::navigateMeetingSchedule,
+        onPostsNavButtonClick = navController::navigateMyPosts,
+        onCommentsNavButtonClick = navController::navigateMyComments,
         onEditProfileSuccess = navController::navigateUp,
     )
 }
