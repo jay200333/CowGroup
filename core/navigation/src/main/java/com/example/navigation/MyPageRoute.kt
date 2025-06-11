@@ -9,4 +9,19 @@ data object EditProfileRoute
 data class FullMeetingRoute(val isBookmarkPage: Boolean)
 
 @Serializable
-data object SettingRoute
+data object FullJoinMeetingRoute
+
+@Serializable
+data object FullBookmarkMeetingRoute
+
+@Serializable
+data object MeetingScheduleRoute
+
+@Serializable
+data object MyPostsRoute
+
+@Serializable
+data object MyCommentsRoute
+
+@Serializable
+data object UserInfoRoute

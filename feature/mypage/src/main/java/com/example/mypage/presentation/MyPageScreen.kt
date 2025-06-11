@@ -1,5 +1,6 @@
 package com.example.mypage.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,8 +46,13 @@ fun MyPageScreen(
     viewModel: MyPageViewModel = hiltViewModel(),
     onEventClick: (Int) -> Unit,
     onEditProfileButtonClick: () -> Unit,
-    onSettingButtonClick: () -> Unit,
     onFullMeetingButtonClick: (Boolean) -> Unit,
+    onUserInfoNavButtonClick: () -> Unit,
+    onJoinMeetingNavButtonClick: () -> Unit,
+    onBookmarkMeetingNavButtonClick: () -> Unit,
+    onMeetingScheduleNavButtonClick: () -> Unit,
+    onPostsNavButtonClick: () -> Unit,
+    onCommentsNavButtonClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onShowSnackBar: (String) -> Unit
 ) {
@@ -55,7 +61,6 @@ fun MyPageScreen(
     MyPageScreen(
         onEventClick = onEventClick,
         onEditProfileButtonClick = onEditProfileButtonClick,
-        onSettingButtonClick = onSettingButtonClick,
         onFullMeetingButtonClick = { isBookmarkPage -> onFullMeetingButtonClick(isBookmarkPage) },
         myPageInfo = uiState.myPageInfo,
         onBookMarkClick = { eventId, isBookmarked ->
@@ -64,6 +69,12 @@ fun MyPageScreen(
                 isBookmarked
             )
         },
+        onUserInfoNavButtonClick = onUserInfoNavButtonClick,
+        onJoinMeetingNavButtonClick = onJoinMeetingNavButtonClick,
+        onBookmarkMeetingNavButtonClick = onBookmarkMeetingNavButtonClick,
+        onMeetingScheduleNavButtonClick = onMeetingScheduleNavButtonClick,
+        onPostsNavButtonClick = onPostsNavButtonClick,
+        onCommentsNavButtonClick = onCommentsNavButtonClick,
         snackBarHostState = snackBarHostState,
     )
 
@@ -83,8 +94,13 @@ fun MyPageScreen(
 fun MyPageScreen(
     onEventClick: (Int) -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
+    onUserInfoNavButtonClick: () -> Unit,
+    onJoinMeetingNavButtonClick: () -> Unit,
+    onBookmarkMeetingNavButtonClick: () -> Unit,
+    onMeetingScheduleNavButtonClick: () -> Unit,
+    onPostsNavButtonClick: () -> Unit,
+    onCommentsNavButtonClick: () -> Unit,
     onEditProfileButtonClick: () -> Unit,
-    onSettingButtonClick: () -> Unit,
     onFullMeetingButtonClick: (Boolean) -> Unit,
     myPageInfo: MyPageInfo,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
@@ -96,13 +112,14 @@ fun MyPageScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding).padding(top = 60.dp),
+                .padding(innerPadding)
+                .padding(top = 60.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp).clickable { onUserInfoNavButtonClick() },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CowGroupAsyncImage(
@@ -155,7 +172,9 @@ fun MyPageScreen(
                     verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onJoinMeetingNavButtonClick() },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -182,7 +201,9 @@ fun MyPageScreen(
                     }
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onBookmarkMeetingNavButtonClick() },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -209,7 +230,9 @@ fun MyPageScreen(
                     }
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onMeetingScheduleNavButtonClick() },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -248,7 +271,9 @@ fun MyPageScreen(
                     verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPostsNavButtonClick() },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -270,7 +295,9 @@ fun MyPageScreen(
                     }
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onCommentsNavButtonClick() },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -302,7 +329,6 @@ fun MyPageScreenPreview() {
         MyPageScreen(
             onEventClick = {},
             onEditProfileButtonClick = {},
-            onSettingButtonClick = {},
             onFullMeetingButtonClick = {},
             myPageInfo = MyPageInfo(
                 userInfo = MyPageUserInfo(
@@ -317,6 +343,12 @@ fun MyPageScreenPreview() {
                 bookmarkList = emptyList()
             ),
             onBookMarkClick = { _, _ -> },
+            onUserInfoNavButtonClick = {},
+            onJoinMeetingNavButtonClick = {},
+            onBookmarkMeetingNavButtonClick = {},
+            onMeetingScheduleNavButtonClick = {},
+            onPostsNavButtonClick = {},
+            onCommentsNavButtonClick = {},
         )
     }
 }
