@@ -52,7 +52,6 @@ fun NavGraphBuilder.mainNavGraph(
             }
         },
         onShowFullRegularMeetingClick = navController::navigateFullRegularMeeting,
-        twoClick =  navController::navigateMember,
         onCreatePostButtonClick = navController::navigateCreatePost
     )
     mapNavGraph(

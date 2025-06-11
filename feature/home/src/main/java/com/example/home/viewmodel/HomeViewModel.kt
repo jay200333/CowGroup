@@ -9,6 +9,7 @@ import com.example.data.model.SearchHistory
 import com.example.data.repository.EventRepository
 import com.example.data.repository.SearchHistoryRepository
 import com.example.datastore.CowGroupDataStore
+import com.example.model.Category
 import com.example.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ data class HomeUIState(
     val isLoading: Boolean = false,
     val isLogout: Boolean = false,
     val eventList: PagingData<Event> = PagingData.empty(),
+    val selectedCategory: Category? = null,
     val message: String = "",
 )
 
@@ -50,6 +52,10 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun updateCategory(category: Category?) {
+        _homeUIState.update { it.copy(selectedCategory = category) }
     }
 
     fun updateBookmark(eventId: Int, isBookmarked: Boolean) {

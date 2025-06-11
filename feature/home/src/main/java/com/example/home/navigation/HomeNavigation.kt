@@ -73,7 +73,6 @@ fun NavGraphBuilder.homeNavGraph(
     onEditMeetingSuccess: (Int) -> Unit,
     onDeleteMeetingSuccess: () -> Unit,
     onShowFullRegularMeetingClick: (Int) -> Unit,
-    twoClick: (Int) -> Unit,
     onCreatePostButtonClick: (Int, Int, Boolean) -> Unit
 ) {
     composable<HomeScreenRoute> {
@@ -90,8 +89,7 @@ fun NavGraphBuilder.homeNavGraph(
                     eventId,
                     isEditMode
                 )
-            },
-            twoClick = twoClick
+            }
         )
     }
     composable<CreateMeetingRoute>
