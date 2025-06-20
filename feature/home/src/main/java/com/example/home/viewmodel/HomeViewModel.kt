@@ -11,11 +11,13 @@ import com.example.data.repository.SearchHistoryRepository
 import com.example.datastore.CowGroupDataStore
 import com.example.model.Category
 import com.example.model.Event
+import com.example.model.SearchMeetingRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -28,6 +30,7 @@ data class HomeUIState(
     val isLogout: Boolean = false,
     val eventList: PagingData<Event> = PagingData.empty(),
     val selectedCategory: Category? = null,
+    val searchTerm: String = "",
     val message: String = "",
 )
 
@@ -40,8 +43,10 @@ class HomeViewModel @Inject constructor(
     private val _homeUIState: MutableStateFlow<HomeUIState> = MutableStateFlow(HomeUIState())
     val homeUIState: StateFlow<HomeUIState> = _homeUIState.asStateFlow()
 
-    private val pagingEvents: Flow<PagingData<Event>> =
-        eventRepository.getPagingHomeEvents(10).cachedIn(viewModelScope)
+    private val _searchRequestFlow = MutableStateFlow(SearchMeetingRequest("", null))
+    val pagingEvents: Flow<PagingData<Event>> = _searchRequestFlow.flatMapLatest { searchRequest ->
+        eventRepository.getPagedHomeEventsBySearch(10, searchRequest)
+    }.cachedIn(viewModelScope)
 
     init {
         pagingEvents.onEach { pagingEvents ->
@@ -56,6 +61,15 @@ class HomeViewModel @Inject constructor(
 
     fun updateCategory(category: Category?) {
         _homeUIState.update { it.copy(selectedCategory = category) }
+        _searchRequestFlow.update { it.copy(category = category?.name) }
+    }
+
+    fun updateSearchTerm(searchTerm: String) {
+        _homeUIState.update { it.copy(searchTerm = searchTerm) }
+    }
+
+    fun onSearchTermChanged() {
+        _searchRequestFlow.update { it.copy(content = _homeUIState.value.searchTerm) }
     }
 
     fun updateBookmark(eventId: Int, isBookmarked: Boolean) {

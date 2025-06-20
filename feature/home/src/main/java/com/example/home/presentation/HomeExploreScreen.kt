@@ -44,7 +44,6 @@ import com.example.home.viewmodel.HomeUIState
 import com.example.home.viewmodel.HomeViewModel
 import com.example.model.Category
 import com.example.model.Event
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun HomeExploreScreen(
@@ -58,7 +57,7 @@ fun HomeExploreScreen(
     onShowSnackBar: (String) -> Unit,
 ) {
     val uiState: HomeUIState by viewModel.homeUIState.collectAsState()
-    val pagingEvents = viewModel.homeUIState.map { it.eventList }.collectAsLazyPagingItems()
+    val pagingEvents = viewModel.pagingEvents.collectAsLazyPagingItems()
     val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
 
 
@@ -69,6 +68,8 @@ fun HomeExploreScreen(
         onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         onLogoutButtonClick = viewModel::logout,
         updateCategory = viewModel::updateCategory,
+        updateSearchTerm = viewModel::updateSearchTerm,
+        onSearchTermChanged = viewModel::onSearchTermChanged,
         onEventClick = { eventId -> onEventClick(eventId) },
         onCreateMeetingClick = { onCreateMeetingClick(0, false) },
         onBookMarkClick = { eventId, isBookmarked ->
@@ -79,6 +80,7 @@ fun HomeExploreScreen(
         },
         eventList = pagingEvents,
         recentSearches = recentSearches,
+        searchTerm = uiState.searchTerm,
         selectedCategory = uiState.selectedCategory,
         snackBarHostState = snackBarHostState,
     )
@@ -110,8 +112,11 @@ fun HomeExploreScreen(
     onCreateMeetingClick: () -> Unit,
     onBookMarkClick: (Int, Boolean) -> Unit,
     updateCategory: (Category?) -> Unit,
+    updateSearchTerm: (String) -> Unit,
+    onSearchTermChanged: () -> Unit,
     eventList: LazyPagingItems<Event>,
     recentSearches: List<SearchHistory>,
+    searchTerm: String,
     selectedCategory: Category?,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -122,10 +127,13 @@ fun HomeExploreScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             HomeScreenSearchBar(
+                updateSearchTerm,
+                onSearchTermChanged,
                 onSearchButtonClick,
                 onDeleteSearchHistoryButtonClick,
                 onLogoutButtonClick,
                 recentSearches,
+                searchTerm
             )
         },
         floatingActionButton = {
@@ -177,6 +185,7 @@ fun HomeExploreScreen(
             }
             if (eventList.itemCount != 0) {
                 LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     state = listState
                 ) {

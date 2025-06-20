@@ -32,7 +32,7 @@ fun PagingMeetingItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventC
     Row(modifier = Modifier.fillMaxWidth().clickable { onEventClick() }, verticalAlignment = Alignment.CenterVertically) {
         CowGroupAsyncImage(
             modifier = Modifier.clip(MaterialTheme.shapes.medium).size(70.dp),
-            imgUrl = "",
+            imgUrl = event.imageUri,
             contentDescription = "profile_img",
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -61,7 +61,7 @@ fun PagingMeetingItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventC
                 )
                 Text(
                     modifier = Modifier.padding(start = 2.dp),
-                    text = "카테고리", // api 모델 변경해야함
+                    text = event.category,
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -74,7 +74,7 @@ fun PagingMeetingItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventC
                 )
                 Text(
                     modifier = Modifier.padding(start = 2.dp),
-                    text = "${event.participants}",
+                    text = "${event.applicants}",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -99,11 +99,11 @@ fun MeetingItemPreview() {
         event = Event(
             id = 1,
             name = "test1",
-            author = "홍길동",
             content = "test1",
-            createdDate = "2024-12-31",
-            capacities = 10,
-            participants = 100,
+            category = "운동",
+            applicants = 5,
+            capacity = 10,
+            imageUri = "",
             isBookmarked = false,
         ),
     )

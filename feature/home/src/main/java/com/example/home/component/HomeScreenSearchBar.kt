@@ -41,12 +41,14 @@ import com.example.home.R
 
 @Composable
 fun HomeScreenSearchBar(
+    updateSearchTerm: (String) -> Unit,
+    onSearchTermChanged: () -> Unit,
     onSearchButtonClick: (String) -> Unit,
     onDeleteSearchTermButtonClick: (String) -> Unit,
     onLogOutButtonClick: () -> Unit,
     recentSearches: List<SearchHistory>,
+    searchTerm: String
 ) {
-    val textFieldState = remember { mutableStateOf("") }
     val expanded = remember { mutableStateOf(false) }
 
     Box(
@@ -67,11 +69,12 @@ fun HomeScreenSearchBar(
                     colors = SearchBarDefaults.colors(MaterialTheme.colorScheme.onTertiary),
                     inputField = {
                         SearchBarDefaults.InputField(
-                            query = textFieldState.value,
-                            onQueryChange = { textFieldState.value = it },
+                            query = searchTerm,
+                            onQueryChange = { updateSearchTerm(it) },
                             onSearch = {
                                 expanded.value = false
-                                onSearchButtonClick(textFieldState.value)
+                                onSearchButtonClick(searchTerm)
+                                onSearchTermChanged()
                             },
                             expanded = expanded.value,
                             onExpandedChange = { expanded.value = it },
@@ -123,7 +126,8 @@ fun HomeScreenSearchBar(
                                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                                                 modifier = Modifier
                                                     .clickable {
-                                                        textFieldState.value = searchHistory.query
+                                                        updateSearchTerm(searchHistory.query)
+                                                        onSearchTermChanged()
                                                         expanded.value = false
                                                     }
                                                     .fillMaxWidth()
@@ -164,9 +168,12 @@ fun HomeScreenSearchBar(
 @Composable
 fun CowGroupSearchBarPreview() {
     HomeScreenSearchBar(
+        updateSearchTerm = {},
+        onSearchTermChanged = {},
         onSearchButtonClick = {},
         onLogOutButtonClick = {},
         onDeleteSearchTermButtonClick = {},
         recentSearches = emptyList(),
+        searchTerm = ""
     )
 }
