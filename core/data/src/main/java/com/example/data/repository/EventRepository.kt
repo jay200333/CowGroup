@@ -29,4 +29,6 @@ interface EventRepository {
     suspend fun getParticipateEvents(page: Int, size: Int): Flow<List<Event>>
 
     suspend fun getBookmarkEvents(page: Int, size: Int): Flow<List<Event>>
+
+    suspend fun getPagedHomeEventsCount(searchRequest: SearchMeetingRequest): Int
 }

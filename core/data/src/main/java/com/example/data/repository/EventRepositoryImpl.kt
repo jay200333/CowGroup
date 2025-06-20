@@ -169,6 +169,17 @@ internal class EventRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPagedHomeEventsCount(searchRequest: SearchMeetingRequest): Int {
+        try {
+            val response = api.getSearchEventsCount(searchRequest)
+            return response.data
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     companion object {
         private const val INITIAL_LOAD_SIZE = 10
     }

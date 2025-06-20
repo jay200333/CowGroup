@@ -73,6 +73,9 @@ interface CowGroupApi {
     @POST("/events/search")
     suspend fun getSearchEvents(@Query("page") page: Int, @Query("size") size: Int, @Body searchMeetingRequest: SearchMeetingRequest): ApiResponse<PagingHomeEventResponse>
 
+    @POST("/events/search/count")
+    suspend fun getSearchEventsCount(@Body searchMeetingRequest: SearchMeetingRequest): ApiResponse<Int>
+
     @Multipart
     @POST("/events")
     suspend fun createMeeting(
