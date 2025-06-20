@@ -28,6 +28,7 @@ import javax.inject.Inject
 data class HomeUIState(
     val isLoading: Boolean = false,
     val isLogout: Boolean = false,
+    val eventCount: Int = 0,
     val eventList: PagingData<Event> = PagingData.empty(),
     val selectedCategory: Category? = null,
     val searchTerm: String = "",
@@ -62,6 +63,7 @@ class HomeViewModel @Inject constructor(
     fun updateCategory(category: Category?) {
         _homeUIState.update { it.copy(selectedCategory = category) }
         _searchRequestFlow.update { it.copy(category = category?.name) }
+        getEventCounts()
     }
 
     fun updateSearchTerm(searchTerm: String) {
@@ -70,6 +72,7 @@ class HomeViewModel @Inject constructor(
 
     fun onSearchTermChanged() {
         _searchRequestFlow.update { it.copy(content = _homeUIState.value.searchTerm) }
+        getEventCounts()
     }
 
     fun updateBookmark(eventId: Int, isBookmarked: Boolean) {
@@ -138,5 +141,37 @@ class HomeViewModel @Inject constructor(
 
     fun getRecentSearches(): Flow<List<SearchHistory>> {
         return searchHistoryRepository.getRecentSearches()
+    }
+
+   fun getEventCounts() {
+        viewModelScope.launch {
+            _homeUIState.update { it.copy(isLoading = true, message = "") }
+            try {
+                val count = eventRepository.getPagedHomeEventsCount(
+                    SearchMeetingRequest(
+                        homeUIState.value.searchTerm,
+                        homeUIState.value.selectedCategory?.name
+                    )
+                )
+                _homeUIState.update {
+                    it.copy(
+                        isLoading = false,
+                        eventCount = count
+                    )
+                }
+            } catch (e: HttpException) {
+                _homeUIState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _homeUIState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
     }
 }

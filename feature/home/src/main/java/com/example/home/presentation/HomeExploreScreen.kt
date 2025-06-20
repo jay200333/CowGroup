@@ -78,6 +78,7 @@ fun HomeExploreScreen(
                 isBookmarked
             )
         },
+        eventCount = uiState.eventCount,
         eventList = pagingEvents,
         recentSearches = recentSearches,
         searchTerm = uiState.searchTerm,
@@ -98,6 +99,7 @@ fun HomeExploreScreen(
 
     LaunchedEffect(Unit) {
         pagingEvents.refresh()
+        viewModel.getEventCounts()
     }
 }
 
@@ -114,6 +116,7 @@ fun HomeExploreScreen(
     updateCategory: (Category?) -> Unit,
     updateSearchTerm: (String) -> Unit,
     onSearchTermChanged: () -> Unit,
+    eventCount: Int,
     eventList: LazyPagingItems<Event>,
     recentSearches: List<SearchHistory>,
     searchTerm: String,
@@ -178,7 +181,7 @@ fun HomeExploreScreen(
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween
             ) {
                 Text(
-                    text = "총 ${eventList.itemCount}개",
+                    text = "총 ${eventCount}개",
                     style = MaterialTheme.typography.titleSmall
                 )
                 CowGroupSortDropdownMenu()
