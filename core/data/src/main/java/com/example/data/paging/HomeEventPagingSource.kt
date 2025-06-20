@@ -1,14 +1,17 @@
 package com.example.data.paging
 
 import com.example.model.Event
+import com.example.model.SearchMeetingRequest
 import com.example.network.model.toEvent
 import com.example.network.retrofit.CowGroupApi
 
 class HomeEventPagingSource(
-    private val api: CowGroupApi
+    private val api: CowGroupApi,
+    private val searchRequest: SearchMeetingRequest
 ) : BasePagingSource<Event>(pageFetcher = { page, size ->
-    api.getEvents(
+    api.getSearchEvents(
         page,
-        size
-    ).data.content.map { it.toEvent() }
+        size,
+        searchRequest
+    ).data.eventSearchInfos.map { it.toEvent() }
 })

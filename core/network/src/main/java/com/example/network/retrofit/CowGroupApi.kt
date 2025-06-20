@@ -6,6 +6,7 @@ import com.example.model.CreateRegularMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
+import com.example.model.SearchMeetingRequest
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckVerificationResponse
@@ -69,8 +70,8 @@ interface CowGroupApi {
     @GET("/events/{event-id}/participants")
     suspend fun getEventMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
 
-    @GET("/events")
-    suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
+    @POST("/events/search")
+    suspend fun getSearchEvents(@Query("page") page: Int, @Query("size") size: Int, @Body searchMeetingRequest: SearchMeetingRequest): ApiResponse<PagingHomeEventResponse>
 
     @Multipart
     @POST("/events")

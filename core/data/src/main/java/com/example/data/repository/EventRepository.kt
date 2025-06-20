@@ -4,10 +4,11 @@ import androidx.paging.PagingData
 import com.example.model.CreateMeeting
 import com.example.model.DetailEvent
 import com.example.model.Event
+import com.example.model.SearchMeetingRequest
 import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
-    fun getPagingHomeEvents(pageSize: Int): Flow<PagingData<Event>>
+    fun getPagedHomeEventsBySearch(pageSize: Int, searchRequest: SearchMeetingRequest): Flow<PagingData<Event>>
 
     fun getPagingParticipateEvents(pageSize: Int): Flow<PagingData<Event>>
 
