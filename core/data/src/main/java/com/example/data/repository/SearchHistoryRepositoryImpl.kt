@@ -7,9 +7,10 @@ import com.example.database.model.SearchHistoryEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Named
 
 internal class SearchHistoryRepositoryImpl @Inject constructor(
-    private val searchHistoryDao: SearchHistoryDao
+    @Named("group") private val searchHistoryDao: SearchHistoryDao
 ) : SearchHistoryRepository {
     override suspend fun insertSearchHistory(query: String) {
         searchHistoryDao.insertSearchHistory(
