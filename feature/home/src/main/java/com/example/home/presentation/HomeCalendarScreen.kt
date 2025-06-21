@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.data.model.SearchHistory
 import com.example.designsystem.component.CowGroupDateRangePicker
 import com.example.home.R
 import com.example.home.component.CowGroupSortDropdownMenu
@@ -56,16 +57,22 @@ fun HomeCalendarScreen(
     onCreateMeetingClick: (Int, Boolean) -> Unit,
 ) {
     val uiState: HomeCalendarUISTate by viewModel.uiState.collectAsState()
+    val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
 
     HomeCalendarScreen(
         selectedTabIndex = selectedTabIndex,
         onTabSelected = onTabSelected,
+        onSearchButtonClick = viewModel::insertQuery,
+        onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         updateDateRange = viewModel::updateDateRange,
         updateSelectedDate = viewModel::updateSelectedDate,
+        updateSearchTerm = viewModel::updateSearchTerm,
+        onCreateMeetingClick = { onCreateMeetingClick(0, false) },
         dateList = uiState.dateList,
         selectedDate = uiState.selectedDate,
         regularEventList = uiState.regularEventList,
-        onCreateMeetingClick = { onCreateMeetingClick(0, false) },
+        recentSearches = recentSearches,
+        searchTerm = uiState.searchTerm
     )
 
     LaunchedEffect(Unit) {
@@ -77,12 +84,17 @@ fun HomeCalendarScreen(
 fun HomeCalendarScreen(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
+    onSearchButtonClick: (String) -> Unit,
+    onDeleteSearchHistoryButtonClick: (String) -> Unit,
     updateDateRange: (Pair<Long?, Long?>) -> Unit,
     updateSelectedDate: (LocalDate) -> Unit,
+    updateSearchTerm: (String) -> Unit,
     onCreateMeetingClick: () -> Unit,
     dateList: List<LocalDate>,
     selectedDate: LocalDate,
-    regularEventList: List<RegularEvent>
+    regularEventList: List<RegularEvent>,
+    recentSearches: List<SearchHistory>,
+    searchTerm: String
 ) {
     val listState = rememberLazyListState()
     val tabTitles = listOf("둘러보기", "날짜보기")
@@ -96,7 +108,13 @@ fun HomeCalendarScreen(
     }
 
     Scaffold(
-        topBar = { HomeScreenSearchBar({}, {}, {}, emptyList()) },
+        topBar = { HomeScreenSearchBar(updateSearchTerm,
+            {},
+            onSearchButtonClick,
+            onDeleteSearchHistoryButtonClick,
+            {},
+            recentSearches,
+            searchTerm) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onCreateMeetingClick,

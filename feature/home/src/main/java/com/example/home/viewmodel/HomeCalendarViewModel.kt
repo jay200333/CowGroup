@@ -3,10 +3,13 @@ package com.example.home.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.model.SearchHistory
+import com.example.data.repository.RegularMeetingSearchHistoryRepository
 import com.example.model.RegularEvent
 import com.example.network.model.ErrorResponse
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,13 +32,15 @@ data class HomeCalendarUISTate(
         .toInstant()
         .toEpochMilli(),
     val dateList: List<LocalDate> = emptyList(),
-    val selectedDate: LocalDate = LocalDate.now(),
     val regularEventList: List<RegularEvent> = emptyList(), // pagingData로 교체해야함.
+    val selectedDate: LocalDate = LocalDate.now(),
+    val searchTerm: String = "",
     val message: String = ""
 )
 
 @HiltViewModel
 class HomeCalendarViewModel @Inject constructor(
+    private val regularMeetingSearchHistoryRepository: RegularMeetingSearchHistoryRepository,
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<HomeCalendarUISTate> =
         MutableStateFlow((HomeCalendarUISTate()))
@@ -129,5 +134,27 @@ class HomeCalendarViewModel @Inject constructor(
 
     fun updateSelectedDate(date: LocalDate) {
         _uiState.update { it.copy(selectedDate = date) }
+    }
+
+    fun updateSearchTerm(searchTerm: String) {
+        _uiState.update { it.copy(searchTerm = searchTerm) }
+    }
+
+    fun insertQuery(query: String) {
+        if (query.isNotBlank()) {
+            viewModelScope.launch {
+                regularMeetingSearchHistoryRepository.insertSearchHistory(query)
+            }
+        }
+    }
+
+    fun deleteSearchHistory(query: String) {
+        viewModelScope.launch {
+            regularMeetingSearchHistoryRepository.deleteSearchHistory(query)
+        }
+    }
+
+    fun getRecentSearches(): Flow<List<SearchHistory>> {
+        return regularMeetingSearchHistoryRepository.getRecentSearches()
     }
 }
