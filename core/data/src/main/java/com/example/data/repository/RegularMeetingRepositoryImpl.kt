@@ -4,9 +4,12 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.data.paging.RegularMeetingPagingSource
+import com.example.data.paging.RegularMeetingSearchPagingSource
 import com.example.model.CreateRegularMeeting
 import com.example.model.EventMember
 import com.example.model.RegularEvent
+import com.example.model.SearchRegularEvent
+import com.example.model.SearchRegularMeetingRequest
 import com.example.network.model.toCreateRegularMeeting
 import com.example.network.model.toEventMember
 import com.example.network.retrofit.CowGroupApi
@@ -17,6 +20,19 @@ import javax.inject.Inject
 internal class RegularMeetingRepositoryImpl @Inject constructor(
     private val api: CowGroupApi
 ) : RegularMeetingRepository {
+    override fun getPagedRegularEventsBySearch(
+        pageSize: Int,
+        searchRequest: SearchRegularMeetingRequest
+    ): Flow<PagingData<SearchRegularEvent>> {
+        return Pager(
+            config = PagingConfig(
+                initialLoadSize = INITIAL_LOAD_SIZE,
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { RegularMeetingSearchPagingSource(api, searchRequest) }
+        ).flow
+    }
     override fun getPagingRegularEvents(pageSize: Int, eventId: Int): Flow<PagingData<RegularEvent>> {
         return Pager(
             config = PagingConfig(

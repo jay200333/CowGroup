@@ -7,6 +7,7 @@ import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
 import com.example.model.SearchMeetingRequest
+import com.example.model.SearchRegularMeetingRequest
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckVerificationResponse
@@ -19,6 +20,7 @@ import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.PagingPostResponse
 import com.example.network.model.PagingRegularEventResponse
+import com.example.network.model.PagingSearchRegularEventResponse
 import com.example.network.model.PostResponse
 import com.example.network.model.ProfileResponse
 import com.example.network.model.RegularEventMemberResponse
@@ -111,6 +113,9 @@ interface CowGroupApi {
 
     @GET("/events/bookmarks")
     suspend fun getBookmarkEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingBookmarkEventResponse>
+
+    @POST("/regular/search")
+    suspend fun getSearchRegularMeeting(@Query("page") page: Int, @Query("size") size: Int, @Body searchRegularMeetingRequest: SearchRegularMeetingRequest): ApiResponse<PagingSearchRegularEventResponse>
 
     @GET("/events/{event-id}/regular/search")
     suspend fun getPagingRegularMeeting(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingRegularEventResponse>
