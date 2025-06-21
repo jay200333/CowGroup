@@ -22,16 +22,17 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.common.DateUtil
 import com.example.cowgroup.core.designsystem.R
 import com.example.designsystem.component.CowGroupAsyncImage
-import com.example.model.RegularEvent
+import com.example.model.SearchRegularEvent
 
 @Composable
-fun HomeCalendarRegularMeetingItem(regularEvent: RegularEvent) {
+fun HomeCalendarRegularMeetingItem(regularEvent: SearchRegularEvent) {
     Row(modifier = Modifier.fillMaxWidth().clickable {}, verticalAlignment = Alignment.CenterVertically) {
         CowGroupAsyncImage(
             modifier = Modifier.clip(MaterialTheme.shapes.medium).size(70.dp),
-            imgUrl = "",
+            imgUrl = regularEvent.accessUrl,
             contentDescription = "profile_img",
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -53,7 +54,7 @@ fun HomeCalendarRegularMeetingItem(regularEvent: RegularEvent) {
                 )
                 Text(
                     modifier = Modifier.padding(start = 2.dp),
-                    text = "카테고리", // api 모델 변경해야함
+                    text = regularEvent.category,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -67,7 +68,7 @@ fun HomeCalendarRegularMeetingItem(regularEvent: RegularEvent) {
                 )
                 Text(
                     modifier = Modifier.padding(start = 2.dp),
-                    text = regularEvent.dateTime,
+                    text = DateUtil.formatIsoToRegularDate(regularEvent.dateTime),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )

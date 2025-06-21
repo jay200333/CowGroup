@@ -37,6 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.example.data.model.SearchHistory
 import com.example.designsystem.component.CowGroupDateRangePicker
 import com.example.home.R
@@ -46,7 +49,7 @@ import com.example.home.component.HomeCalendarRegularMeetingItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeCalendarUISTate
 import com.example.home.viewmodel.HomeCalendarViewModel
-import com.example.model.RegularEvent
+import com.example.model.SearchRegularEvent
 import java.time.LocalDate
 
 @Composable
@@ -57,6 +60,7 @@ fun HomeCalendarScreen(
     onCreateMeetingClick: (Int, Boolean) -> Unit,
 ) {
     val uiState: HomeCalendarUISTate by viewModel.uiState.collectAsState()
+    val pagingEvents = viewModel.pagingEvents.collectAsLazyPagingItems()
     val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
 
     HomeCalendarScreen(
@@ -70,13 +74,13 @@ fun HomeCalendarScreen(
         onCreateMeetingClick = { onCreateMeetingClick(0, false) },
         dateList = uiState.dateList,
         selectedDate = uiState.selectedDate,
-        regularEventList = uiState.regularEventList,
+        regularEventList = pagingEvents,
         recentSearches = recentSearches,
         searchTerm = uiState.searchTerm
     )
 
     LaunchedEffect(Unit) {
-        viewModel.getRegularEventList()
+        pagingEvents.refresh()
     }
 }
 
@@ -92,7 +96,7 @@ fun HomeCalendarScreen(
     onCreateMeetingClick: () -> Unit,
     dateList: List<LocalDate>,
     selectedDate: LocalDate,
-    regularEventList: List<RegularEvent>,
+    regularEventList: LazyPagingItems<SearchRegularEvent>,
     recentSearches: List<SearchHistory>,
     searchTerm: String
 ) {
@@ -108,13 +112,17 @@ fun HomeCalendarScreen(
     }
 
     Scaffold(
-        topBar = { HomeScreenSearchBar(updateSearchTerm,
-            {},
-            onSearchButtonClick,
-            onDeleteSearchHistoryButtonClick,
-            {},
-            recentSearches,
-            searchTerm) },
+        topBar = {
+            HomeScreenSearchBar(
+                updateSearchTerm,
+                {},
+                onSearchButtonClick,
+                onDeleteSearchHistoryButtonClick,
+                {},
+                recentSearches,
+                searchTerm
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onCreateMeetingClick,
@@ -182,26 +190,29 @@ fun HomeCalendarScreen(
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween
             ) {
                 Text(
-                    text = "총 ${regularEventList.size}개",
+                    text = "총 ${regularEventList.itemCount}개",
                     style = MaterialTheme.typography.titleSmall
                 )
                 CowGroupSortDropdownMenu()
             }
 
-            if (regularEventList.isNotEmpty()) {
+            if (regularEventList.itemCount != 0) {
                 LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     state = listState
                 ) {
                     items(
-                        count = regularEventList.size,
-                        key = { index -> regularEventList[index].id }
+                        count = regularEventList.itemCount,
+                        key = regularEventList.itemKey { it.id }
                     )
                     { index ->
                         val regularEvent = regularEventList[index]
-                        HomeCalendarRegularMeetingItem(
-                            regularEvent = regularEvent,
-                        )
+                        if (regularEvent != null) {
+                            HomeCalendarRegularMeetingItem(
+                                regularEvent = regularEvent
+                            )
+                        }
                     }
                 }
             } else {
