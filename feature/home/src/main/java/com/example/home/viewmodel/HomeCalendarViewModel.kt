@@ -1,6 +1,5 @@
 package com.example.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -40,6 +40,7 @@ data class HomeCalendarUISTate(
     val regularEventList: PagingData<SearchRegularEvent> = PagingData.empty(),
     val selectedDate: LocalDate = LocalDate.now(),
     val searchTerm: String = "",
+    val regularMeetingCount: Int = 0,
     val message: String = ""
 )
 
@@ -52,8 +53,13 @@ class HomeCalendarViewModel @Inject constructor(
         MutableStateFlow((HomeCalendarUISTate()))
     val uiState: StateFlow<HomeCalendarUISTate> = _uiState.asStateFlow()
 
-    private val _searchRequestFlow = MutableStateFlow(SearchRegularMeetingRequest("", LocalDate.now().format(
-        DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+    private val _searchRequestFlow = MutableStateFlow(
+        SearchRegularMeetingRequest(
+            "", LocalDate.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            )
+        )
+    )
     val pagingEvents: Flow<PagingData<SearchRegularEvent>> =
         _searchRequestFlow.flatMapLatest { searchRequest ->
             regularMeetingRepository.getPagedRegularEventsBySearch(
@@ -77,8 +83,6 @@ class HomeCalendarViewModel @Inject constructor(
             )
         }
         updateDateList()
-        Log.d("calendar", "시작일 : ${_uiState.value.startDate} 끝일 : ${_uiState.value.endDate}")
-        Log.d("calendar", "${_uiState.value.dateList}")
     }
 
     private fun updateDateList() {
@@ -92,14 +96,54 @@ class HomeCalendarViewModel @Inject constructor(
             .takeWhile { !it.isAfter(endDate) }
             .toList()
         _uiState.update { it.copy(dateList = dateList) }
+        updateSelectedDate(dateList.first())
     }
 
     fun updateSelectedDate(date: LocalDate) {
         _uiState.update { it.copy(selectedDate = date) }
+        _searchRequestFlow.update { it.copy(date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) }
+        getRegularMeetingCount()
     }
 
     fun updateSearchTerm(searchTerm: String) {
         _uiState.update { it.copy(searchTerm = searchTerm) }
+    }
+
+    fun onSearchTermChanged() {
+        _searchRequestFlow.update { it.copy(content = _uiState.value.searchTerm) }
+        getRegularMeetingCount()
+    }
+
+    fun getRegularMeetingCount() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, message = "") }
+            try {
+                val count = regularMeetingRepository.getPagedRegularMeetingCount(
+                    SearchRegularMeetingRequest(
+                        uiState.value.searchTerm,
+                        uiState.value.selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    )
+                )
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        regularMeetingCount = count
+                    )
+                }
+            } catch (e: HttpException) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
     }
 
     fun insertQuery(query: String) {

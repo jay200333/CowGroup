@@ -71,6 +71,7 @@ fun HomeCalendarScreen(
         updateDateRange = viewModel::updateDateRange,
         updateSelectedDate = viewModel::updateSelectedDate,
         updateSearchTerm = viewModel::updateSearchTerm,
+        onSearchTermChanged = viewModel::onSearchTermChanged,
         onCreateMeetingClick = { onCreateMeetingClick(0, false) },
         dateList = uiState.dateList,
         selectedDate = uiState.selectedDate,
@@ -81,6 +82,7 @@ fun HomeCalendarScreen(
 
     LaunchedEffect(Unit) {
         pagingEvents.refresh()
+        viewModel.getRegularMeetingCount()
     }
 }
 
@@ -93,6 +95,7 @@ fun HomeCalendarScreen(
     updateDateRange: (Pair<Long?, Long?>) -> Unit,
     updateSelectedDate: (LocalDate) -> Unit,
     updateSearchTerm: (String) -> Unit,
+    onSearchTermChanged: () -> Unit,
     onCreateMeetingClick: () -> Unit,
     dateList: List<LocalDate>,
     selectedDate: LocalDate,
@@ -115,7 +118,7 @@ fun HomeCalendarScreen(
         topBar = {
             HomeScreenSearchBar(
                 updateSearchTerm,
-                {},
+                onSearchTermChanged,
                 onSearchButtonClick,
                 onDeleteSearchHistoryButtonClick,
                 {},
