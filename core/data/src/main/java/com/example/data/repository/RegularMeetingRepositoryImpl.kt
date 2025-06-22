@@ -114,6 +114,17 @@ internal class RegularMeetingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPagedRegularMeetingCount(searchRequest: SearchRegularMeetingRequest): Int {
+        try {
+            val response = api.getSearchRegularMeetingCount(searchRequest)
+            return response.data
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     companion object {
         private const val INITIAL_LOAD_SIZE = 10
     }

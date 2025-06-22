@@ -117,6 +117,9 @@ interface CowGroupApi {
     @POST("/regular/search")
     suspend fun getSearchRegularMeeting(@Query("page") page: Int, @Query("size") size: Int, @Body searchRegularMeetingRequest: SearchRegularMeetingRequest): ApiResponse<PagingSearchRegularEventResponse>
 
+    @POST("/regular/search/count")
+    suspend fun getSearchRegularMeetingCount(@Body searchRegularMeetingRequest: SearchRegularMeetingRequest): ApiResponse<Int>
+
     @GET("/events/{event-id}/regular/search")
     suspend fun getPagingRegularMeeting(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingRegularEventResponse>
 

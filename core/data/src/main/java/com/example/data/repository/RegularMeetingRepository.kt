@@ -24,4 +24,6 @@ interface RegularMeetingRepository {
     suspend fun updateJoinRegularMeeting(regularEventId: Int, participationId: Int?): Int
 
     suspend fun getRegularMemberList(regularId: Int): EventMember
+
+    suspend fun getPagedRegularMeetingCount(searchRequest: SearchRegularMeetingRequest): Int
 }
