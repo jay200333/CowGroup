@@ -204,6 +204,7 @@ fun HomeExploreScreen(
                                         event.id,
                                         event.isBookmarked,
                                     )
+                                    eventList.refresh()
                                 },
                             )
                         }
