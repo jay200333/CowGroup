@@ -28,10 +28,14 @@ import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.model.SearchRegularEvent
 
 @Composable
-fun HomeCalendarRegularMeetingItem(regularEvent: SearchRegularEvent) {
-    Row(modifier = Modifier.fillMaxWidth().clickable {}, verticalAlignment = Alignment.CenterVertically) {
+fun HomeCalendarRegularMeetingItem(regularEvent: SearchRegularEvent, onEventClick: (Int) -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onEventClick(regularEvent.id) }, verticalAlignment = Alignment.CenterVertically) {
         CowGroupAsyncImage(
-            modifier = Modifier.clip(MaterialTheme.shapes.medium).size(70.dp),
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.medium)
+                .size(70.dp),
             imgUrl = regularEvent.accessUrl,
             contentDescription = "profile_img",
         )

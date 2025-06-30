@@ -57,6 +57,7 @@ fun HomeCalendarScreen(
     viewModel: HomeCalendarViewModel = hiltViewModel(),
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
+    onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
 ) {
     val uiState: HomeCalendarUISTate by viewModel.uiState.collectAsState()
@@ -73,6 +74,7 @@ fun HomeCalendarScreen(
         updateSearchTerm = viewModel::updateSearchTerm,
         onSearchTermChanged = viewModel::onSearchTermChanged,
         onCreateMeetingClick = { onCreateMeetingClick(0, false) },
+        onEventClick = { eventId -> onEventClick(eventId) },
         dateList = uiState.dateList,
         selectedDate = uiState.selectedDate,
         regularEventList = pagingEvents,
@@ -92,6 +94,7 @@ fun HomeCalendarScreen(
     onTabSelected: (Int) -> Unit,
     onSearchButtonClick: (String) -> Unit,
     onDeleteSearchHistoryButtonClick: (String) -> Unit,
+    onEventClick: (Int) -> Unit,
     updateDateRange: (Pair<Long?, Long?>) -> Unit,
     updateSelectedDate: (LocalDate) -> Unit,
     updateSearchTerm: (String) -> Unit,
@@ -213,7 +216,8 @@ fun HomeCalendarScreen(
                         val regularEvent = regularEventList[index]
                         if (regularEvent != null) {
                             HomeCalendarRegularMeetingItem(
-                                regularEvent = regularEvent
+                                regularEvent = regularEvent,
+                                onEventClick = onEventClick
                             )
                         }
                     }

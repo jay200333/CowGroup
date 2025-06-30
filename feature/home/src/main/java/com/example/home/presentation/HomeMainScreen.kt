@@ -26,6 +26,7 @@ fun HomeMainScreen(
         1 -> HomeCalendarScreen(
             selectedTabIndex = selectedTabIndex,
             onTabSelected = onTabSelected,
+            onEventClick = onEventClick,
             onCreateMeetingClick = onCreateMeetingClick,
         )
     }
