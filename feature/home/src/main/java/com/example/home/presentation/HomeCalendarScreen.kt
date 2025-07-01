@@ -37,6 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import com.example.data.model.SearchHistory
 import com.example.designsystem.component.CowGroupDateRangePicker
 import com.example.home.R
 import com.example.home.component.CowGroupSortDropdownMenu
@@ -45,7 +49,7 @@ import com.example.home.component.HomeCalendarRegularMeetingItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeCalendarUISTate
 import com.example.home.viewmodel.HomeCalendarViewModel
-import com.example.model.RegularEvent
+import com.example.model.SearchRegularEvent
 import java.time.LocalDate
 
 @Composable
@@ -53,23 +57,34 @@ fun HomeCalendarScreen(
     viewModel: HomeCalendarViewModel = hiltViewModel(),
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
+    onEventClick: (Int) -> Unit,
     onCreateMeetingClick: (Int, Boolean) -> Unit,
 ) {
     val uiState: HomeCalendarUISTate by viewModel.uiState.collectAsState()
+    val pagingEvents = viewModel.pagingEvents.collectAsLazyPagingItems()
+    val recentSearches by viewModel.getRecentSearches().collectAsState(initial = emptyList())
 
     HomeCalendarScreen(
         selectedTabIndex = selectedTabIndex,
         onTabSelected = onTabSelected,
+        onSearchButtonClick = viewModel::insertQuery,
+        onDeleteSearchHistoryButtonClick = viewModel::deleteSearchHistory,
         updateDateRange = viewModel::updateDateRange,
         updateSelectedDate = viewModel::updateSelectedDate,
+        updateSearchTerm = viewModel::updateSearchTerm,
+        onSearchTermChanged = viewModel::onSearchTermChanged,
+        onCreateMeetingClick = { onCreateMeetingClick(0, false) },
+        onEventClick = { eventId -> onEventClick(eventId) },
         dateList = uiState.dateList,
         selectedDate = uiState.selectedDate,
-        regularEventList = uiState.regularEventList,
-        onCreateMeetingClick = { onCreateMeetingClick(0, false) },
+        regularEventList = pagingEvents,
+        recentSearches = recentSearches,
+        searchTerm = uiState.searchTerm
     )
 
     LaunchedEffect(Unit) {
-        viewModel.getRegularEventList()
+        pagingEvents.refresh()
+        viewModel.getRegularMeetingCount()
     }
 }
 
@@ -77,12 +92,19 @@ fun HomeCalendarScreen(
 fun HomeCalendarScreen(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
+    onSearchButtonClick: (String) -> Unit,
+    onDeleteSearchHistoryButtonClick: (String) -> Unit,
+    onEventClick: (Int) -> Unit,
     updateDateRange: (Pair<Long?, Long?>) -> Unit,
     updateSelectedDate: (LocalDate) -> Unit,
+    updateSearchTerm: (String) -> Unit,
+    onSearchTermChanged: () -> Unit,
     onCreateMeetingClick: () -> Unit,
     dateList: List<LocalDate>,
     selectedDate: LocalDate,
-    regularEventList: List<RegularEvent>
+    regularEventList: LazyPagingItems<SearchRegularEvent>,
+    recentSearches: List<SearchHistory>,
+    searchTerm: String
 ) {
     val listState = rememberLazyListState()
     val tabTitles = listOf("둘러보기", "날짜보기")
@@ -96,7 +118,17 @@ fun HomeCalendarScreen(
     }
 
     Scaffold(
-        topBar = { HomeScreenSearchBar({}, {}, {}, emptyList()) },
+        topBar = {
+            HomeScreenSearchBar(
+                updateSearchTerm,
+                onSearchTermChanged,
+                onSearchButtonClick,
+                onDeleteSearchHistoryButtonClick,
+                {},
+                recentSearches,
+                searchTerm
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onCreateMeetingClick,
@@ -164,26 +196,30 @@ fun HomeCalendarScreen(
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween
             ) {
                 Text(
-                    text = "총 ${regularEventList.size}개",
+                    text = "총 ${regularEventList.itemCount}개",
                     style = MaterialTheme.typography.titleSmall
                 )
                 CowGroupSortDropdownMenu()
             }
 
-            if (regularEventList.isNotEmpty()) {
+            if (regularEventList.itemCount != 0) {
                 LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     state = listState
                 ) {
                     items(
-                        count = regularEventList.size,
-                        key = { index -> regularEventList[index].id }
+                        count = regularEventList.itemCount,
+                        key = regularEventList.itemKey { it.id }
                     )
                     { index ->
                         val regularEvent = regularEventList[index]
-                        HomeCalendarRegularMeetingItem(
-                            regularEvent = regularEvent,
-                        )
+                        if (regularEvent != null) {
+                            HomeCalendarRegularMeetingItem(
+                                regularEvent = regularEvent,
+                                onEventClick = onEventClick
+                            )
+                        }
                     }
                 }
             } else {

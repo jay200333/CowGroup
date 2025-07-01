@@ -6,6 +6,8 @@ import com.example.model.CreateRegularMeeting
 import com.example.model.EmailCodeInfo
 import com.example.model.LoginInfo
 import com.example.model.Profile
+import com.example.model.SearchMeetingRequest
+import com.example.model.SearchRegularMeetingRequest
 import com.example.model.SignUpInfo
 import com.example.network.model.ApiResponse
 import com.example.network.model.CheckVerificationResponse
@@ -18,6 +20,7 @@ import com.example.network.model.PagingHomeEventResponse
 import com.example.network.model.PagingParticipatingEventResponse
 import com.example.network.model.PagingPostResponse
 import com.example.network.model.PagingRegularEventResponse
+import com.example.network.model.PagingSearchRegularEventResponse
 import com.example.network.model.PostResponse
 import com.example.network.model.ProfileResponse
 import com.example.network.model.RegularEventMemberResponse
@@ -69,8 +72,11 @@ interface CowGroupApi {
     @GET("/events/{event-id}/participants")
     suspend fun getEventMemberList(@Path("event-id") eventId: Int): ApiResponse<MemberResponse>
 
-    @GET("/events")
-    suspend fun getEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingHomeEventResponse>
+    @POST("/events/search")
+    suspend fun getSearchEvents(@Query("page") page: Int, @Query("size") size: Int, @Body searchMeetingRequest: SearchMeetingRequest): ApiResponse<PagingHomeEventResponse>
+
+    @POST("/events/search/count")
+    suspend fun getSearchEventsCount(@Body searchMeetingRequest: SearchMeetingRequest): ApiResponse<Int>
 
     @Multipart
     @POST("/events")
@@ -107,6 +113,12 @@ interface CowGroupApi {
 
     @GET("/events/bookmarks")
     suspend fun getBookmarkEvents(@Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingBookmarkEventResponse>
+
+    @POST("/regular/search")
+    suspend fun getSearchRegularMeeting(@Query("page") page: Int, @Query("size") size: Int, @Body searchRegularMeetingRequest: SearchRegularMeetingRequest): ApiResponse<PagingSearchRegularEventResponse>
+
+    @POST("/regular/search/count")
+    suspend fun getSearchRegularMeetingCount(@Body searchRegularMeetingRequest: SearchRegularMeetingRequest): ApiResponse<Int>
 
     @GET("/events/{event-id}/regular/search")
     suspend fun getPagingRegularMeeting(@Path("event-id") eventId: Int, @Query("page") page: Int, @Query("size") size: Int): ApiResponse<PagingRegularEventResponse>

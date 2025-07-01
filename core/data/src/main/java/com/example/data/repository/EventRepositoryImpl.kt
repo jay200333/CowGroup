@@ -9,6 +9,7 @@ import com.example.data.paging.ParticipateEventPagingSource
 import com.example.model.CreateMeeting
 import com.example.model.DetailEvent
 import com.example.model.Event
+import com.example.model.SearchMeetingRequest
 import com.example.network.model.toDetailEvent
 import com.example.network.model.toEvent
 import com.example.network.retrofit.CowGroupApi
@@ -26,14 +27,17 @@ internal class EventRepositoryImpl @Inject constructor(
     private val api: CowGroupApi,
 ) : EventRepository {
 
-    override fun getPagingHomeEvents(pageSize: Int): Flow<PagingData<Event>> {
+    override fun getPagedHomeEventsBySearch(
+        pageSize: Int,
+        searchRequest: SearchMeetingRequest
+    ): Flow<PagingData<Event>> {
         return Pager(
             config = PagingConfig(
                 initialLoadSize = INITIAL_LOAD_SIZE,
                 pageSize = pageSize,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { HomeEventPagingSource(api) }
+            pagingSourceFactory = { HomeEventPagingSource(api, searchRequest) }
         ).flow
     }
 
@@ -158,6 +162,17 @@ internal class EventRepositoryImpl @Inject constructor(
             )
             val eventId = response.data
             return eventId
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getPagedHomeEventsCount(searchRequest: SearchMeetingRequest): Int {
+        try {
+            val response = api.getSearchEventsCount(searchRequest)
+            return response.data
         } catch (e: HttpException) {
             throw e
         } catch (e: Exception) {

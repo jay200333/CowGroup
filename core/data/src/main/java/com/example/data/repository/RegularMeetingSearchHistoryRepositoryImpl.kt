@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Named
 
-internal class SearchHistoryRepositoryImpl @Inject constructor(
-    @Named("group") private val searchHistoryDao: SearchHistoryDao
-) : SearchHistoryRepository {
+internal class RegularMeetingSearchHistoryRepositoryImpl @Inject constructor(
+    @Named("regular") private val searchHistoryDao: SearchHistoryDao
+) : RegularMeetingSearchHistoryRepository {
     override suspend fun insertSearchHistory(query: String) {
         searchHistoryDao.insertSearchHistory(
             SearchHistoryEntity(

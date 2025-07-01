@@ -4,9 +4,13 @@ import androidx.paging.PagingData
 import com.example.model.CreateRegularMeeting
 import com.example.model.EventMember
 import com.example.model.RegularEvent
+import com.example.model.SearchRegularEvent
+import com.example.model.SearchRegularMeetingRequest
 import kotlinx.coroutines.flow.Flow
 
 interface RegularMeetingRepository {
+    fun getPagedRegularEventsBySearch(pageSize: Int, searchRequest: SearchRegularMeetingRequest): Flow<PagingData<SearchRegularEvent>>
+
     fun getPagingRegularEvents(pageSize: Int, eventId: Int): Flow<PagingData<RegularEvent>>
 
     suspend fun createRegularMeeting(eventId: Int, regularMeeting: CreateRegularMeeting)
@@ -20,4 +24,6 @@ interface RegularMeetingRepository {
     suspend fun updateJoinRegularMeeting(regularEventId: Int, participationId: Int?): Int
 
     suspend fun getRegularMemberList(regularId: Int): EventMember
+
+    suspend fun getPagedRegularMeetingCount(searchRequest: SearchRegularMeetingRequest): Int
 }

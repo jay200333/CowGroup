@@ -3,6 +3,7 @@ package com.example.database.di
 import android.content.Context
 import androidx.room.Room
 import com.example.database.CowGroupDatabase
+import com.example.database.RegularEventSearchHistoryDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +22,15 @@ internal object DatabaseModule {
         context,
         CowGroupDatabase::class.java,
         "cowgroup-database"
+    ).build()
+
+    @Provides
+    @Singleton
+    fun providesRegularEventSearchHistoryDatabase(
+        @ApplicationContext context: Context,
+    ): RegularEventSearchHistoryDatabase = Room.databaseBuilder(
+        context,
+        RegularEventSearchHistoryDatabase::class.java,
+        "regularEventSearchHistory-database"
     ).build()
 }
