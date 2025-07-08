@@ -116,7 +116,8 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable<FullJoinMeetingRoute> {
         JoinMeetingScreen(
-            onNavigationButtonClick = onNavigationButtonClick
+            onNavigationButtonClick = onNavigationButtonClick,
+            onEventClick = { eventId -> onEventClick(eventId) }
         )
     }
 

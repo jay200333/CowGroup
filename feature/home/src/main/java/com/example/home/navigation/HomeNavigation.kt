@@ -106,7 +106,7 @@ fun NavGraphBuilder.homeNavGraph(
     composable<EventDetailRoute> {
         EventDetailMainScreen(
             onDeleteMeetingSuccess = onDeleteMeetingSuccess,
-            onNavigationButtonClick = onHomeScreen,
+            onNavigationButtonClick = onNavigationButtonClick,
             onEditButtonClick = { eventId, isEditMode ->
                 onCreateMeetingClick(
                     eventId,
