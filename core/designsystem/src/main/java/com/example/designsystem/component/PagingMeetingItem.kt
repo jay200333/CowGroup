@@ -74,7 +74,7 @@ fun PagingMeetingItem(event: Event, onBookMarkClick: (Boolean) -> Unit, onEventC
                 )
                 Text(
                     modifier = Modifier.padding(start = 2.dp),
-                    text = "${event.applicants}",
+                    text = "${event.applicants}명",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
