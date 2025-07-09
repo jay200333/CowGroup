@@ -123,7 +123,8 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable<FullBookmarkMeetingRoute> {
         BookmarkMeetingScreen(
-            onNavigationButtonClick = onNavigationButtonClick
+            onNavigationButtonClick = onNavigationButtonClick,
+            onEventClick = { eventId -> onEventClick(eventId) }
         )
     }
 
