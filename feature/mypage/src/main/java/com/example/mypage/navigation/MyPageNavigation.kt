@@ -130,7 +130,8 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable<MeetingScheduleRoute> {
         MeetingScheduleScreen(
-            onNavigationButtonClick = onNavigationButtonClick
+            onNavigationButtonClick = onNavigationButtonClick,
+            onEventClick = { eventId -> onEventClick(eventId) }
         )
     }
 
