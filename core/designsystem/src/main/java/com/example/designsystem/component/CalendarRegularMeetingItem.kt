@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.common.DateUtil
 import com.example.cowgroup.core.designsystem.R
-import com.example.designsystem.component.CowGroupAsyncImage
 import com.example.model.SearchRegularEvent
 
 @Composable
-fun HomeCalendarRegularMeetingItem(regularEvent: SearchRegularEvent, onEventClick: (Int) -> Unit) {
+fun CalendarRegularMeetingItem(regularEvent: SearchRegularEvent, onEventClick: (Int) -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .clickable { onEventClick(regularEvent.id) }, verticalAlignment = Alignment.CenterVertically) {
@@ -66,7 +65,7 @@ fun HomeCalendarRegularMeetingItem(regularEvent: SearchRegularEvent, onEventClic
                 Icon(
                     modifier = Modifier
                         .size(16.dp),
-                    painter = painterResource(com.example.home.R.drawable.baseline_calendar_month_24),
+                    painter = painterResource(R.drawable.baseline_calendar_month_24),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = "icon_paging_item_date"
                 )
