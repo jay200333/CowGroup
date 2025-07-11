@@ -41,11 +41,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.example.data.model.SearchHistory
+import com.example.designsystem.component.CalendarRegularMeetingItem
 import com.example.designsystem.component.CowGroupDateRangePicker
+import com.example.designsystem.component.DateSelector
 import com.example.home.R
 import com.example.home.component.CowGroupSortDropdownMenu
-import com.example.home.component.DateSelector
-import com.example.home.component.HomeCalendarRegularMeetingItem
 import com.example.home.component.HomeScreenSearchBar
 import com.example.home.viewmodel.HomeCalendarUISTate
 import com.example.home.viewmodel.HomeCalendarViewModel
@@ -215,7 +215,7 @@ fun HomeCalendarScreen(
                     { index ->
                         val regularEvent = regularEventList[index]
                         if (regularEvent != null) {
-                            HomeCalendarRegularMeetingItem(
+                            CalendarRegularMeetingItem(
                                 regularEvent = regularEvent,
                                 onEventClick = onEventClick
                             )
