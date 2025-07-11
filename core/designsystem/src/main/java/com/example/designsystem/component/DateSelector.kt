@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
