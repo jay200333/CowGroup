@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.component.CowGroupAsyncImage
+import com.example.designsystem.component.DropDownMenuItem
+import com.example.designsystem.component.EditDropDownMenu
 import com.example.model.Comment
 
 @Composable

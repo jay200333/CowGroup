@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,13 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.common.DateUtil
-import com.example.designsystem.component.CowGroupAsyncImage
+import com.example.cowgroup.core.designsystem.R
 import com.example.designsystem.theme.CowGroupTheme
-import com.example.home.R
 import com.example.model.Post
 
 @Composable
-fun EventDetailBoardItem(
+fun PagingPostItem(
     post: Post,
     onChatClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
@@ -133,9 +132,9 @@ fun EventDetailBoardItem(
 
 @Preview(showBackground = true)
 @Composable
-fun EventDetailBoardItemPreview() {
+fun PagingPostItemPreview() {
     CowGroupTheme {
-        EventDetailBoardItem(
+        PagingPostItem(
             onChatClick = {},
             onDeleteButtonClick = {},
             onEditButtonClick = {},
