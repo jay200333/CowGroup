@@ -66,12 +66,14 @@ fun PagingPostItem(
             )
             Spacer(modifier = Modifier.weight(1f))
 
-            EditDropDownMenu(
-                menuItems = listOf(
-                    DropDownMenuItem("수정하기") { onEditButtonClick() },
-                    DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
+            if (post.isRegistrant) {
+                EditDropDownMenu(
+                    menuItems = listOf(
+                        DropDownMenuItem("수정하기") { onEditButtonClick() },
+                        DropDownMenuItem("삭제하기") { onDeleteButtonClick() }
+                    )
                 )
-            )
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
