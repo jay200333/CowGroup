@@ -32,10 +32,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.component.CowGroupDialog
+import com.example.designsystem.component.DropDownMenuItem
+import com.example.designsystem.component.EditDropDownMenu
 import com.example.designsystem.component.MarkButton
 import com.example.home.R
-import com.example.home.component.DropDownMenuItem
-import com.example.home.component.EditDropDownMenu
 import com.example.home.viewmodel.EventDetailMainUIState
 import com.example.home.viewmodel.EventDetailMainViewModel
 import com.example.model.DetailEvent

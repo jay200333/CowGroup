@@ -37,9 +37,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.designsystem.component.CowGroupDialog
+import com.example.designsystem.component.PagingPostItem
 import com.example.home.R
 import com.example.home.component.CommentBottomSheetContent
-import com.example.home.component.EventDetailBoardItem
 import com.example.home.viewmodel.EventDetailBoardUIState
 import com.example.home.viewmodel.EventDetailBoardViewModel
 import com.example.model.Post
@@ -150,7 +150,7 @@ fun EventDetailBoardScreen(
                     items(postList.itemCount) { index ->
                         val post = postList[index]
                         if (post != null) {
-                            EventDetailBoardItem(
+                            PagingPostItem(
                                 post = post,
                                 onChatClick = {
                                     selectedPostId = post.id
