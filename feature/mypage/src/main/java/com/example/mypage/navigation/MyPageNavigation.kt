@@ -74,6 +74,7 @@ fun NavGraphBuilder.myPageNavGraph(
     onPostsNavButtonClick: () -> Unit,
     onCommentsNavButtonClick: () -> Unit,
     onEditProfileSuccess: () -> Unit,
+    onEditPostButtonClick: (Int, Int, Boolean) -> Unit
 ) {
     composable<MyPageScreenRoute> {
         MyPageScreen(
@@ -137,7 +138,14 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable<MyPostsRoute> {
         MyPostsScreen(
-            onNavigationButtonClick = onNavigationButtonClick
+            onNavigationButtonClick = onNavigationButtonClick,
+            onEditPostButtonClick = { eventId, postId, isEditMode ->
+                onEditPostButtonClick(
+                    eventId,
+                    postId,
+                    isEditMode
+                )
+            }
         )
     }
 

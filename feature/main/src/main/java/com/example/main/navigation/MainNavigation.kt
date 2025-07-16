@@ -76,5 +76,6 @@ fun NavGraphBuilder.mainNavGraph(
         onPostsNavButtonClick = navController::navigateMyPosts,
         onCommentsNavButtonClick = navController::navigateMyComments,
         onEditProfileSuccess = navController::navigateUp,
+        onEditPostButtonClick = navController::navigateCreatePost
     )
 }
