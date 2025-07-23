@@ -36,6 +36,7 @@ import com.example.model.Comment
 
 @Composable
 fun CommentBottomSheetContent(
+    getCommentList: (Int) -> Unit,
     updateComment: (TextFieldValue) -> Unit,
     postComment: (Int) -> Unit,
     deleteComment: (Int?, Int) -> Unit,
@@ -52,7 +53,7 @@ fun CommentBottomSheetContent(
     var selectedCommentId by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(postId) {
         if (postId != null) {
-            postComment(postId)
+            getCommentList(postId)
         }
     }
 

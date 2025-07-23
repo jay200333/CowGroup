@@ -30,18 +30,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.designsystem.component.CommentBottomSheetContent
 import com.example.designsystem.component.CowGroupDialog
 import com.example.designsystem.component.PagingPostItem
 import com.example.home.R
-import com.example.home.component.CommentBottomSheetContent
 import com.example.home.viewmodel.EventDetailBoardUIState
 import com.example.home.viewmodel.EventDetailBoardViewModel
+import com.example.home.viewmodel.EventDetailCommentUIState
+import com.example.model.Comment
 import com.example.model.Post
 import kotlinx.coroutines.flow.map
 
@@ -54,6 +57,7 @@ fun EventDetailBoardScreen(
     snackBarHostState: SnackbarHostState,
 ) {
     val uiState: EventDetailBoardUIState by viewModel.uiState.collectAsState()
+    val commentUIState: EventDetailCommentUIState by viewModel.commentUiState.collectAsState()
     val pagingPosts = viewModel.uiState.map { it.postList }.collectAsLazyPagingItems()
 
     EventDetailBoardScreen(
@@ -61,6 +65,17 @@ fun EventDetailBoardScreen(
         onEditPostButtonClick = onEditPostButtonClick,
         onDeletePostButtonClick = viewModel::deletePost,
         postList = pagingPosts,
+        getCommentList = viewModel::getCommentList,
+        updateComment = viewModel::updateComment,
+        postComment = viewModel::postComment,
+        deleteComment = viewModel::deleteComment,
+        editComment = viewModel::editComment,
+        switchEditMode = viewModel::switchEditMode,
+        cancelEdit = viewModel::cancelEditMode,
+        commentList = commentUIState.commentList,
+        isEditMode = commentUIState.isEditMode,
+        sendButtonEnabled = commentUIState.sendButtonEnabled,
+        comment = commentUIState.comment,
         snackBarHostState = snackBarHostState,
     )
     LaunchedEffect(uiState.message) {
@@ -80,7 +95,18 @@ fun EventDetailBoardScreen(
     onCreatePostButtonClick: () -> Unit,
     onEditPostButtonClick: (Int, Int, Boolean) -> Unit,
     onDeletePostButtonClick: (Int) -> Unit,
+    getCommentList: (Int) -> Unit,
+    updateComment: (TextFieldValue) -> Unit,
+    postComment: (Int) -> Unit,
+    deleteComment: (Int?, Int) -> Unit,
+    editComment: (Int) -> Unit,
+    switchEditMode: (Int) -> Unit,
+    cancelEdit: () -> Unit,
     postList: LazyPagingItems<Post>,
+    comment: TextFieldValue,
+    commentList: List<Comment>,
+    isEditMode: Boolean,
+    sendButtonEnabled: Boolean,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -212,7 +238,20 @@ fun EventDetailBoardScreen(
             sheetState = sheetState,
             containerColor = Color.White
         ) {
-            CommentBottomSheetContent(postId = selectedPostId!!)
+            CommentBottomSheetContent(
+                postId = selectedPostId!!,
+                getCommentList = getCommentList,
+                updateComment = updateComment,
+                postComment = postComment,
+                deleteComment = deleteComment,
+                editComment = editComment,
+                switchEditMode = switchEditMode,
+                cancelEdit = cancelEdit,
+                commentList = commentList,
+                isEditMode = isEditMode,
+                sendButtonEnabled = sendButtonEnabled,
+                comment = comment
+            )
         }
     }
 }
