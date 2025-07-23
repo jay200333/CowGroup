@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,9 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.example.designsystem.component.CowGroupAsyncImage
-import com.example.designsystem.component.DropDownMenuItem
-import com.example.designsystem.component.EditDropDownMenu
 import com.example.model.Comment
 
 @Composable

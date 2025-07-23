@@ -1,4 +1,4 @@
-package com.example.home.component
+package com.example.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,39 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.designsystem.component.CowGroupDialog
-import com.example.home.viewmodel.CommentUIState
-import com.example.home.viewmodel.CommentViewModel
+
 import com.example.model.Comment
-
-@Composable
-fun CommentBottomSheetContent(
-    viewModel: CommentViewModel = hiltViewModel(),
-    postId: Int?
-) {
-    val uiState: CommentUIState by viewModel.uiState.collectAsState()
-
-    CommentBottomSheetContent(
-        updateComment = viewModel::updateComment,
-        postComment = viewModel::postComment,
-        deleteComment = viewModel::deleteComment,
-        editComment = viewModel::editComment,
-        switchEditMode = viewModel::switchEditMode,
-        cancelEdit = viewModel::cancelEditMode,
-        postId = postId,
-        comment = uiState.comment,
-        commentList = uiState.commentList,
-        isEditMode = uiState.isEditMode,
-        sendButtonEnabled = uiState.sendButtonEnabled
-    )
-
-    LaunchedEffect(postId) {
-        if (postId != null) {
-            viewModel.getCommentList(postId)
-        }
-    }
-}
 
 @Composable
 fun CommentBottomSheetContent(
@@ -82,6 +50,11 @@ fun CommentBottomSheetContent(
 ) {
     var showCommentDialog by remember { mutableStateOf(false) }
     var selectedCommentId by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(postId) {
+        if (postId != null) {
+            postComment(postId)
+        }
+    }
 
     if (showCommentDialog) {
         CowGroupDialog(
